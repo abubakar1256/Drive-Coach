@@ -1,10 +1,32 @@
+# Dependencies and package manager caches
 node_modules/
-.next/
+api/node_modules/
 .pnpm-store/
+.npm/
+.yarn/
+
+# Framework/build output
+.next/
+out/
+dist/
+api/dist/
+*.tsbuildinfo
+
+# Local review and runtime files
 docx-review/
 *.log
-*.tsbuildinfo
+logs/
+coverage/
+.cache/
+.parcel-cache/
+
+# Environment and secrets (keep only safe templates)
 .env*
 !.env.example
-api/dist/
-api/node_modules/
+api/.env*
+!api/.env.example
+
+# IDE and OS files
+.vscode-test/
+.DS_Store
+Thumbs.db
