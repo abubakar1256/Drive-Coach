@@ -1,0 +1,475 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  LEARNER
+  CONTENT_MANAGER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum RouteStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  UNCOLLECTIBLE
+}
+
+enum RefundStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  displayName  String?
+  role         UserRole       @default(LEARNER)
+  emailVerifiedAt DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  subscriptions Subscription[]
+  refreshSessions RefreshSession[]
+  favorites      Favorite[]
+  practiceSessions PracticeSession[]
+  selfReflections SelfReflection[]
+  auditLogs      AuditLog[]
+  passwordResetTokens PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  notifications Notification[]
+  payments Payment[]
+  invoices Invoice[]
+  schoolsCreated DrivingSchool[]
+  instructorProfile InstructorProfile?
+  enrollmentsAsStudent StudentEnrollment[]
+  referralCodes ReferralCode[]
+  referralAttribution ReferralAttribution?
+  commissions Commission[]
+}
+
+model ExamCentre {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  city        String
+  area        String?
+  region      String
+  latitude    Float?
+  longitude   Float?
+  description String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  routes      Route[]
+}
+
+model Route {
+  id          String      @id @default(cuid())
+  centreId    String
+  slug        String      @unique
+  name        String
+  status      RouteStatus @default(DRAFT)
+  durationMin Int?
+  version     Int         @default(1)
+  verifiedAt  DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  centre      ExamCentre  @relation(fields: [centreId], references: [id], onDelete: Cascade)
+  points      RoutePoint[]
+  favorites   Favorite[]
+  practiceSessions PracticeSession[]
+}
+
+model RoutePoint {
+  id          String   @id @default(cuid())
+  routeId     String
+  sequence    Int
+  category    String
+  title       String
+  description String?
+  warning     String?
+  imageUrl    String?
+  videoUrl    String?
+  latitude    Float
+  longitude   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  route       Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  mediaAssets MediaAsset[]
+
+  @@unique([routeId, sequence])
+}
+
+model Plan {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  durationHours Int
+  priceCents    Int
+  currency      String         @default("EUR")
+  isActive      Boolean        @default(true)
+  subscriptions Subscription[]
+  payments Payment[]
+}
+
+model Subscription {
+  id            String             @id @default(cuid())
+  userId        String
+  planId        String
+  status        SubscriptionStatus @default(PENDING)
+  provider      String?
+  providerRef   String?            @unique
+  startsAt      DateTime?
+  expiresAt     DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan          Plan               @relation(fields: [planId], references: [id])
+  payments      Payment[]
+}
+
+model RefreshSession {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  routeId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route     Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, routeId])
+  @@index([userId, createdAt])
+}
+
+model PracticeSession {
+  id             String          @id @default(cuid())
+  userId         String
+  routeId        String
+  startedAt      DateTime        @default(now())
+  completedAt    DateTime?
+  durationSec    Int?
+  completionPct  Int             @default(0)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route          Route           @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  reflection     SelfReflection?
+  trackPoints    PracticeTrackPoint[]
+
+  @@index([userId, createdAt])
+}
+
+model SelfReflection {
+  id                    String          @id @default(cuid())
+  sessionId             String          @unique
+  userId                String
+  speedCompliance       Int?
+  rightOfWayConfidence  Int?
+  roundaboutConfidence  Int?
+  laneChangeConfidence  Int?
+  observedSpeedKph      Int?
+  speedLimitKph         Int?
+  flaggedSpeeding       Boolean         @default(false)
+  missedRightOfWay      Boolean         @default(false)
+  notes                 String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  session               PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entity, createdAt])
+  @@index([userId, createdAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model MediaAsset {
+  id           String     @id @default(cuid())
+  routePointId String
+  storageKey   String     @unique
+  publicUrl    String
+  originalName String
+  mimeType     String
+  byteSize     Int
+  createdAt    DateTime   @default(now())
+  routePoint   RoutePoint @relation(fields: [routePointId], references: [id], onDelete: Cascade)
+
+  @@index([routePointId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  metadata  Json?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model PracticeTrackPoint {
+  id         String          @id @default(cuid())
+  sessionId  String
+  latitude   Float
+  longitude  Float
+  speedKph   Float?
+  accuracyM  Float?
+  recordedAt DateTime
+  session    PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, recordedAt])
+}
+
+model DrivingSchool {
+  id              String              @id @default(cuid())
+  name            String
+  slug            String              @unique
+  email           String?
+  createdByUserId String
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  createdBy       User                @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
+  instructors     InstructorProfile[]
+  referralCodes   ReferralCode[]
+}
+
+model InstructorProfile {
+  id          String             @id @default(cuid())
+  userId      String             @unique
+  schoolId    String
+  status      String             @default("ACTIVE")
+  createdAt   DateTime           @default(now())
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school      DrivingSchool      @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  enrollments StudentEnrollment[]
+}
+
+model StudentEnrollment {
+  id           String            @id @default(cuid())
+  instructorId String
+  studentId    String
+  status       String            @default("INVITED")
+  invitedAt    DateTime          @default(now())
+  joinedAt     DateTime?
+  createdAt    DateTime          @default(now())
+  instructor   InstructorProfile @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  student      User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([instructorId, studentId])
+  @@index([studentId])
+}
+
+model ReferralCode {
+  id             String                 @id @default(cuid())
+  code           String                 @unique
+  ownerUserId    String
+  schoolId       String?
+  commissionBps  Int                    @default(1000)
+  active         Boolean                @default(true)
+  createdAt      DateTime               @default(now())
+  owner          User                   @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  school         DrivingSchool?        @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  attributions   ReferralAttribution[]
+  commissions    Commission[]
+}
+
+model ReferralAttribution {
+  id             String       @id @default(cuid())
+  codeId         String
+  referredUserId String       @unique
+  createdAt      DateTime     @default(now())
+  code           ReferralCode @relation(fields: [codeId], references: [id], onDelete: Cascade)
+  referredUser   User         @relation(fields: [referredUserId], references: [id], onDelete: Cascade)
+}
+
+model Commission {
+  id             String       @id @default(cuid())
+  referralCodeId String
+  referredUserId String
+  paymentId      String?
+  amountCents    Int
+  commissionCents Int
+  status         String       @default("PENDING")
+  createdAt      DateTime     @default(now())
+  referralCode   ReferralCode @relation(fields: [referralCodeId], references: [id], onDelete: Cascade)
+  referredUser   User         @relation(fields: [referredUserId], references: [id], onDelete: Cascade)
+  payment        Payment?     @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+}
+
+model Payment {
+  id                 String        @id @default(cuid())
+  userId             String
+  planId             String
+  subscriptionId     String?
+  provider           String
+  providerPaymentId String?       @unique
+  checkoutSessionId String?
+  amountCents        Int
+  currency           String
+  status             PaymentStatus @default(PENDING)
+  metadata           Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan               Plan          @relation(fields: [planId], references: [id])
+  subscription       Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  invoices           Invoice[]
+  refunds            Refund[]
+  commissions        Commission[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+model Invoice {
+  id                String        @id @default(cuid())
+  userId            String
+  paymentId         String?
+  providerInvoiceId String?       @unique
+  number            String?
+  amountCents       Int
+  currency          String
+  status            InvoiceStatus @default(DRAFT)
+  invoiceUrl        String?
+  issuedAt          DateTime?
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment           Payment?      @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+}
+
+model Refund {
+  id               String       @id @default(cuid())
+  paymentId        String
+  providerRefundId String?      @unique
+  amountCents      Int
+  status           RefundStatus @default(PENDING)
+  reason           String?
+  createdAt        DateTime     @default(now())
+  payment          Payment      @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  id             String   @id @default(cuid())
+  code           String   @unique
+  percentOff     Int?
+  amountOffCents Int?
+  currency       String?
+  maxRedemptions Int?
+  redeemCount    Int      @default(0)
+  expiresAt      DateTime?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+}
+
+model PaymentWebhookEvent {
+  id          String   @id @default(cuid())
+  provider    String
+  eventId     String
+  eventType   String
+  payload     Json
+  processedAt DateTime?
+  error       String?
+  createdAt   DateTime @default(now())
+
+  @@unique([provider, eventId])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String
+  userId     String?
+  centreSlug String?
+  routeSlug  String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([centreSlug, createdAt])
+  @@index([routeSlug, createdAt])
+}

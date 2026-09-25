@@ -1,0 +1,26 @@
+{
+  "name": "driving-test-route-platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "api:dev": "pnpm --dir api dev",
+    "api:build": "pnpm --dir api build",
+    "api:prisma:validate": "pnpm --dir api prisma:validate"
+  },
+  "dependencies": {
+    "mapbox-gl": "^3.31.0",
+    "next": "14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.16.5",
+    "@types/react": "18.3.5",
+    "@types/react-dom": "18.3.0",
+    "typescript": "5.6.2"
+  }
+}

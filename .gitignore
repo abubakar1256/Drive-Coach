@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.pnpm-store/
+docx-review/
+*.log
+*.tsbuildinfo
+.env*
+!.env.example
+api/dist/
+api/node_modules/

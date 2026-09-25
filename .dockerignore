@@ -1,0 +1,9 @@
+node_modules
+.next
+api/node_modules
+api/dist
+api/uploads/media
+.git
+.env
+api/.env
+*.log
