@@ -274,6 +274,8 @@ model VerifiedTip {
   cooldownSeconds      Int      @default(90)
   country              String   @default("BE")
   region               String   @default("BE-FL")
+  jurisdiction         String   @default("BE-FL")
+  ruleVersion          String   @default("CURRENT_1975")
   legalClaim           String?
   source               String?
   sourceReference      String?

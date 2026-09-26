@@ -55,6 +55,12 @@ const verifiedTips = [
 
 const draftTips = drivingSkills.flatMap(([skillCode, skillName]) => Array.from({ length: 5 }, (_, index) => [`TIP-${skillCode}-${String(index + 1).padStart(2, "0")}`, skillCode, `${skillName}: oefen deze stap rustig en tijdig.`, `${skillName}: practise this step calmly and early.`] as const));
 const tipCatalog = [...verifiedTips, ...draftTips] as const;
+const frenchSkillNames: Record<string, string> = { SPEED: "Conscience de la vitesse", PRIORITY: "Priorité et droit de passage", OBSERVATION: "Observation", HAZARD: "Détection des dangers", POSITION: "Position sur la chaussée", LANE_CHANGE: "Changement de voie", JUNCTION: "Carrefours", ROUNDABOUT: "Ronds-points", TURNING: "Virages", SIGNS: "Panneaux et feux", VULNERABLE: "Usagers vulnérables", SPACE: "Distance et espace", MERGING: "Insertion et dépassement", SPECIAL: "Situations particulières", CONTROL: "Maîtrise du véhicule", MANOEUVRE: "Manœuvres" };
+const frenchTipText: Record<string, string> = {
+  "TIP-SPD-01": "Contrôlez votre vitesse.", "TIP-SPD-04": "Adaptez votre vitesse à temps.", "TIP-PRI-01": "Contrôlez la situation de priorité.", "TIP-PRI-03": "Une situation de priorité approche. Observez à temps.",
+  "TIP-OBS-01": "Regardez plus loin devant.", "TIP-OBS-06": "Contrôlez votre angle mort.", "TIP-RND-03": "Choisissez la bonne voie à temps.", "TIP-RND-05": "Contrôlez les rétroviseurs et l’angle mort avant de changer de voie.",
+  "TIP-RND-08": "Contrôlez la présence de cyclistes.", "TIP-LAN-03": "Préparez votre changement de voie à temps.", "TIP-HAZ-01": "Regardez plus loin pour repérer les dangers possibles.", "TIP-SPC-01": "Gardez une distance de sécurité suffisante."
+};
 
 async function main() {
   const skillIds = new Map<string, string>();
@@ -75,8 +81,10 @@ async function main() {
     const skillId = skillIds.get(skillCode);
     if (!skillId) throw new Error(`Missing skill ${skillCode}`);
     const approved = verifiedTips.some(([verifiedCode]) => verifiedCode === code);
-    const tip = await prisma.verifiedTip.upsert({ where: { code }, update: { skillId, voiceTextNl, voiceTextEn, verified: true, adminApproved: true, verifiedAt: new Date(), triggerTypes: [skillCode] }, create: { code, skillId, voiceTextNl, voiceTextEn, verified: true, adminApproved: true, verifiedAt: new Date(), triggerTypes: [skillCode], priority: 10, cooldownSeconds: 90 } });
-    await prisma.verifiedTip.update({ where: { id: tip.id }, data: { verified: approved, adminApproved: approved, verifiedAt: approved ? new Date() : null } });
+    const voiceTextFr = frenchTipText[code] ?? `${frenchSkillNames[skillCode] ?? skillCode} : entraînez cette étape calmement et à temps.`;
+    const source = approved ? "FOD Mobilité / Wegcode" : null;
+    const sourceReference = approved ? "https://mobilit.belgium.be/nl/weg/rijden/wegcode-verkeersregels-en-sancties/verkeersregels" : null;
+    const tip = await prisma.verifiedTip.upsert({ where: { code }, update: { skillId, voiceTextNl, voiceTextFr, voiceTextEn, verified: approved, adminApproved: approved, verifiedAt: approved ? new Date() : null, triggerTypes: [skillCode], source, sourceReference, jurisdiction: "BE-FL", ruleVersion: "CURRENT_1975", validUntil: approved ? new Date("2027-05-31T23:59:59.999Z") : null }, create: { code, skillId, voiceTextNl, voiceTextFr, voiceTextEn, verified: approved, adminApproved: approved, verifiedAt: approved ? new Date() : null, triggerTypes: [skillCode], priority: 10, cooldownSeconds: 90, source, sourceReference, jurisdiction: "BE-FL", ruleVersion: "CURRENT_1975", validUntil: approved ? new Date("2027-05-31T23:59:59.999Z") : null } });
     tipIds.set(code, tip.id);
   }
   const tipLinks: Array<[string, string]> = [
