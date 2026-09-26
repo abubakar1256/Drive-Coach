@@ -61,21 +61,36 @@ export class LearningService {
     return { mode: "grounded-route-coach", route: { id: route[0].id, slug: route[0].slug, name: route[0].name, centreName: route[0].centreName }, focus, checklist: route.map((point) => ({ sequence: point.sequence, title: point.title, instruction: point.warning || point.description || `Prepare for ${point.category}.` })), safety: "This coach only summarizes published RoutePilot points and your reflection. It does not alter the official route or replace an instructor." };
   }
 
-  async driveCoach(userId: string, routeId?: string) {
+  async driveCoach(userId: string, routeId?: string, mode = "COACH") {
+    const coachingMode = this.coachingMode(mode);
     const weaknessRows = await this.query('SELECT uwh."occurrenceCount", uwh."lastSeenAt", w."code", w."label", ds."code" AS "skillCode", ds."name" AS "skillName" FROM "UserWeaknessHistory" uwh JOIN "Weakness" w ON w."id" = uwh."weaknessId" JOIN "DrivingSkill" ds ON ds."id" = w."skillId" WHERE uwh."userId" = $1 AND w."active" = true ORDER BY uwh."occurrenceCount" DESC, uwh."lastSeenAt" DESC LIMIT 8', userId);
     const focus = weaknessRows[0] ? { skill: weaknessRows[0].skillName, skillCode: weaknessRows[0].skillCode, message: `Based on your recent practice, focus on ${weaknessRows[0].label.toLowerCase()} before your next drive.` } : { skill: "Start with a reflection", skillCode: null, message: "Complete a practice reflection to build your personal Drive Coach plan." };
     const recommendationRows = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", COALESCE(SUM(CASE WHEN uwh."id" IS NOT NULL THEN rsc."coverageWeight" * (1 + LEAST(uwh."occurrenceCount", 5)) ELSE 0 END), 0)::int AS "score", COALESCE(ARRAY_AGG(DISTINCT ds."code") FILTER (WHERE uwh."id" IS NOT NULL), ARRAY[]::text[]) AS "matchedSkills" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RouteSkillCoverage" rsc ON rsc."routeId" = r."id" AND rsc."verified" = true LEFT JOIN "DrivingSkill" ds ON ds."id" = rsc."skillId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."userId" = $1 AND uwh."weaknessId" IN (SELECT w2."id" FROM "Weakness" w2 WHERE w2."skillId" = ds."id") WHERE r."status" = \'PUBLISHED\' AND c."isPublished" = true AND ($2::text IS NULL OR r."id" <> $2) GROUP BY r."id", c."id" ORDER BY "score" DESC, r."name" ASC LIMIT 3', userId, routeId ?? null);
     const recommendations = recommendationRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, score: row.score, matchedSkills: row.matchedSkills ?? [], reason: row.score > 0 ? `${row.name} covers your recent focus: ${(row.matchedSkills ?? []).join(", ")}.` : `${row.name} is an approved route available for continued practice.` }));
-    const tips = await this.query('SELECT DISTINCT ON (vt."id") vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."skillId", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(uwh."occurrenceCount", 0)::int AS "occurrenceCount" FROM "VerifiedTip" vt JOIN "DrivingSkill" ds ON ds."id" = vt."skillId" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "Weakness" w ON w."id" = wt."weaknessId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = w."id" AND uwh."userId" = $1 WHERE vt."verified" = true AND vt."adminApproved" = true ORDER BY vt."id", "occurrenceCount" DESC, vt."priority" DESC LIMIT 8', userId);
+    const tipLimit = coachingMode === "LIGHT" ? 3 : coachingMode === "INTENSIVE" ? 8 : 5;
+    const tips = await this.query(`SELECT DISTINCT ON (vt."id") vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."skillId", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(uwh."occurrenceCount", 0)::int AS "occurrenceCount" FROM "VerifiedTip" vt JOIN "DrivingSkill" ds ON ds."id" = vt."skillId" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "Weakness" w ON w."id" = wt."weaknessId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = w."id" AND uwh."userId" = $1 WHERE vt."verified" = true AND vt."adminApproved" = true ORDER BY vt."id", "occurrenceCount" DESC, vt."priority" DESC LIMIT ${tipLimit}`, userId);
     let route: Row | null = null;
     if (routeId) {
       const routeRows = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
       route = routeRows[0] ?? null;
     }
+    const rideRows = await this.query<{ completedRides: number }>('SELECT COUNT(*)::int AS "completedRides" FROM "PracticeSession" WHERE "userId" = $1 AND "completedAt" IS NOT NULL', userId);
+    const completedRides = rideRows[0]?.completedRides ?? 0;
+    const practicePlan = { completedRides, ready: completedRides >= 5, message: completedRides >= 5 ? "Your recent rides are enough to keep a focused practice plan." : `${5 - completedRides} more completed ride${5 - completedRides === 1 ? "" : "s"} will make the plan more reliable.`, priorities: weaknessRows.slice(0, 3).map((weakness) => ({ code: weakness.code, label: weakness.label, occurrences: weakness.occurrenceCount, skill: weakness.skillName })) };
     for (const recommendation of recommendations) {
       await this.prisma.$executeRawUnsafe('INSERT INTO "RouteRecommendation" ("id", "userId", "routeId", "score", "reason", "focusSkillCode") VALUES ($1,$2,$3,$4,$5,$6)', randomUUID(), userId, recommendation.id, recommendation.score, recommendation.reason, focus.skillCode);
     }
-    return { mode: "drive-coach-v1", focus, route, weaknesses: weaknessRows, tips, recommendations, safety: "Drive Coach only uses user reflections plus verified route and tip data. It does not change official routes, invent traffic rules or make pass/fail decisions." };
+    return { mode: coachingMode, focus, route, weaknesses: weaknessRows, tips, recommendations, practicePlan, safety: "Drive Coach only uses user reflections plus verified route and tip data. It does not change official routes, invent traffic rules or make pass/fail decisions." };
+  }
+
+  async triggerVoiceTip(userId: string, routePointId: string, distanceM: number, sessionId?: string, mode = "COACH") {
+    const coachingMode = this.coachingMode(mode);
+    if (!Number.isFinite(distanceM) || distanceM < 0 || distanceM > 1000) return { speak: false, reason: "Distance is outside the safe trigger range." };
+    const rows = await this.query('SELECT vt."id", vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."priority", vt."cooldownSeconds", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(MAX(uwh."occurrenceCount"), 0)::int AS "occurrenceCount" FROM "RoutePoint" rp JOIN "Route" r ON r."id" = rp."routeId" AND r."status" = \'PUBLISHED\' JOIN "ExamCentre" c ON c."id" = r."centreId" AND c."isPublished" = true JOIN "DrivingSkill" ds ON ds."code" = CASE LOWER(rp."category") WHEN \'roundabout\' THEN \'ROUNDABOUT\' WHEN \'lane-change\' THEN \'LANE_CHANGE\' WHEN \'speed-zone\' THEN \'SPEED\' WHEN \'traffic-light\' THEN \'SIGNS\' ELSE \'OBSERVATION\' END JOIN "VerifiedTip" vt ON vt."skillId" = ds."id" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = wt."weaknessId" AND uwh."userId" = $1 WHERE rp."id" = $2 AND vt."verified" = true AND vt."adminApproved" = true AND $3 <= COALESCE(vt."maxTriggerDistanceM", 180) AND $3 >= COALESCE(vt."minTriggerDistanceM", 0) AND NOT EXISTS (SELECT 1 FROM "TipDeliveryHistory" td WHERE td."userId" = $1 AND td."tipId" = vt."id" AND td."deliveredAt" > NOW() - make_interval(secs => vt."cooldownSeconds")) GROUP BY vt."id", vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."priority", vt."cooldownSeconds", ds."code", ds."name" ORDER BY "occurrenceCount" DESC, vt."priority" DESC LIMIT 1', userId, routePointId, distanceM);
+    const tip = rows[0];
+    if (!tip) return { speak: false, reason: coachingMode === "LIGHT" ? "No high-priority verified reminder is due." : "No verified reminder is due at this point." };
+    await this.prisma.$executeRawUnsafe('INSERT INTO "TipDeliveryHistory" ("id", "userId", "tipId", "sessionId", "routePointId") VALUES ($1,$2,$3,$4,$5)', randomUUID(), userId, tip.id, sessionId ?? null, routePointId);
+    return { speak: true, mode: coachingMode, tip: { code: tip.code, skillCode: tip.skillCode, skillName: tip.skillName, voiceTextEn: tip.voiceTextEn, voiceTextNl: tip.voiceTextNl }, safety: "This is an admin-approved verified reminder tied to a published route point." };
   }
 
   async routeRecommendation(userId: string, routeId: string) {
@@ -169,6 +184,11 @@ export class LearningService {
     if ((reflection?.roundaboutConfidence ?? 5) <= 2) return { skill: "Roundabouts", message: "Choose your lane before entry, check mirrors and signal the exit early.", keywords: ["roundabout", "lane", "exit"] };
     if ((reflection?.laneChangeConfidence ?? 5) <= 2) return { skill: "Lane changes", message: "Practise mirror, signal and blind-spot checks before changing position.", keywords: ["lane", "change", "mirror"] };
     return { skill: "Calm consistency", message: "Keep the approved route, scan ahead and make each decision early and smoothly.", keywords: ["start", "junction", "lane"] };
+  }
+
+  private coachingMode(mode?: string) {
+    const normalized = (mode ?? "COACH").toUpperCase();
+    return normalized === "LIGHT" || normalized === "INTENSIVE" ? normalized : "COACH";
   }
 
   private audit(userId: string, action: string, entity: string, entityId: string) {

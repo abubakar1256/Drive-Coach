@@ -17,6 +17,7 @@ export type ApiRoute = {
     _count: { routes: number };
   };
   points: Array<{
+    id: string;
     sequence: number;
     category: string;
     title: string;
@@ -139,10 +140,14 @@ export function routeToCentre(route: ApiRoute, fallback: Centre): Centre {
     description: route.centre.description ?? fallback.description,
     routeCoordinates: route.points.map((point) => [point.longitude, point.latitude]),
     routePoints: route.points.map((point) => ({
+      id: point.id,
       number: String(point.sequence).padStart(2, "0"),
       title: point.title,
       detail: point.warning ? `${point.description ?? ""} ${point.warning}`.trim() : point.description ?? "",
       tone: pointTone(point.category),
+      latitude: point.latitude,
+      longitude: point.longitude,
+      category: point.category,
     })),
   };
 }
@@ -159,6 +164,6 @@ export function apiCentreToCentre(centre: ApiCentre, fallback: Centre = centres[
     routes: centre.routes.length,
     description: centre.description ?? `${centre.name} practice routes and attention points.`,
     routeCoordinates: firstRoute?.points.map((point) => [point.longitude, point.latitude]) ?? (centre.longitude && centre.latitude ? [[centre.longitude, centre.latitude]] : fallback.routeCoordinates),
-    routePoints: firstRoute?.points.map((point) => ({ number: String(point.sequence).padStart(2, "0"), title: point.title, detail: point.warning ? `${point.description ?? ""} ${point.warning}`.trim() : point.description ?? "", tone: pointTone(point.category) })) ?? fallback.routePoints,
+    routePoints: firstRoute?.points.map((point) => ({ id: undefined, number: String(point.sequence).padStart(2, "0"), title: point.title, detail: point.warning ? `${point.description ?? ""} ${point.warning}`.trim() : point.description ?? "", tone: pointTone(point.category), latitude: point.latitude, longitude: point.longitude, category: point.category })) ?? fallback.routePoints,
   };
 }

@@ -14,3 +14,17 @@
 .mapbox-shell { height: 590px; position: relative; background: #e7efe4; }.mapbox-container { position: absolute; inset: 0; }.mapboxgl-ctrl-group { border-radius: 5px !important; box-shadow: 0 2px 8px rgba(30,92,74,.12) !important; }.mapbox-point-marker { width: 22px; height: 22px; border: 3px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--coral); box-shadow: 0 2px 7px rgba(0,0,0,.25); cursor: pointer; transition: .2s ease; }.mapbox-point-marker:nth-child(even) { background: #5c9ab0; }.mapbox-point-marker.is-active { transform: rotate(-45deg) scale(1.28); box-shadow: 0 0 0 6px rgba(231,125,101,.2), 0 4px 12px rgba(0,0,0,.2); }.mapbox-helper { position: absolute; left: 17px; bottom: 17px; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.94); border-radius: 6px; padding: 9px 11px; box-shadow: 0 5px 15px rgba(30,92,74,.12); }.mapbox-helper span { color: var(--deep-green); font-size: 10px; font-weight: 700; }.mapbox-helper i { width: 6px; height: 6px; background: #4bb477; border-radius: 50%; display: inline-block; margin-right: 5px; }.mapbox-helper small { color: var(--muted); font-size: 9px; }
 @media (max-width: 600px) { .route-map-callout { right: 10px; bottom: 10px; max-width: 190px; } }
 @media (max-width: 600px) { .mapbox-shell { height: 330px; }.mapbox-helper { left: 10px; bottom: 10px; }.mapbox-helper small { display: none; } }
+.voice-guidance-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid rgba(12, 65, 54, .12);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #f5fbf6, #fff8ed);
+}
+.voice-guidance-card > div { display: grid; gap: 3px; }
+.voice-guidance-card label { display: grid; gap: 6px; color: #56736b; font-size: .78rem; }
+.voice-guidance-card select { border: 1px solid #d5e4dc; border-radius: 10px; padding: 9px 10px; background: white; color: #12382e; }
+.voice-guidance-card button { border: 0; border-radius: 999px; padding: 11px 14px; background: #ff861d; color: white; font-weight: 700; cursor: pointer; }
+.voice-guidance-card button.is-active { background: #116b58; }
+.voice-guidance-card small { color: #56736b; line-height: 1.45; }

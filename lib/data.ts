@@ -1,8 +1,12 @@
 export type RoutePoint = {
+  id?: string;
   number: string;
   title: string;
   detail: string;
   tone: "mint" | "coral" | "blue";
+  latitude?: number;
+  longitude?: number;
+  category?: string;
 };
 
 export type Centre = {

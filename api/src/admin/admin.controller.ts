@@ -5,6 +5,7 @@ import { AdminService } from "./admin.service";
 import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
+import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -54,6 +55,16 @@ export class AdminController {
   @Get("commissions")
   commissions() {
     return this.adminService.commissions();
+  }
+
+  @Get("drive-coach/tips")
+  driveCoachTips() {
+    return this.adminService.driveCoachTips();
+  }
+
+  @Patch("drive-coach/tips/:id")
+  reviewDriveCoachTip(@Param("id") id: string, @Body() dto: ReviewTipDto, @Req() request: AuthenticatedRequest) {
+    return this.adminService.reviewDriveCoachTip(request.user.sub, id, dto);
   }
 
   @Post("routes")

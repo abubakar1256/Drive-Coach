@@ -41,6 +41,9 @@ const weaknessCatalog = [
   ["MANOEUVRE_PARKING", "MANOEUVRE", "Parking manoeuvre"], ["MANOEUVRE_REVERSE", "MANOEUVRE", "Reversing manoeuvre"],
 ] as const;
 
+const expandedWeaknessCatalog = drivingSkills.flatMap(([skillCode, skillName]) => Array.from({ length: 10 }, (_, index) => [`${skillCode}_PATTERN_${String(index + 1).padStart(2, "0")}`, skillCode, `${skillName} practice pattern ${index + 1}`] as const));
+const allWeaknesses = [...weaknessCatalog, ...expandedWeaknessCatalog] as const;
+
 const verifiedTips = [
   ["TIP-SPD-01", "SPEED", "Controleer je snelheid.", "Check your speed."], ["TIP-SPD-04", "SPEED", "Pas je snelheid tijdig aan.", "Adjust your speed early."],
   ["TIP-PRI-01", "PRIORITY", "Controleer de voorrangssituatie.", "Check the priority situation."], ["TIP-PRI-03", "PRIORITY", "Voorrangssituatie nadert. Observeer tijdig.", "Priority situation ahead. Observe early."],
@@ -50,6 +53,9 @@ const verifiedTips = [
   ["TIP-HAZ-01", "HAZARD", "Kijk verder vooruit naar mogelijke gevaren.", "Look further ahead for possible hazards."], ["TIP-SPC-01", "SPACE", "Bewaar voldoende volgafstand.", "Keep enough following distance."],
 ] as const;
 
+const draftTips = drivingSkills.flatMap(([skillCode, skillName]) => Array.from({ length: 5 }, (_, index) => [`TIP-${skillCode}-${String(index + 1).padStart(2, "0")}`, skillCode, `${skillName}: oefen deze stap rustig en tijdig.`, `${skillName}: practise this step calmly and early.`] as const));
+const tipCatalog = [...verifiedTips, ...draftTips] as const;
+
 async function main() {
   const skillIds = new Map<string, string>();
   for (const [index, [code, name]] of drivingSkills.entries()) {
@@ -57,7 +63,7 @@ async function main() {
     skillIds.set(code, skill.id);
   }
   const weaknessIds = new Map<string, string>();
-  for (const [code, skillCode, label] of weaknessCatalog) {
+  for (const [code, skillCode, label] of allWeaknesses) {
     const skillId = skillIds.get(skillCode);
     if (!skillId) throw new Error(`Missing skill ${skillCode}`);
     const labelText = label ?? code;
@@ -65,10 +71,12 @@ async function main() {
     weaknessIds.set(code, weakness.id);
   }
   const tipIds = new Map<string, string>();
-  for (const [code, skillCode, voiceTextNl, voiceTextEn] of verifiedTips) {
+  for (const [code, skillCode, voiceTextNl, voiceTextEn] of tipCatalog) {
     const skillId = skillIds.get(skillCode);
     if (!skillId) throw new Error(`Missing skill ${skillCode}`);
+    const approved = verifiedTips.some(([verifiedCode]) => verifiedCode === code);
     const tip = await prisma.verifiedTip.upsert({ where: { code }, update: { skillId, voiceTextNl, voiceTextEn, verified: true, adminApproved: true, verifiedAt: new Date(), triggerTypes: [skillCode] }, create: { code, skillId, voiceTextNl, voiceTextEn, verified: true, adminApproved: true, verifiedAt: new Date(), triggerTypes: [skillCode], priority: 10, cooldownSeconds: 90 } });
+    await prisma.verifiedTip.update({ where: { id: tip.id }, data: { verified: approved, adminApproved: approved, verifiedAt: approved ? new Date() : null } });
     tipIds.set(code, tip.id);
   }
   const tipLinks: Array<[string, string]> = [
@@ -100,7 +108,7 @@ async function main() {
     { name: "3 months", durationHours: 2160, priceCents: 1395 },
   ]) await prisma.plan.upsert({ where: { name: plan.name }, update: { ...plan, isActive: true }, create: { ...plan, currency: "EUR", isActive: true } });
 
-  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${weaknessCatalog.length} weaknesses, verified tips and 4 access plans.`);
+  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${allWeaknesses.length} weaknesses, ${tipCatalog.length} tips (${verifiedTips.length} approved) and 4 access plans.`);
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; }).finally(() => prisma.$disconnect());

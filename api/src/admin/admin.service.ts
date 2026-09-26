@@ -5,6 +5,7 @@ import { PrismaService } from "../prisma.service";
 import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
+import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 
 @Injectable()
 export class AdminService {
@@ -74,6 +75,20 @@ export class AdminService {
 
   commissions() {
     return this.prisma.$queryRawUnsafe('SELECT cm."id", cm."amountCents", cm."commissionCents", cm."status", cm."createdAt", rc."code", owner."email" AS "ownerEmail", referred."email" AS "referredEmail" FROM "Commission" cm JOIN "ReferralCode" rc ON rc."id" = cm."referralCodeId" JOIN "User" owner ON owner."id" = rc."ownerUserId" JOIN "User" referred ON referred."id" = cm."referredUserId" ORDER BY cm."createdAt" DESC LIMIT 500');
+  }
+
+  driveCoachTips() {
+    return this.prisma.verifiedTip.findMany({ include: { skill: { select: { code: true, name: true } }, _count: { select: { weaknesses: true } } }, orderBy: [{ adminApproved: "asc" }, { priority: "desc" }, { code: "asc" }] });
+  }
+
+  async reviewDriveCoachTip(actorId: string, id: string, dto: ReviewTipDto) {
+    const current = await this.prisma.verifiedTip.findUnique({ where: { id }, select: { id: true, code: true, verified: true, adminApproved: true } });
+    if (!current) throw new NotFoundException("Drive Coach tip not found");
+    const verified = dto.verified ?? current.verified;
+    const adminApproved = dto.adminApproved ?? current.adminApproved;
+    const updated = await this.prisma.verifiedTip.update({ where: { id }, data: { verified, adminApproved, sourceReference: dto.sourceReference ?? undefined, verifiedAt: verified && adminApproved ? new Date() : null, verifiedBy: verified && adminApproved ? actorId : null } });
+    await this.prisma.$executeRawUnsafe('INSERT INTO "AuditLog" ("id", "userId", "action", "entity", "entityId", "metadata") VALUES ($1,$2,$3,$4,$5,$6::jsonb)', randomUUID(), actorId, "DRIVE_COACH_TIP_REVIEWED", "VerifiedTip", id, JSON.stringify({ code: current.code, verified, adminApproved }));
+    return updated;
   }
 
   async createRoute(dto: CreateRouteDto) {
