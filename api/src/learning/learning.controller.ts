@@ -15,6 +15,7 @@ export class LearningController {
   @Delete("me/favorites/:routeId") removeFavorite(@Req() req: AuthenticatedRequest, @Param("routeId") routeId: string) { return this.learning.removeFavorite(req.user.sub, routeId); }
   @Get("me/practice-sessions") sessions(@Req() req: AuthenticatedRequest) { return this.learning.listSessions(req.user.sub); }
   @Get("me/route-assistant") routeAssistant(@Req() req: AuthenticatedRequest, @Query("routeId") routeId: string) { return this.learning.routeAssistant(req.user.sub, routeId); }
+  @Get("me/drive-coach") driveCoach(@Req() req: AuthenticatedRequest, @Query("routeId") routeId?: string) { return this.learning.driveCoach(req.user.sub, routeId); }
   @Get("me/route-recommendation") routeRecommendation(@Req() req: AuthenticatedRequest, @Query("routeId") routeId: string) { return this.learning.routeRecommendation(req.user.sub, routeId); }
   @Post("practice-sessions") start(@Req() req: AuthenticatedRequest, @Body() dto: CreatePracticeSessionDto) { return this.learning.startSession(req.user.sub, dto); }
   @Patch("practice-sessions/:id") update(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: UpdatePracticeSessionDto) { return this.learning.updateSession(req.user.sub, id, dto); }

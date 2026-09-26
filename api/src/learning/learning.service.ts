@@ -61,6 +61,23 @@ export class LearningService {
     return { mode: "grounded-route-coach", route: { id: route[0].id, slug: route[0].slug, name: route[0].name, centreName: route[0].centreName }, focus, checklist: route.map((point) => ({ sequence: point.sequence, title: point.title, instruction: point.warning || point.description || `Prepare for ${point.category}.` })), safety: "This coach only summarizes published RoutePilot points and your reflection. It does not alter the official route or replace an instructor." };
   }
 
+  async driveCoach(userId: string, routeId?: string) {
+    const weaknessRows = await this.query('SELECT uwh."occurrenceCount", uwh."lastSeenAt", w."code", w."label", ds."code" AS "skillCode", ds."name" AS "skillName" FROM "UserWeaknessHistory" uwh JOIN "Weakness" w ON w."id" = uwh."weaknessId" JOIN "DrivingSkill" ds ON ds."id" = w."skillId" WHERE uwh."userId" = $1 AND w."active" = true ORDER BY uwh."occurrenceCount" DESC, uwh."lastSeenAt" DESC LIMIT 8', userId);
+    const focus = weaknessRows[0] ? { skill: weaknessRows[0].skillName, skillCode: weaknessRows[0].skillCode, message: `Based on your recent practice, focus on ${weaknessRows[0].label.toLowerCase()} before your next drive.` } : { skill: "Start with a reflection", skillCode: null, message: "Complete a practice reflection to build your personal Drive Coach plan." };
+    const recommendationRows = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", COALESCE(SUM(CASE WHEN uwh."id" IS NOT NULL THEN rsc."coverageWeight" * (1 + LEAST(uwh."occurrenceCount", 5)) ELSE 0 END), 0)::int AS "score", COALESCE(ARRAY_AGG(DISTINCT ds."code") FILTER (WHERE uwh."id" IS NOT NULL), ARRAY[]::text[]) AS "matchedSkills" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RouteSkillCoverage" rsc ON rsc."routeId" = r."id" AND rsc."verified" = true LEFT JOIN "DrivingSkill" ds ON ds."id" = rsc."skillId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."userId" = $1 AND uwh."weaknessId" IN (SELECT w2."id" FROM "Weakness" w2 WHERE w2."skillId" = ds."id") WHERE r."status" = \'PUBLISHED\' AND c."isPublished" = true AND ($2::text IS NULL OR r."id" <> $2) GROUP BY r."id", c."id" ORDER BY "score" DESC, r."name" ASC LIMIT 3', userId, routeId ?? null);
+    const recommendations = recommendationRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, score: row.score, matchedSkills: row.matchedSkills ?? [], reason: row.score > 0 ? `${row.name} covers your recent focus: ${(row.matchedSkills ?? []).join(", ")}.` : `${row.name} is an approved route available for continued practice.` }));
+    const tips = await this.query('SELECT DISTINCT ON (vt."id") vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."skillId", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(uwh."occurrenceCount", 0)::int AS "occurrenceCount" FROM "VerifiedTip" vt JOIN "DrivingSkill" ds ON ds."id" = vt."skillId" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "Weakness" w ON w."id" = wt."weaknessId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = w."id" AND uwh."userId" = $1 WHERE vt."verified" = true AND vt."adminApproved" = true ORDER BY vt."id", "occurrenceCount" DESC, vt."priority" DESC LIMIT 8', userId);
+    let route: Row | null = null;
+    if (routeId) {
+      const routeRows = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
+      route = routeRows[0] ?? null;
+    }
+    for (const recommendation of recommendations) {
+      await this.prisma.$executeRawUnsafe('INSERT INTO "RouteRecommendation" ("id", "userId", "routeId", "score", "reason", "focusSkillCode") VALUES ($1,$2,$3,$4,$5,$6)', randomUUID(), userId, recommendation.id, recommendation.score, recommendation.reason, focus.skillCode);
+    }
+    return { mode: "drive-coach-v1", focus, route, weaknesses: weaknessRows, tips, recommendations, safety: "Drive Coach only uses user reflections plus verified route and tip data. It does not change official routes, invent traffic rules or make pass/fail decisions." };
+  }
+
   async routeRecommendation(userId: string, routeId: string) {
     const selected = await this.query('SELECT r."id", r."centreId", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
     if (!selected[0]) throw new NotFoundException("Published route not found");
@@ -97,8 +114,9 @@ export class LearningService {
     if (!session[0]) throw new NotFoundException("Practice session not found");
     const speedingObserved = dto.observedSpeedKph !== undefined && dto.speedLimitKph !== undefined && dto.observedSpeedKph > dto.speedLimitKph;
     await this.prisma.$executeRawUnsafe('INSERT INTO "SelfReflection" ("id", "sessionId", "userId", "speedCompliance", "rightOfWayConfidence", "roundaboutConfidence", "laneChangeConfidence", "observedSpeedKph", "speedLimitKph", "flaggedSpeeding", "missedRightOfWay", "notes", "updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW()) ON CONFLICT ("sessionId") DO UPDATE SET "speedCompliance"=$4,"rightOfWayConfidence"=$5,"roundaboutConfidence"=$6,"laneChangeConfidence"=$7,"observedSpeedKph"=$8,"speedLimitKph"=$9,"flaggedSpeeding"=$10,"missedRightOfWay"=$11,"notes"=$12,"updatedAt"=NOW()', randomUUID(), sessionId, userId, dto.speedCompliance ?? null, dto.rightOfWayConfidence ?? null, dto.roundaboutConfidence ?? null, dto.laneChangeConfidence ?? null, dto.observedSpeedKph ?? null, dto.speedLimitKph ?? null, dto.flaggedSpeeding || speedingObserved, dto.missedRightOfWay ?? false, dto.notes ?? null);
+    await this.recordWeaknesses(userId, sessionId, dto, speedingObserved);
     await this.audit(userId, "REFLECTION_SAVED", "PracticeSession", sessionId);
-    return { success: true, sessionId, recommendations: this.recommendations(dto) };
+    return { success: true, sessionId, recommendations: this.recommendations(dto), coach: await this.driveCoach(userId) };
   }
 
   async recordTrackPoint(userId: string, sessionId: string, dto: CreateTrackPointDto) {
@@ -107,6 +125,26 @@ export class LearningService {
     const id = randomUUID();
     await this.prisma.$executeRawUnsafe('INSERT INTO "PracticeTrackPoint" ("id", "sessionId", "latitude", "longitude", "speedKph", "accuracyM", "recordedAt") VALUES ($1,$2,$3,$4,$5,$6,$7)', id, sessionId, dto.latitude, dto.longitude, dto.speedKph ?? null, dto.accuracyM ?? null, dto.recordedAt ? new Date(dto.recordedAt) : new Date());
     return { success: true, id, sessionId };
+  }
+
+  private async recordWeaknesses(userId: string, sessionId: string, dto: CreateReflectionDto, speedingObserved: boolean) {
+    const codes = new Set<string>();
+    if (speedingObserved || dto.flaggedSpeeding || (dto.speedCompliance ?? 5) <= 2) codes.add("SPEED_TOO_FAST_ZONE");
+    if (dto.missedRightOfWay || (dto.rightOfWayConfidence ?? 5) <= 2) codes.add("PRIORITY_RIGHT_UNCERTAIN");
+    if ((dto.roundaboutConfidence ?? 5) <= 2) codes.add("ROUNDABOUT_WRONG_LANE");
+    if ((dto.laneChangeConfidence ?? 5) <= 2) codes.add("LANE_CHANGE_MIRROR");
+    const notes = (dto.notes ?? "").toLowerCase();
+    if (notes.includes("cyclist") || notes.includes("fiets") || notes.includes("bike")) codes.add("OBS_CYCLIST");
+    if (notes.includes("mirror") || notes.includes("spiegel")) codes.add("OBS_MIRRORS");
+    if (notes.includes("blind")) codes.add("OBS_BLIND_SPOT");
+    if (notes.includes("junction") || notes.includes("kruispunt")) codes.add("JUNCTION_OBSERVATION");
+    const weaknesses = await this.query('SELECT w."id", w."code", w."skillId" FROM "Weakness" w WHERE w."code" = ANY($1::text[]) AND w."active" = true', [...codes]);
+    const skillIds = new Set<string>();
+    for (const weakness of weaknesses) {
+      skillIds.add(weakness.skillId);
+      await this.prisma.$executeRawUnsafe('INSERT INTO "UserWeaknessHistory" ("id", "userId", "weaknessId", "occurrenceCount", "lastSeenAt", "lastSessionId") VALUES ($1,$2,$3,1,NOW(),$4) ON CONFLICT ("userId", "weaknessId") DO UPDATE SET "occurrenceCount" = "UserWeaknessHistory"."occurrenceCount" + 1, "lastSeenAt" = NOW(), "lastSessionId" = $4', randomUUID(), userId, weakness.id, sessionId);
+    }
+    for (const skillId of skillIds) await this.prisma.$executeRawUnsafe('INSERT INTO "UserSkillProgress" ("id", "userId", "skillId", "practiceCount", "weaknessCount", "lastPractisedAt") VALUES ($1,$2,$3,1,$4,NOW()) ON CONFLICT ("userId", "skillId") DO UPDATE SET "practiceCount" = "UserSkillProgress"."practiceCount" + 1, "weaknessCount" = "UserSkillProgress"."weaknessCount" + $4, "lastPractisedAt" = NOW()', randomUUID(), userId, skillId, 1);
   }
 
   private sessionShape(row: Row) {

@@ -76,6 +76,10 @@ model User {
   referralCodes ReferralCode[]
   referralAttribution ReferralAttribution?
   commissions Commission[]
+  weaknessHistory UserWeaknessHistory[]
+  skillProgress UserSkillProgress[]
+  tipDeliveries TipDeliveryHistory[]
+  routeRecommendations RouteRecommendation[]
 }
 
 model ExamCentre {
@@ -107,8 +111,10 @@ model Route {
   updatedAt   DateTime    @updatedAt
   centre      ExamCentre  @relation(fields: [centreId], references: [id], onDelete: Cascade)
   points      RoutePoint[]
+  skillCoverage RouteSkillCoverage[]
   favorites   Favorite[]
   practiceSessions PracticeSession[]
+  recommendations RouteRecommendation[]
 }
 
 model RoutePoint {
@@ -127,6 +133,7 @@ model RoutePoint {
   updatedAt   DateTime @updatedAt
   route       Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
   mediaAssets MediaAsset[]
+  features    RoutePointFeature[]
 
   @@unique([routeId, sequence])
 }
@@ -220,6 +227,159 @@ model SelfReflection {
   user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+model DrivingSkill {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  weaknesses  Weakness[]
+  tips        VerifiedTip[]
+  routeCoverage RouteSkillCoverage[]
+  progress    UserSkillProgress[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Weakness {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  skillId     String
+  label       String
+  description String?
+  active      Boolean  @default(true)
+  skill       DrivingSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  tips        WeaknessTip[]
+  history     UserWeaknessHistory[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([skillId, active])
+}
+
+model VerifiedTip {
+  id                   String   @id @default(cuid())
+  code                 String   @unique
+  skillId              String
+  voiceTextNl          String?
+  voiceTextFr          String?
+  voiceTextEn          String
+  triggerTypes         String[]
+  minTriggerDistanceM  Int?
+  maxTriggerDistanceM  Int?
+  priority             Int      @default(0)
+  cooldownSeconds      Int      @default(90)
+  country              String   @default("BE")
+  region               String   @default("BE-FL")
+  legalClaim           String?
+  source               String?
+  sourceReference      String?
+  validFrom            DateTime?
+  validUntil           DateTime?
+  verified             Boolean  @default(false)
+  adminApproved        Boolean  @default(false)
+  verifiedAt           DateTime?
+  verifiedBy           String?
+  skill                DrivingSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  weaknesses           WeaknessTip[]
+  deliveries           TipDeliveryHistory[]
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([skillId, verified, adminApproved])
+}
+
+model WeaknessTip {
+  weaknessId String
+  tipId      String
+  weakness   Weakness   @relation(fields: [weaknessId], references: [id], onDelete: Cascade)
+  tip        VerifiedTip @relation(fields: [tipId], references: [id], onDelete: Cascade)
+
+  @@id([weaknessId, tipId])
+}
+
+model RoutePointFeature {
+  id             String   @id @default(cuid())
+  routePointId   String
+  featureCode    String
+  complexity     String   @default("MEDIUM")
+  verified       Boolean  @default(false)
+  routePoint     RoutePoint @relation(fields: [routePointId], references: [id], onDelete: Cascade)
+
+  @@unique([routePointId, featureCode])
+  @@index([featureCode, verified])
+}
+
+model RouteSkillCoverage {
+  id             String   @id @default(cuid())
+  routeId        String
+  skillId        String
+  coverageWeight Int      @default(1)
+  verified       Boolean  @default(false)
+  route          Route       @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  skill          DrivingSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([routeId, skillId])
+  @@index([skillId, verified])
+}
+
+model UserWeaknessHistory {
+  id             String   @id @default(cuid())
+  userId         String
+  weaknessId     String
+  occurrenceCount Int     @default(0)
+  lastSeenAt     DateTime @default(now())
+  lastSessionId  String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weakness       Weakness @relation(fields: [weaknessId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weaknessId])
+  @@index([userId, lastSeenAt])
+}
+
+model TipDeliveryHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  tipId        String
+  sessionId    String?
+  routePointId String?
+  deliveredAt  DateTime @default(now())
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tip          VerifiedTip @relation(fields: [tipId], references: [id], onDelete: Cascade)
+
+  @@index([userId, deliveredAt])
+  @@index([tipId, deliveredAt])
+}
+
+model UserSkillProgress {
+  id             String   @id @default(cuid())
+  userId         String
+  skillId        String
+  practiceCount  Int      @default(0)
+  weaknessCount  Int      @default(0)
+  lastPractisedAt DateTime?
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill          DrivingSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
+  @@index([userId, weaknessCount])
+}
+
+model RouteRecommendation {
+  id             String   @id @default(cuid())
+  userId         String
+  routeId        String
+  score          Int
+  reason         String
+  focusSkillCode String?
+  generatedAt    DateTime @default(now())
+  user           User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route          Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@index([userId, generatedAt])
 }
 
 model AuditLog {
