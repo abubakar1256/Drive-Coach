@@ -1,8 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { UserRole } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
-import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
+import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateOfficialPassagePointDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
@@ -20,6 +20,27 @@ export class AdminService {
 
   createCentre(dto: CreateCentreDto) {
     return this.prisma.examCentre.create({ data: dto, include: { _count: { select: { routes: true } } } });
+  }
+
+  listOfficialPassagePoints(centreId: string) {
+    return this.prisma.officialPassagePoint.findMany({
+      where: { centreId },
+      orderBy: { sequence: "asc" },
+    });
+  }
+
+  async updateOfficialPassagePoint(id: string, dto: UpdateOfficialPassagePointDto) {
+    const current = await this.prisma.officialPassagePoint.findUnique({ where: { id }, select: { id: true, latitude: true, longitude: true, verificationStatus: true, verifiedAt: true } });
+    if (!current) throw new NotFoundException("Official passage point not found");
+    const nextStatus = dto.verificationStatus ?? current.verificationStatus;
+    const isVerified = nextStatus === "VERIFIED";
+    if (isVerified && ((dto.latitude ?? current.latitude) === null || (dto.longitude ?? current.longitude) === null)) {
+      throw new BadRequestException("Latitude and longitude are required before verification");
+    }
+    return this.prisma.officialPassagePoint.update({
+      where: { id },
+      data: { ...dto, verificationStatus: nextStatus, verifiedAt: isVerified ? (current.verifiedAt ?? new Date()) : null },
+    });
   }
 
   listRoutes() {

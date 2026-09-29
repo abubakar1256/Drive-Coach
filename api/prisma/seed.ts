@@ -8,6 +8,50 @@ const centres = [
   { slug: "ghent-east", name: "Ghent East", city: "Ghent", area: "Sint-Denijs-Westrem", region: "East Flanders", latitude: 51.0275, longitude: 3.6956, description: "Prepare for compact roundabouts, changing speed zones and open-road observation." },
 ];
 
+// Official passage-point names published by Autoveiligheid for the Alken exam centre.
+// The source does not publish an exact Route 1 sequence or GPS coordinates, so those
+// fields intentionally remain pending admin verification rather than being guessed.
+const officialAlkenPassagePoints = [
+  ["Alken", "Meerdegatstraat - Expressweg"],
+  ["Hasselt", "Eugeen Leenlaan - Luikersteenweg"],
+  ["Hasselt", "Sint-Truidersteenweg - Vorststraat"],
+  ["Hasselt", "Lentestraat - Zomerstraat"],
+  ["Hasselt", "De Geloesplein"],
+  ["Hasselt", "Prins Bisschopssingel - Sint-Truidersteenweg"],
+  ["Hasselt", "Boomkensstraat - Kruisherenlaan"],
+  ["Hasselt", "Abelenstraat - Boomkensstraat"],
+  ["Hasselt", "Slagerslaan - Boerenkrijgsstraat"],
+  ["Hasselt", "Sint-Hubertusplein"],
+  ["Hasselt", "Runkstersteenweg - Boerenkrijgsingel"],
+  ["Hasselt", "Notelarenstraat - Jagersstraat"],
+  ["Hasselt", "Sint-Martinusplein"],
+  ["Hasselt", "Sint-Truidersteenweg - Overmerelaan"],
+  ["Hasselt", "Sint-Truidersteenweg - De Berlaymontstraat"],
+  ["Alken", "Meerdegatstraat - Kolmenstraat"],
+  ["Hasselt", "Schoolstraat - Fonteinstraat"],
+  ["Hasselt", "Groenmolenstraat - Stationsstraat"],
+  ["Hasselt", "Kliniekstraat - Prins Bisschopssingel"],
+  ["Hasselt", "Luikersteenweg - Daniëlstraat"],
+  ["Hasselt", "Kolmenstraat - Groenmolenstraat"],
+  ["Alken", "Meerdegatstraat - Steenweg"],
+  ["Hasselt", "Pastorijstraat - Sint-Truidersteenweg"],
+  ["Hasselt", "Graaf de Brigodestraat - Sint-Lambrechts-Herkstraat"],
+  ["Hasselt", "Rode-Kruisstraat - Lindenhofstraat"],
+  ["Hasselt", "Lindenhofstraat - Beukenhofstraat"],
+  ["Hasselt", "Steenweg - Stationsstraat"],
+  ["Hasselt", "Sint-Lambertusstraat - Sint-Truidersteenweg"],
+  ["Hasselt", "Pastorijstraat - Graaf de Brigodestraat"],
+  ["Hasselt", "Papenakkerstraat - Gravin de Stembierstraat"],
+  ["Hasselt", "Sint-Truidersteenweg - Kruisherenlaan"],
+  ["Hasselt", "Sint-Truidersteenweg - Biezenstraat"],
+] as const;
+
+const officialPassageSource = {
+  sourceLabel: "Autoveiligheid officiële doorgangspunten",
+  sourceUrl: "https://www.autoveiligheid.be/downloaden/doorgangspunten-1005",
+  sourceRevision: "NGD-EC126-GN 01-11-2024 (1005)",
+};
+
 const routePoints = [
   { sequence: 1, category: "start", title: "Leave the test centre", description: "Check mirrors and position before joining traffic", warning: null, latitude: 50.8382, longitude: 4.3047 },
   { sequence: 2, category: "lane-change", title: "Lane change before junction", description: "Move over early and keep the junction clear", warning: "Check the mirror and blind spot before moving over", latitude: 50.8371, longitude: 4.3104 },
@@ -107,6 +151,19 @@ async function main() {
     await prisma.routeSkillCoverage.deleteMany({ where: { routeId: route.id } });
     const coverageCodes = new Set<string>(savedPoints.flatMap((point) => point.category === "roundabout" ? ["ROUNDABOUT", "OBSERVATION", "POSITION", "VULNERABLE"] : point.category === "lane-change" ? ["LANE_CHANGE", "OBSERVATION", "POSITION"] : point.category === "speed-zone" ? ["SPEED", "SIGNS", "VULNERABLE"] : ["CONTROL", "OBSERVATION"]));
     await prisma.routeSkillCoverage.createMany({ data: [...coverageCodes].map((skillCode) => ({ routeId: route.id, skillId: skillIds.get(skillCode)!, coverageWeight: skillCode === "ROUNDABOUT" ? 3 : 1, verified: true })) });
+  }
+
+  const alken = await prisma.examCentre.upsert({
+    where: { slug: "alken" },
+    update: { name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true },
+    create: { slug: "alken", name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true, description: "Official passage-point reference for the Alken driving-test area." },
+  });
+  for (const [index, [municipality, junction]] of officialAlkenPassagePoints.entries()) {
+    await prisma.officialPassagePoint.upsert({
+      where: { centreId_sequence: { centreId: alken.id, sequence: index + 1 } },
+      update: { municipality, junction, ...officialPassageSource },
+      create: { centreId: alken.id, sequence: index + 1, municipality, junction, ...officialPassageSource, verificationStatus: "PENDING_REVIEW" },
+    });
   }
 
   for (const plan of [

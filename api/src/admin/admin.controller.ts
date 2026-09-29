@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } fro
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { AdminGuard } from "./admin.guard";
 import { AdminService } from "./admin.service";
-import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
+import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateOfficialPassagePointDto, UpdateRouteDto, UpdateRoutePointDto } from "./dto/admin-route.dto";
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
@@ -15,6 +15,16 @@ export class AdminController {
   @Get("centres")
   listCentres() {
     return this.adminService.listCentres();
+  }
+
+  @Get("centres/:centreId/official-passage-points")
+  officialPassagePoints(@Param("centreId") centreId: string) {
+    return this.adminService.listOfficialPassagePoints(centreId);
+  }
+
+  @Patch("official-passage-points/:id")
+  updateOfficialPassagePoint(@Param("id") id: string, @Body() dto: UpdateOfficialPassagePointDto) {
+    return this.adminService.updateOfficialPassagePoint(id, dto);
   }
 
   @Post("centres")

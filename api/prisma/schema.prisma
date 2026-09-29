@@ -96,6 +96,7 @@ model ExamCentre {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   routes      Route[]
+  officialPassagePoints OfficialPassagePoint[]
 }
 
 model Route {
@@ -107,6 +108,9 @@ model Route {
   durationMin Int?
   version     Int         @default(1)
   verifiedAt  DateTime?
+  sourceLabel String?
+  sourceUrl   String?
+  verificationStatus String @default("UNVERIFIED")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   centre      ExamCentre  @relation(fields: [centreId], references: [id], onDelete: Cascade)
@@ -115,6 +119,29 @@ model Route {
   favorites   Favorite[]
   practiceSessions PracticeSession[]
   recommendations RouteRecommendation[]
+}
+
+model OfficialPassagePoint {
+  id                 String   @id @default(cuid())
+  centreId           String
+  sequence           Int
+  municipality       String
+  junction           String
+  sourceLabel        String
+  sourceUrl          String
+  sourceRevision     String?
+  latitude           Float?
+  longitude          Float?
+  verificationStatus String   @default("PENDING_REVIEW")
+  verifiedAt         DateTime?
+  verifiedBy         String?
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  centre             ExamCentre @relation(fields: [centreId], references: [id], onDelete: Cascade)
+
+  @@unique([centreId, sequence])
+  @@index([centreId, verificationStatus])
 }
 
 model RoutePoint {
