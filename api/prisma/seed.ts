@@ -158,6 +158,11 @@ async function main() {
     update: { name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true },
     create: { slug: "alken", name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true, description: "Official passage-point reference for the Alken driving-test area." },
   });
+  await prisma.route.upsert({
+    where: { slug: "alken-route-1" },
+    update: { centreId: alken.id, sourceLabel: officialPassageSource.sourceLabel, sourceUrl: officialPassageSource.sourceUrl, verificationStatus: "PENDING_REVIEW" },
+    create: { centreId: alken.id, slug: "alken-route-1", name: "Route 1", status: RouteStatus.DRAFT, durationMin: 24, sourceLabel: officialPassageSource.sourceLabel, sourceUrl: officialPassageSource.sourceUrl, verificationStatus: "PENDING_REVIEW" },
+  });
   for (const [index, [municipality, junction]] of officialAlkenPassagePoints.entries()) {
     await prisma.officialPassagePoint.upsert({
       where: { centreId_sequence: { centreId: alken.id, sequence: index + 1 } },

@@ -12,6 +12,43 @@ docker compose up --build
 
 This starts PostgreSQL 17, applies Prisma migrations before the API starts, and serves the web app on `http://localhost:3000`. Change the generated/default secrets before exposing the stack publicly.
 
+## Railway deployment
+
+Railway should contain three services in one project:
+
+1. PostgreSQL: add Railway's PostgreSQL service.
+2. API: connect this GitHub repository, keep the repository root as the build context, and set `RAILWAY_DOCKERFILE_PATH=api/Dockerfile`.
+3. Web: connect the same repository and use the root `Dockerfile`.
+
+Do not set the API service root directory to `/api`: both Dockerfiles use the repository root as their build context.
+
+Set these API variables:
+
+```env
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+PORT=4000
+WEB_ORIGIN=https://<your-web-service-domain>
+JWT_ACCESS_SECRET=<long-random-production-secret>
+```
+
+Set these Web variables before deploying (the API URL is also used by server-rendered centre and route pages):
+
+```env
+API_SERVER_URL=https://<your-api-service-domain>
+NEXT_PUBLIC_SITE_URL=https://<your-web-service-domain>
+NEXT_PUBLIC_MAPBOX_TOKEN=<public-mapbox-token>
+```
+
+The API container runs `prisma migrate deploy` automatically at startup. After the first successful API deployment, run the seed once from the API service shell:
+
+```bash
+pnpm --dir api prisma:seed
+```
+
+This creates the demo centres, plans, coaching data, Alken and its official passage-point reference list. Alken Route 1 is created as a draft until its coordinates and sequence are verified in the admin panel.
+
+Set the API health check path to `/api/v1/health`. Generate public domains for both Web and API; the client receives the Web domain only. Keep `DATABASE_URL`, `JWT_ACCESS_SECRET`, Stripe secrets and email-provider secrets private.
+
 ## Payments
 
 Add these values to `api/.env`:
