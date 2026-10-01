@@ -64,7 +64,10 @@ export type ApiCentreSummary = {
 // Server Components must call the deployed API directly. In production on Railway,
 // API_SERVER_URL points to the API service; in the browser, client components use
 // the same-origin /api/v1 rewrite configured in next.config.mjs.
-const apiBaseUrl = process.env.API_SERVER_URL ?? process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+const configuredApiUrl = process.env.API_SERVER_URL ?? process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+const apiBaseUrl = configuredApiUrl
+  ? `${configuredApiUrl.replace(/\/$/, "")}${configuredApiUrl.endsWith("/api/v1") ? "" : "/api/v1"}`
+  : "http://localhost:4000/api/v1";
 
 export async function getRouteBySlug(slug: string): Promise<ApiRoute | null> {
   try {
