@@ -23,3 +23,25 @@
 .faq-section { padding: 112px 0; background: #f0f7f1; }.faq-layout { display: grid; grid-template-columns: .72fr 1.28fr; gap: 100px; align-items: start; }.faq-intro h2 { font: 600 clamp(42px, 4vw, 58px)/.98 'Space Grotesk', sans-serif; letter-spacing: -.07em; margin-bottom: 20px; }.faq-intro h2 span { color: var(--deep-green); }.faq-intro > p:not(.eyebrow) { max-width: 250px; color: var(--muted); line-height: 1.7; font-size: 14px; margin-bottom: 26px; }.faq-list { border-top: 1px solid #ceded2; }.faq-item { border-bottom: 1px solid #ceded2; }.faq-item button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: 600 17px 'Space Grotesk', sans-serif; letter-spacing: -.03em; }.faq-item button b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #dcefe0; color: var(--deep-green); font: 500 20px 'DM Sans', sans-serif; }.faq-item p { max-width: 620px; color: var(--muted); line-height: 1.7; font-size: 13px; margin: -5px 45px 22px 0; }
 @media (max-width: 900px) { .hero-road-scene { inset: -10px -20px; }.stats-grid { grid-template-columns: repeat(2, 1fr); }.stats-grid > div:nth-child(3) { border-left: 0; }.testimonial-grid { grid-template-columns: 1fr 1fr; }.testimonial-featured { grid-column: 1 / -1; }.faq-layout { gap: 50px; } }
 @media (max-width: 600px) { .hero-road-scene { inset: -10px -10px; opacity: .58; }.scene-road { top: 55%; }.stats-grid { grid-template-columns: 1fr 1fr; gap: 0; }.stats-grid > div { padding: 15px 12px; }.stats-grid strong { font-size: 31px; }.testimonial-grid, .faq-layout { grid-template-columns: 1fr; }.testimonials-section, .faq-section { padding: 76px 0; }.testimonial-featured { grid-column: auto; }.section-side-copy { margin-top: 12px; }.faq-intro > p:not(.eyebrow) { max-width: 340px; } }
+
+.mobile-menu { display: none; position: relative; }
+.mobile-menu-panel { position: absolute; right: 0; top: 44px; z-index: 20; width: 210px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.98); box-shadow: 0 18px 40px rgba(23,65,45,.16); }
+.mobile-menu-panel a { display: block; padding: 12px 13px; border-radius: 8px; color: var(--ink); font-size: 13px; font-weight: 700; }
+.mobile-menu-panel a:hover { background: #edf7ee; color: var(--deep-green); }
+.feature-grid-four { grid-template-columns: repeat(4, 1fr); }
+.feature-card.is-expanded { background: #f5fbf5; padding-left: 13px; border-radius: 9px; }
+.feature-card p { transition: min-height .2s ease; }
+.feature-read-more { margin-top: 27px; padding: 0; border: 0; background: transparent; color: var(--deep-green); font: 700 12px 'DM Sans', sans-serif; cursor: pointer; }
+.feature-read-more span { margin-left: 5px; font-size: 14px; }
+.pricing-heading { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 60px; margin-bottom: 48px; }
+.pricing-heading h2 { font-size: clamp(40px, 4vw, 57px); }
+.pricing-heading > p { max-width: 370px; color: var(--muted); font-size: 14px; line-height: 1.7; margin: 0; }
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+.plans-grid .plan-card { min-height: 100%; display: flex; flex-direction: column; }
+.plan-card-featured { border: 2px solid var(--deep-green); transform: translateY(-8px); }
+.plan-subtitle { min-height: 34px; color: var(--muted); font-size: 11px; line-height: 1.45; margin: 0; }
+.plans-grid .plan-card ul { flex: 1; }
+.button-outline { color: var(--deep-green); background: transparent; border-color: #c8ddcc; box-shadow: none; }
+.button-outline:hover { color: white; background: var(--deep-green); border-color: var(--deep-green); }
+@media (max-width: 900px) { .mobile-menu { display: block; }.feature-grid-four { grid-template-columns: repeat(2, 1fr); }.plans-grid { grid-template-columns: 1fr; max-width: 520px; }.plan-card-featured { transform: none; }.pricing-heading { gap: 28px; } }
+@media (max-width: 600px) { .mobile-menu { display: block; }.feature-grid-four { grid-template-columns: 1fr; }.feature-card.is-expanded { padding-left: 13px; }.pricing-heading { display: block; }.pricing-heading > p { margin-top: 22px; }.plans-grid { max-width: none; } }

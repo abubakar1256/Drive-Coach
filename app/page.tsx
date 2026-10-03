@@ -1,20 +1,13 @@
 import Faq from "./Faq";
 import AccountNavLink from "./AccountNavLink";
 import PageViewTracker from "./PageViewTracker";
+import LanguageSwitcher from "./LanguageSwitcher";
+import MobileMenu from "./MobileMenu";
+import HowItWorks from "./HowItWorks";
+import PricingPlans from "./PricingPlans";
+import HomeCentreSection from "./HomeCentreSection";
 
 export const metadata = { alternates: { canonical: "/" }, openGraph: { url: "/" } };
-
-const centres = [
-  { slug: "brussels-south", name: "Brussels South", area: "Anderlecht", routes: 12, tone: "mint" },
-  { slug: "antwerp-north", name: "Antwerp North", area: "Deurne", routes: 9, tone: "blue" },
-  { slug: "ghent-east", name: "Ghent East", area: "Sint-Denijs-Westrem", routes: 8, tone: "sand" },
-];
-
-const features = [
-  { icon: "01", title: "Choose your centre", text: "Find the exact test centre and see the routes candidates practise most." },
-  { icon: "02", title: "Study the tricky points", text: "Understand roundabouts, lanes, signs and difficult turns before you drive." },
-  { icon: "03", title: "Drive with confidence", text: "Use your preparation time wisely and arrive ready for the real test." },
-];
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -66,10 +59,11 @@ export default function Home() {
           <a href="#faq">FAQ</a>
         </div>
         <div className="nav-actions">
+          <LanguageSwitcher />
           <AccountNavLink />
           <a className="button button-small" href="/centres">Start practising <Arrow /></a>
         </div>
-        <button className="menu-button" aria-label="Open navigation menu">☰</button>
+        <MobileMenu links={[{ href: "#how-it-works", label: "How it works" }, { href: "#centres", label: "Test centres" }, { href: "#pricing", label: "Pricing" }, { href: "#faq", label: "FAQ" }, { href: "/account", label: "My account" }]} />
       </nav>
 
       <section className="hero" id="top">
@@ -108,25 +102,18 @@ export default function Home() {
       <section className="stats-section"><div className="shell stats-grid"><div><strong>180<span>+</span></strong><small>verified practice routes</small></div><div><strong>30<span>+</span></strong><small>Belgian test centres</small></div><div><strong>4.9<span>/5</span></strong><small>learner rating</small></div><div><strong>24<span>/7</span></strong><small>access to prepare</small></div></div></section>
 
       <section className="section shell" id="how-it-works">
-        <div className="section-intro"><p className="eyebrow">A simpler way to prepare</p><h2>Less guessing.<br /><span>More knowing.</span></h2><p>Good preparation is not about memorising every street. It is about knowing where to focus your attention.</p></div>
-        <div className="feature-grid">{features.map((feature) => <article className="feature-card" key={feature.icon}><span className="feature-number">{feature.icon}</span><h3>{feature.title}</h3><p>{feature.text}</p><a href="#centres" aria-label={`Learn more about ${feature.title}`}>Learn more <Arrow /></a></article>)}</div>
+        <HowItWorks />
       </section>
 
-      <section className="centre-section" id="centres">
-        <div className="shell">
-          <div className="section-heading-row"><div><p className="eyebrow">Start where your test starts</p><h2>Find your test centre</h2></div><a className="text-link" href="/centres">View all centres <Arrow /></a></div>
-          <div className="search-bar"><span className="search-icon">⌕</span><span>Search by city or test centre...</span><kbd>⌘ K</kbd></div>
-          <div className="centre-grid">{centres.map((centre) => <a className="centre-card" href={`/centres/${centre.slug}`} key={centre.name}><div className={`centre-art ${centre.tone}`}><span className="art-road" /><span className="art-circle" /><span className="art-dot" /></div><div className="centre-card-copy"><div><h3>{centre.name}</h3><p>{centre.area}</p></div><span className="card-arrow"><Arrow /></span></div><div className="centre-card-meta"><span>{centre.routes} practice routes</span><span>→</span></div></a>)}</div>
-        </div>
-      </section>
+      <HomeCentreSection />
 
       <section className="section shell route-preview" id="route-preview">
         <div className="preview-copy"><p className="eyebrow">See the details that matter</p><h2>Your route,<br /><span>made clearer.</span></h2><p>Every route brings the important moments together in one calm, visual overview. No clutter. No second guessing.</p><ul className="check-list"><li><span>✓</span> Ordered route points and start/finish markers</li><li><span>✓</span> Warnings for lanes, signs and complex junctions</li><li><span>✓</span> Photos, videos and practical driving tips</li></ul><a className="button button-dark" href="#centres">Explore a sample route <Arrow /></a></div><div className="preview-panel"><div className="preview-panel-head"><div><span className="small-label">EXAM CENTRE · BRUSSELS SOUTH</span><h3>Route 04 <span className="soft-badge">7 points</span></h3></div><span className="panel-menu">•••</span></div><RouteMap /><div className="point-list"><div className="point-row"><b>01</b><span className="point-dot mint-dot" /><div><strong>Start at test centre</strong><small>Check mirrors before leaving</small></div><span>›</span></div><div className="point-row active"><b>02</b><span className="point-dot coral-dot" /><div><strong>Lane change</strong><small>Move over before the junction</small></div><span>›</span></div><div className="point-row"><b>03</b><span className="point-dot blue-dot" /><div><strong>Roundabout</strong><small>Watch the second exit</small></div><span>›</span></div></div></div>
       </section>
 
-      <section className="testimonials-section"><div className="shell"><div className="section-heading-row"><div><p className="eyebrow">Learners feel ready sooner</p><h2>Less stress.<br /><span>More confidence.</span></h2></div><p className="section-side-copy">Real preparation is knowing what is coming before the first turn.</p></div><div className="testimonial-grid"><article className="testimonial-card testimonial-featured"><div className="stars">★★★★★</div><blockquote>“I knew the difficult junctions before my first practice drive. That changed everything.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-orange">LS</span><div><strong>Laura S.</strong><small>Passed first time · Brussels</small></div></div></article><article className="testimonial-card"><div className="stars">★★★★★</div><blockquote>“The route points made it easy to focus on the moments that actually matter.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-blue">TV</span><div><strong>Thomas V.</strong><small>Passed first time · Antwerp</small></div></div></article><article className="testimonial-card"><div className="stars">★★★★★</div><blockquote>“It gave me a calm plan instead of another list of streets to memorise.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-green">EM</span><div><strong>Emma M.</strong><small>Passed first time · Ghent</small></div></div></article></div></div></section>
+      <PricingPlans />
 
-      <section className="pricing-section" id="pricing"><div className="shell pricing-inner"><div className="pricing-copy"><p className="eyebrow">Simple access, no surprises</p><h2>Prepare on<br /><span>your timeline.</span></h2><p>Choose the access period that fits your exam date. All routes stay easy to discover—premium unlocks the complete preparation experience.</p><a href="#pricing" className="text-link">Compare all plans <Arrow /></a></div><div className="plan-card"><div className="plan-card-header"><span className="plan-tag">MOST POPULAR</span><h3>7 days</h3><p>Everything you need for one focused week.</p></div><div className="plan-price"><strong>€8<span>.95</span></strong><small>one-time payment</small></div><ul><li>All routes for one test centre</li><li>Map points, tips and warnings</li><li>Images, videos and checklists</li></ul><a className="button button-full" href="#pricing">Choose 7-day access <Arrow /></a><small className="plan-foot">Secure checkout · Cancel anytime before purchase</small></div></div></section>
+      <section className="testimonials-section"><div className="shell"><div className="section-heading-row"><div><p className="eyebrow">Learners feel ready sooner</p><h2>Less stress.<br /><span>More confidence.</span></h2></div><p className="section-side-copy">Real preparation is knowing what is coming before the first turn.</p></div><div className="testimonial-grid"><article className="testimonial-card testimonial-featured"><div className="stars">★★★★★</div><blockquote>“I knew the difficult junctions before my first practice drive. That changed everything.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-orange">LS</span><div><strong>Laura S.</strong><small>Passed first time · Brussels</small></div></div></article><article className="testimonial-card"><div className="stars">★★★★★</div><blockquote>“The route points made it easy to focus on the moments that actually matter.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-blue">TV</span><div><strong>Thomas V.</strong><small>Passed first time · Antwerp</small></div></div></article><article className="testimonial-card"><div className="stars">★★★★★</div><blockquote>“It gave me a calm plan instead of another list of streets to memorise.”</blockquote><div className="testimonial-person"><span className="person-avatar avatar-green">EM</span><div><strong>Emma M.</strong><small>Passed first time · Ghent</small></div></div></article></div></div></section>
 
       <Faq />
 

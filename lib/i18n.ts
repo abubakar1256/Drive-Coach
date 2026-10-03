@@ -57,6 +57,7 @@ export type DirectoryMessages = {
   allCentres: string;
   whereTesting: string;
   searchCityCentre: string;
+  provinceLabel: string;
   allRegions: string;
   centresFound: string;
   clearFilters: string;
@@ -68,10 +69,10 @@ export type DirectoryMessages = {
 };
 
 export const directoryMessages: Record<Locale, DirectoryMessages> = {
-  en: { allCentres: "All centres", whereTesting: "Where are you testing?", searchCityCentre: "Search city or centre", allRegions: "All regions", centresFound: "centres found", clearFilters: "Clear filters", noCentresFound: "No centres found", tryDifferent: "Try a different city or clear the filters.", showAllCentres: "Show all centres", exploreCentre: "Explore centre", practiceRoutes: "practice routes" },
-  nl: { allCentres: "Alle locaties", whereTesting: "Waar doe je examen?", searchCityCentre: "Zoek stad of locatie", allRegions: "Alle regio’s", centresFound: "locaties gevonden", clearFilters: "Filters wissen", noCentresFound: "Geen locaties gevonden", tryDifferent: "Probeer een andere stad of wis de filters.", showAllCentres: "Alle locaties tonen", exploreCentre: "Locatie bekijken", practiceRoutes: "oefenroutes" },
-  fr: { allCentres: "Tous les centres", whereTesting: "Où passez-vous l’examen ?", searchCityCentre: "Rechercher une ville ou un centre", allRegions: "Toutes les régions", centresFound: "centres trouvés", clearFilters: "Effacer les filtres", noCentresFound: "Aucun centre trouvé", tryDifferent: "Essayez une autre ville ou effacez les filtres.", showAllCentres: "Afficher tous les centres", exploreCentre: "Explorer le centre", practiceRoutes: "itinéraires de pratique" },
-  de: { allCentres: "Alle Zentren", whereTesting: "Wo machst du die Prüfung?", searchCityCentre: "Stadt oder Zentrum suchen", allRegions: "Alle Regionen", centresFound: "Zentren gefunden", clearFilters: "Filter löschen", noCentresFound: "Keine Zentren gefunden", tryDifferent: "Versuche eine andere Stadt oder lösche die Filter.", showAllCentres: "Alle Zentren anzeigen", exploreCentre: "Zentrum ansehen", practiceRoutes: "Übungsrouten" },
+  en: { allCentres: "All centres", whereTesting: "Where are you testing?", searchCityCentre: "Search city or centre", provinceLabel: "Province", allRegions: "All regions", centresFound: "centres found", clearFilters: "Clear filters", noCentresFound: "No centres found", tryDifferent: "Try a different city or clear the filters.", showAllCentres: "Show all centres", exploreCentre: "Explore centre", practiceRoutes: "practice routes" },
+  nl: { allCentres: "Alle locaties", whereTesting: "Waar doe je examen?", searchCityCentre: "Zoek stad of locatie", provinceLabel: "Provincie", allRegions: "Alle regio’s", centresFound: "locaties gevonden", clearFilters: "Filters wissen", noCentresFound: "Geen locaties gevonden", tryDifferent: "Probeer een andere stad of wis de filters.", showAllCentres: "Alle locaties tonen", exploreCentre: "Locatie bekijken", practiceRoutes: "oefenroutes" },
+  fr: { allCentres: "Tous les centres", whereTesting: "Où passez-vous l’examen ?", searchCityCentre: "Rechercher une ville ou un centre", provinceLabel: "Province", allRegions: "Toutes les régions", centresFound: "centres trouvés", clearFilters: "Effacer les filtres", noCentresFound: "Aucun centre trouvé", tryDifferent: "Essayez une autre ville ou effacez les filtres.", showAllCentres: "Afficher tous les centres", exploreCentre: "Explorer le centre", practiceRoutes: "itinéraires de pratique" },
+  de: { allCentres: "Alle Zentren", whereTesting: "Wo machst du die Prüfung?", searchCityCentre: "Stadt oder Zentrum suchen", provinceLabel: "Bundesland", allRegions: "Alle Regionen", centresFound: "Zentren gefunden", clearFilters: "Filter löschen", noCentresFound: "Keine Zentren gefunden", tryDifferent: "Versuche eine andere Stadt oder lösche die Filter.", showAllCentres: "Alle Zentren anzeigen", exploreCentre: "Zentrum ansehen", practiceRoutes: "Übungsrouten" },
 };
 
 export const messages: Record<Locale, RoutePilotMessages> = {
