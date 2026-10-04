@@ -8,13 +8,15 @@ export class RoutesService {
 
   private async hasPremiumAccess(userId: string) {
     const rows = await this.prisma.$queryRawUnsafe<Array<{ id: string }>>(
-      `SELECT s."id"
-       FROM "Subscription" s
-       JOIN "Plan" p ON p."id" = s."planId"
-       WHERE s."userId" = $1
-         AND s."status" = 'ACTIVE'
-         AND p."name" <> 'Free'
-         AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW())
+      `SELECT u."id"
+       FROM "User" u
+       LEFT JOIN "Subscription" s ON s."userId" = u."id"
+       LEFT JOIN "Plan" p ON p."id" = s."planId"
+       WHERE u."id" = $1
+         AND (
+           u."role" IN ('ADMIN', 'SUPER_ADMIN')
+           OR (s."status" = 'ACTIVE' AND p."name" <> 'Free' AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW()))
+         )
        ORDER BY s."createdAt" DESC
        LIMIT 1`,
       userId,

@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, ServiceUnavailableException } from "@nestjs/common";
+import { UserRole } from "@prisma/client";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CheckoutDto, CouponValidationDto, CreateCouponDto } from "./dto/billing.dto";
@@ -14,7 +15,11 @@ export class BillingService {
   }
 
   async subscription(userId: string) {
-    const subscription = await this.prisma.subscription.findFirst({ where: { userId, status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] }, include: { plan: true }, orderBy: { createdAt: "desc" } });
+    const [user, subscription] = await Promise.all([
+      this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+      this.prisma.subscription.findFirst({ where: { userId, status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] }, include: { plan: true }, orderBy: { createdAt: "desc" } }),
+    ]);
+    if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Diamond", startsAt: null, expiresAt: null, provider: "INTERNAL" };
     return subscription ? { status: subscription.status, plan: subscription.plan.name, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", startsAt: null, expiresAt: null, provider: null };
   }
 

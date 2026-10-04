@@ -79,8 +79,9 @@ export class AuthService {
       const user = await this.prisma.user.findUnique({ where: { id: userId }, include: { subscriptions: { include: { plan: true }, orderBy: { createdAt: "desc" } } } });
       if (!user) throw new UnauthorizedException("User no longer exists");
       const subscription = user.subscriptions.find((item) => item.status === "ACTIVE") ?? user.subscriptions[0];
+      const adminHasDiamond = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN;
       const verification = await this.prisma.$queryRawUnsafe<Array<{ emailVerifiedAt: Date | null }>>('SELECT "emailVerifiedAt" FROM "User" WHERE "id" = $1', userId);
-      return { ...this.safeUser(user), emailVerified: Boolean(verification[0]?.emailVerifiedAt), subscription: subscription ? { status: subscription.status, planName: subscription.plan.name, expiresAt: subscription.expiresAt } : { status: "FREE", planName: "Free", expiresAt: null } };
+      return { ...this.safeUser(user), emailVerified: Boolean(verification[0]?.emailVerifiedAt), subscription: adminHasDiamond ? { status: "ACTIVE", planName: "Diamond", expiresAt: null } : subscription ? { status: subscription.status, planName: subscription.plan.name, expiresAt: subscription.expiresAt } : { status: "FREE", planName: "Free", expiresAt: null } };
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
       throw new ServiceUnavailableException("Authentication database is unavailable");
