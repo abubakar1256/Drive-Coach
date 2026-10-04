@@ -76,6 +76,13 @@ function HeroScene() {
   </div>;
 }
 
+function HeroPhoto() {
+  return <div className="drive-scene drive-scene-photo" role="img" aria-label="Drive Coach road practice with a learner car on a scenic route">
+    <img className="drive-scene-photo-image" src="/images/drive-coach-hero-photo.jpg" alt="Drive Coach learner car on a scenic practice road" />
+    <div className="scene-photo-glass" aria-hidden="true"><span className="scene-photo-status" /> <span>Real roads. Real confidence.</span></div>
+  </div>;
+}
+
 export default function HomePageContent() {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => { const sync = () => { const stored = window.localStorage.getItem("routepilot.locale"); if (isLocale(stored)) setLocale(stored); }; sync(); window.addEventListener("routepilot-locale-change", sync); return () => window.removeEventListener("routepilot-locale-change", sync); }, []);
@@ -88,7 +95,7 @@ export default function HomePageContent() {
       <MobileMenu links={[{ href: "#how-it-works", label: copy.nav.howItWorks }, { href: "#centres", label: copy.nav.testCentres }, { href: "#pricing", label: copy.nav.pricing }, { href: "#faq", label: copy.nav.faq }, { href: "/account", label: copy.nav.myAccount }]} />
     </nav>
 
-    <section className="hero" id="top"><div className="hero-glow glow-one" /><div className="hero-glow glow-two" /><div className="shell hero-inner"><div className="hero-copy"><h1>{copy.hero.title}<br /><em>{copy.hero.accent}</em></h1><p className="hero-text">{copy.hero.description}</p><div className="hero-actions"><a className="button" href="/centres">{copy.hero.findCentre} <Arrow /></a><a className="text-link" href="#how-it-works">{copy.hero.seeHow} <span>↓</span></a></div><div className="hero-proof"><div className="avatar-stack"><span>JD</span><span>MS</span><span>AK</span><b>+</b></div><div><strong>4.9/5</strong><span>{copy.hero.proof}</span></div></div></div><div className="hero-visual"><HeroScene /></div></div></section>
+    <section className="hero" id="top"><div className="hero-glow glow-one" /><div className="hero-glow glow-two" /><div className="shell hero-inner"><div className="hero-copy"><h1>{copy.hero.title}<br /><em>{copy.hero.accent}</em></h1><p className="hero-text">{copy.hero.description}</p><div className="hero-actions"><a className="button" href="/centres">{copy.hero.findCentre} <Arrow /></a><a className="text-link" href="#how-it-works">{copy.hero.seeHow} <span>↓</span></a></div><div className="hero-proof"><div className="avatar-stack"><span>JD</span><span>MS</span><span>AK</span><b>+</b></div><div><strong>4.9/5</strong><span>{copy.hero.proof}</span></div></div></div><div className="hero-visual"><HeroPhoto /></div></div></section>
 
     <section className="trust-strip"><div className="shell trust-inner"><span>{copy.trust.label}</span><div className="trust-stats"><strong>180+</strong><span>{copy.trust.practiceRoutes}</span><strong>30+</strong><span>{copy.trust.testCentres}</span><strong>4.9/5</strong><span>{copy.trust.rated}</span><strong>24/7</strong><span>{copy.trust.access}</span></div></div></section>
     <section className="stats-section"><div className="shell stats-grid"><div><strong>180<span>+</span></strong><small>{copy.stats.verifiedRoutes}</small></div><div><strong>30<span>+</span></strong><small>{copy.stats.BelgianCentres}</small></div><div><strong>4.9<span>/5</span></strong><small>{copy.stats.learnerRating}</small></div><div><strong>24<span>/7</span></strong><small>{copy.stats.accessToPrepare}</small></div></div></section>
