@@ -9,6 +9,7 @@ import "./modern.css";
 import "./landing.css";
 import "./account.css";
 import "./dashboard.css";
+import "./route-reference.css";
 import ServiceWorkerRegister from "./ServiceWorkerRegister";
 import InstallAppPrompt from "./InstallAppPrompt";
 

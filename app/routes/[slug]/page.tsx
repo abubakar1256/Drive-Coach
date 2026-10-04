@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { centres } from "../../../lib/data";
 import { getRouteBySlug, routeToCentre } from "../../../lib/api";
+import { googleMapsRouteUrl, routeDistanceKm, routeSequence } from "../../../lib/route-utils";
 import RouteExperience from "../RouteExperience";
 import AccountNavLink from "../../../app/AccountNavLink";
 import PageViewTracker from "../../../app/PageViewTracker";
@@ -26,11 +27,15 @@ export default async function RoutePage({ params }: { params: { slug: string } }
   const centre = apiRoute ? routeToCentre(apiRoute, fallbackCentre) : fallbackCentre;
   const routeName = apiRoute?.name ?? "Route 04";
   const duration = apiRoute?.durationMin ?? 24;
+  const routePoints = apiRoute?.points ?? centre.routePoints;
+  const sequence = routeSequence(routePoints);
+  const distanceKm = routeDistanceKm(routePoints);
+  const googleMapsUrl = googleMapsRouteUrl(routePoints);
   return (
     <main>
       <PageViewTracker eventType="ROUTE_VIEW" centreSlug={centre.slug} routeSlug={params.slug} />
       <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><div className="nav-links"><Link href="/#how-it-works">How it works</Link><Link href="/centres">Test centres</Link><Link href="/#pricing">Pricing</Link></div><div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/#pricing">Unlock full access <span>↗</span></Link></div><button className="menu-button" aria-label="Open navigation menu">☰</button></nav>
-      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> Route experience · {centre.area}</p><h1>{routeName}</h1><p className="route-meta">{duration} min <span>·</span> {centre.routePoints.length} preview points <span>·</span> Updated recently</p></div><span className="route-access-pill">Preview mode</span></div><RouteExperience centre={centre} routeId={apiRoute?.id} routeSlug={params.slug} /></section>
+      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> Route experience · {centre.area}</p><h1>{routeName}</h1><p className="route-meta">{distanceKm ? `${distanceKm} km` : `${routePoints.length} points`} <span>·</span> {duration} min <span>·</span> Updated recently</p></div><span className="route-access-pill">Preview mode</span></div><div className="route-sequence-panel"><div><span className="small-label">ROUTE SEQUENCE</span><p>{sequence || "Preview points will appear here when this route has been mapped."}</p></div>{googleMapsUrl && <a className="button button-small" href={googleMapsUrl} target="_blank" rel="noreferrer">Open in Google Maps <span>↗</span></a>}</div><RouteExperience centre={centre} routeId={apiRoute?.id} routeSlug={params.slug} /></section>
     </main>
   );
 }
