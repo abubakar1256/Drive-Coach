@@ -39,7 +39,7 @@ const copy: Record<Locale, HowItWorksCopy> = {
         { kind: "paragraph", text: "Your actual test route may be different." },
         { kind: "subheading", text: "Practise locally" },
         { kind: "paragraph", text: "Practise practical-test routes in your own region and train close to home on roundabouts, priority situations, junctions, lanes and other important traffic situations." },
-        { kind: "action", text: "Choose a route →", href: "#route-preview" },
+        { kind: "action", text: "Choose a route →", href: "/centres" },
       ] },
       { number: "03", title: "Attention points while driving", detail: [
         { kind: "subheading", text: "Drive Coach comes with you" },
@@ -77,7 +77,7 @@ const copy: Record<Locale, HowItWorksCopy> = {
         { kind: "paragraph", text: "Je echte examenroute kan verschillen." },
         { kind: "subheading", text: "Lokaal oefenen" },
         { kind: "paragraph", text: "Oefen praktijkexamenroutes in je eigen regio en train dicht bij huis op rotondes, voorrang, kruispunten, rijstroken en andere belangrijke verkeerssituaties." },
-        { kind: "action", text: "Kies een route →", href: "#route-preview" },
+        { kind: "action", text: "Kies een route →", href: "/centres" },
       ] },
       { number: "03", title: "Aandachtspunten tijdens het rijden", detail: [
         { kind: "subheading", text: "Drive Coach rijdt met je mee" },
