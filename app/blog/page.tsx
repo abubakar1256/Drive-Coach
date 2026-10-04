@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ContentNav from "../ContentNav";
 
-export const metadata = { title: "Driving Test Preparation Guides | RoutePilot", description: "Practical preparation guides for route study, roundabouts, lane changes and calmer test days.", alternates: { canonical: "/blog" }, openGraph: { url: "/blog" } };
+export const metadata = { title: "Driving Test Preparation Guides | Drive Coach", description: "Practical preparation guides for route study, roundabouts, lane changes and calmer test days.", alternates: { canonical: "/blog" }, openGraph: { url: "/blog" } };
 
 const guides = [
   { tag: "ROUTE STUDY", title: "How to study a test route without memorising every street", text: "Focus on decision points, signs and positioning so your preparation remains useful when traffic changes." },
@@ -10,5 +10,5 @@ const guides = [
 ];
 
 export default function BlogPage() {
-  return <main className="content-page"><ContentNav /><section className="content-hero shell"><p className="eyebrow"><span className="eyebrow-dot" /> RoutePilot guides</p><h1>Small lessons.<br /><em>Better drives.</em></h1><p>Clear, practical reading for the moments that deserve your attention before test day.</p></section><section className="content-body shell"><div className="guide-grid">{guides.map((guide) => <article className="content-card guide-card" key={guide.title}><span className="small-label">{guide.tag}</span><h2>{guide.title}</h2><p>{guide.text}</p><Link href="/#how-it-works">Explore preparation <span>↗</span></Link></article>)}</div></section></main>;
+  return <main className="content-page"><ContentNav /><section className="content-hero shell"><p className="eyebrow"><span className="eyebrow-dot" /> Drive Coach guides</p><h1>Small lessons.<br /><em>Better drives.</em></h1><p>Clear, practical reading for the moments that deserve your attention before test day.</p></section><section className="content-body shell"><div className="guide-grid">{guides.map((guide) => <article className="content-card guide-card" key={guide.title}><span className="small-label">{guide.tag}</span><h2>{guide.title}</h2><p>{guide.text}</p><Link href="/#how-it-works">Explore preparation <span>↗</span></Link></article>)}</div></section></main>;
 }

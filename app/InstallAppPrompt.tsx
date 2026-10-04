@@ -34,8 +34,8 @@ export default function InstallAppPrompt() {
   }
 
   if (!visible || !promptEvent) return null;
-  return <aside className="install-app-prompt" aria-label="Install RoutePilot">
-    <div><strong>Keep RoutePilot handy</strong><span>Install the practice app for quick access on your phone.</span></div>
+  return <aside className="install-app-prompt" aria-label="Install Drive Coach">
+    <div><strong>Keep Drive Coach handy</strong><span>Install the practice app for quick access on your phone.</span></div>
     <button type="button" onClick={() => void install()}>Install</button>
     <button type="button" className="install-dismiss" onClick={dismiss} aria-label="Dismiss install prompt">×</button>
   </aside>;

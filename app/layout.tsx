@@ -14,16 +14,16 @@ import InstallAppPrompt from "./InstallAppPrompt";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "RoutePilot | Know the road before test day",
+  title: "Drive Coach | Know the road before test day",
   description: "Practice real driving test routes with clear guidance and confidence.",
   openGraph: {
     type: "website",
-    siteName: "RoutePilot",
-    title: "RoutePilot | Know the road before test day",
+    siteName: "Drive Coach",
+    title: "Drive Coach | Know the road before test day",
     description: "Explore driving-test routes, key points and practical preparation guidance.",
     url: "/",
   },
-  twitter: { card: "summary_large_image", title: "RoutePilot | Know the road before test day", description: "Prepare for your driving test with clear route guidance." },
+  twitter: { card: "summary_large_image", title: "Drive Coach | Know the road before test day", description: "Prepare for your driving test with clear route guidance." },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

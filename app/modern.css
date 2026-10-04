@@ -44,7 +44,7 @@ body { background: radial-gradient(circle at 12% -8%, #e9f5eb 0, transparent 31r
 .nav { height: 72px; margin-top: 14px; padding: 0 18px; background: rgba(255,255,255,.76); border: 1px solid rgba(210,225,216,.88); border-radius: 20px; box-shadow: 0 10px 28px rgba(21, 63, 46, .055); backdrop-filter: blur(18px); }
 .inner-nav { background: rgba(255,255,255,.76); }
 .brand { letter-spacing: -.07em; }
-.brand-mark { background: linear-gradient(145deg, #0f6a53, #1b886c); box-shadow: 0 5px 14px rgba(15,106,83,.2); }
+.brand-mark { background: linear-gradient(145deg, #0f6a53, #1b886c); box-shadow: 0 6px 16px rgba(15,106,83,.2); }
 .nav-links, .nav-actions { gap: 10px; }
 .nav-links a, .login-link { padding: 10px 12px; border-radius: 11px; transition: background .2s, color .2s; }
 .nav-links a:hover, .login-link:hover { background: #edf7f0; color: var(--deep-green); }

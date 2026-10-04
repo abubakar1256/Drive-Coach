@@ -6,7 +6,7 @@ export default function DashboardPage() {
   return (
     <main className="dashboard-page">
       <nav className="nav shell inner-nav">
-        <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Route<span className="brand-accent">Pilot</span></span></Link>
+        <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link>
         <div className="nav-links"><Link href="/centres">Test centres</Link><Link href="/#pricing">Pricing</Link><Link href="/account">My account</Link></div>
         <div className="nav-actions"><LanguageSwitcher /><Link className="button button-small" href="/centres">Find a route <span>↗</span></Link></div>
         <button className="menu-button" aria-label="Open navigation menu">☰</button>

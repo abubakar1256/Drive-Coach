@@ -6,7 +6,7 @@ export default function AdminPage() {
   return (
     <main className="admin-page">
       <nav className="nav shell inner-nav">
-        <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Route<span className="brand-accent">Pilot</span></span></Link>
+        <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link>
         <div className="nav-links"><Link href="/centres">View website</Link><Link href="/auth/login">Log in</Link></div>
       </nav>
       <section className="shell admin-shell">

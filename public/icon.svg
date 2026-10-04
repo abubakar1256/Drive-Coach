@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="48" fill="#106d56"/>
-  <path d="M55 134 78 58h18l-23 76H55Zm35 0 23-76h18l-23 76H90Z" fill="#fff"/>
-  <circle cx="143" cy="141" r="14" fill="#ff8a22"/>
+  <defs>
+    <linearGradient id="drive-coach-green" x1="24" y1="18" x2="168" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0f6a53"/>
+      <stop offset="1" stop-color="#1b886c"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="48" fill="url(#drive-coach-green)"/>
+  <path d="M48 139 72 53h17l-24 86H48Zm37 0 24-86h17l-24 86H85Z" fill="#fff"/>
+  <path d="m125 139 16-57h17l-16 57h-17Z" fill="#f4cf6a"/>
 </svg>
