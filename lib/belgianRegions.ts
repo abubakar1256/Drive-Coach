@@ -1,0 +1,20 @@
+import type { Locale } from "./i18n";
+
+export type BelgianRegion = { value: string; labels: Record<Locale, string> };
+
+// Belgium has ten provinces. Brussels is listed separately because it is a
+// capital region, not a province, but it still needs to be filterable.
+export const belgianProvinces: BelgianRegion[] = [
+  { value: "Antwerp", labels: { en: "Antwerp", nl: "Antwerpen" } },
+  { value: "East Flanders", labels: { en: "East Flanders", nl: "Oost-Vlaanderen" } },
+  { value: "Flemish Brabant", labels: { en: "Flemish Brabant", nl: "Vlaams-Brabant" } },
+  { value: "Hainaut", labels: { en: "Hainaut", nl: "Henegouwen" } },
+  { value: "Limburg", labels: { en: "Limburg", nl: "Limburg" } },
+  { value: "Liège", labels: { en: "Liège", nl: "Luik" } },
+  { value: "Luxembourg", labels: { en: "Luxembourg", nl: "Luxemburg" } },
+  { value: "Namur", labels: { en: "Namur", nl: "Namen" } },
+  { value: "Walloon Brabant", labels: { en: "Walloon Brabant", nl: "Waals-Brabant" } },
+  { value: "West Flanders", labels: { en: "West Flanders", nl: "West-Vlaanderen" } },
+];
+
+export const capitalRegion: BelgianRegion = { value: "Brussels", labels: { en: "Brussels-Capital Region", nl: "Brussels Hoofdstedelijk Gewest" } };
