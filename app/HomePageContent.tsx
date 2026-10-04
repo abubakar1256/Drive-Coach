@@ -25,7 +25,7 @@ function HeroScene() {
         <linearGradient id="scene-car" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8b74" /><stop offset="1" stopColor="#dc4f4c" /></linearGradient>
         <filter id="scene-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="10" /></filter>
         <filter id="scene-soft-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="5" /></filter>
-        <path id="scene-route" d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" />
+        <path id="scene-route" d="M520-35 C468 30 419 87 418 142 C417 195 469 222 536 244 C606 267 640 306 626 354 C611 405 523 420 405 442 C272 467 151 516 26 600" />
         <g id="scene-tree">
           <ellipse cx="0" cy="7" rx="32" ry="10" fill="#3b704f" opacity=".2" filter="url(#scene-soft-shadow)" />
           <path d="M-5 11 L-3-28 L8-28 L11 11Z" fill="#936b4b" />
@@ -38,10 +38,10 @@ function HeroScene() {
       <circle cx="560" cy="90" r="62" fill="#ffe5a1" opacity=".7" />
       <path d="M0 240 C105 170 175 212 270 174 C376 132 452 191 540 165 C613 144 661 157 700 132V560H0Z" fill="#8dbd83" opacity=".75" />
       <path d="M0 315 C107 251 210 282 306 240 C418 192 520 259 700 205V560H0Z" fill="url(#scene-ground)" />
-      <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#46604e" strokeWidth="142" opacity=".22" filter="url(#scene-shadow)" />
-      <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#f1f3e7" strokeWidth="130" strokeLinecap="round" />
-      <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="url(#scene-road)" strokeWidth="114" strokeLinecap="round" />
-      <path className="scene-route-flow" d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#f5edcf" strokeWidth="5" strokeDasharray="27 31" strokeLinecap="round" opacity=".95" />
+      <path d="M520-35 C468 30 419 87 418 142 C417 195 469 222 536 244 C606 267 640 306 626 354 C611 405 523 420 405 442 C272 467 151 516 26 600" fill="none" stroke="#46604e" strokeWidth="142" opacity=".22" filter="url(#scene-shadow)" />
+      <path d="M520-35 C468 30 419 87 418 142 C417 195 469 222 536 244 C606 267 640 306 626 354 C611 405 523 420 405 442 C272 467 151 516 26 600" fill="none" stroke="#f1f3e7" strokeWidth="130" strokeLinecap="round" />
+      <path d="M520-35 C468 30 419 87 418 142 C417 195 469 222 536 244 C606 267 640 306 626 354 C611 405 523 420 405 442 C272 467 151 516 26 600" fill="none" stroke="url(#scene-road)" strokeWidth="114" strokeLinecap="round" />
+      <path className="scene-route-flow" d="M520-35 C468 30 419 87 418 142 C417 195 469 222 536 244 C606 267 640 306 626 354 C611 405 523 420 405 442 C272 467 151 516 26 600" fill="none" stroke="#f5edcf" strokeWidth="5" strokeDasharray="27 31" strokeLinecap="round" opacity=".95" />
       <use href="#scene-tree" transform="translate(85 160) scale(.82)" />
       <use href="#scene-tree" transform="translate(170 245) scale(.62)" />
       <use href="#scene-tree" transform="translate(615 145) scale(.86)" />
@@ -50,7 +50,7 @@ function HeroScene() {
       <use href="#scene-tree" transform="translate(575 485) scale(.78)" />
       <path d="M205 220 l-11-20 m11 20 10-22 m-10 22 18-10 M87 355 l-13-24 m13 24 12-26 m-12 26 20-13 M620 405 l-12-23 m12 23 14-25" stroke="#558e5d" strokeWidth="5" strokeLinecap="round" opacity=".8" />
       <g className="scene-car-animated">
-        <g transform="rotate(180) translate(7 0) scale(.72)">
+        <g transform="translate(-7 0) rotate(-8) scale(.72)">
           <ellipse cx="7" cy="62" rx="91" ry="24" fill="#203e32" opacity=".35" filter="url(#scene-soft-shadow)" />
           <path d="M-68 38 C-67 14-51 1-30-3 L-13-39 C-8-50 5-55 26-51 L53-40 C67-34 76-18 79 4 L84 32 C82 50 69 59 49 61 L-43 60 C-59 59-68 51-68 38Z" fill="url(#scene-car)" stroke="#c34848" strokeWidth="3" />
           <path d="M-20-5 L-7-33 C-4-40 5-43 19-40 L43-32 C53-27 58-17 61-5Z" fill="#30465c" stroke="#f9aa8e" strokeWidth="3" />
@@ -61,7 +61,7 @@ function HeroScene() {
           <path d="M-55 19 L-33 16 M61 15 L76 12" stroke="#ffe0ab" strokeWidth="6" strokeLinecap="round" />
           <path d="M-12-10 C3-15 29-14 49-9" stroke="#fff2d3" strokeWidth="3" strokeLinecap="round" opacity=".8" />
         </g>
-        <animateMotion dur="18s" repeatCount="indefinite" rotate="auto-reverse" keyPoints=".13;.87" keyTimes="0;1" calcMode="linear"><mpath href="#scene-route" /></animateMotion>
+        <animateMotion dur="18s" repeatCount="indefinite" rotate="0" keyPoints=".13;.87" keyTimes="0;1" calcMode="linear"><mpath href="#scene-route" /></animateMotion>
       </g>
       <g transform="translate(235 338)">
         <circle r="17" fill="#f47d65" stroke="#fff8e9" strokeWidth="6" />
