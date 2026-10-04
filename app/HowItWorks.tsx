@@ -15,7 +15,7 @@ type HowItWorksCopy = {
 
 const copy: Record<Locale, HowItWorksCopy> = {
   en: {
-    eyebrow: "A simpler way to prepare", title: "Less guessing.", titleAccent: "More knowing.", intro: "Good preparation is not about memorising every street. It is about knowing where to focus your attention.", readMore: "Read more", readLess: "Read less",
+    eyebrow: "How does Drive Coach work?", title: "From practice", titleAccent: "to personal guidance", intro: "Drive Coach helps you prepare for your practical driving test with focus. Choose where you want to practise, discover relevant routes and traffic situations, get support while driving, and use your own feedback or your instructor's feedback to tailor your next practice drives better and better to you.", readMore: "Read more", readLess: "Read less",
     cards: [
       { number: "01", title: "Choose your test centre", summary: "Start with the centre where you will take your practical test.", detail: "Select your exam centre and discover available practice routes and important traffic situations nearby: roundabouts, junctions, lanes, priority situations, speed zones and other attention points." },
       { number: "02", title: "Choose how you want to practise", summary: "Practise around your centre or in your own region.", detail: "Around your centre, practise realistic routes with passage points and important traffic situations. With local practice, train close to home on roundabouts, priority, junctions, lanes and other driving situations. Your real exam route may differ." },
@@ -24,7 +24,7 @@ const copy: Record<Locale, HowItWorksCopy> = {
     ],
   },
   nl: {
-    eyebrow: "ZO BEREID JE JE VOOR", title: "Minder twijfelen.", titleAccent: "Meer weten.", intro: "Een goede voorbereiding draait niet om het uit het hoofd leren van elke straat. Het gaat erom dat je weet waar je extra aandacht aan moet geven.", readMore: "Meer lezen", readLess: "Minder lezen",
+    eyebrow: "Hoe werkt Drive Coach?", title: "Van oefenen", titleAccent: "naar persoonlijke begeleiding", intro: "Drive Coach helpt je om je gericht voor te bereiden op je praktijkexamen. Kies waar je wilt oefenen, ontdek relevante routes en verkeerssituaties, krijg ondersteuning tijdens het rijden en gebruik je eigen feedback of die van je instructeur om je volgende oefenritten steeds beter op jou af te stemmen.", readMore: "Meer lezen", readLess: "Minder lezen",
     cards: [
       { number: "01", title: "Kies je examencentrum", summary: "Begin bij het examencentrum waar jij je praktijkexamen wilt afleggen.", detail: "Selecteer jouw examencentrum en ontdek de beschikbare oefenroutes en belangrijke verkeerssituaties in de omgeving. Zo raak je vertrouwd met rotondes, kruispunten, rijstroken, voorrangssituaties, snelheidszones en andere aandachtspunten." },
       { number: "02", title: "Kies hoe je wilt oefenen", summary: "Oefen rond je examencentrum of lokaal in je eigen regio.", detail: "Rond je examencentrum oefen je routes met doorgangspunten en belangrijke verkeerssituaties. Lokaal oefenen helpt je om dicht bij huis te trainen op rotondes, voorrang, kruispunten, rijstroken en andere situaties. Je echte examenroute kan verschillen." },
