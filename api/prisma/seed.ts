@@ -1,12 +1,7 @@
 import { PrismaClient, RouteStatus, UserRole } from "@prisma/client";
+import { officialCentres as centres } from "../src/exam-centres/official-centres";
 
 const prisma = new PrismaClient();
-
-const centres = [
-  { slug: "brussels-south", name: "Brussels South", city: "Brussels", area: "Anderlecht", region: "Brussels", latitude: 50.8382, longitude: 4.3047, description: "Practice the roads around Brussels South with clear guidance for junctions and lane changes." },
-  { slug: "antwerp-north", name: "Antwerp North", city: "Antwerp", area: "Deurne", region: "Antwerp", latitude: 51.2238, longitude: 4.4567, description: "Build confidence around tram corridors, multi-lane crossings and residential roads." },
-  { slug: "ghent-east", name: "Ghent East", city: "Ghent", area: "Sint-Denijs-Westrem", region: "East Flanders", latitude: 51.0275, longitude: 3.6956, description: "Prepare for compact roundabouts, changing speed zones and open-road observation." },
-];
 
 // Official passage-point names published by Autoveiligheid for the Alken exam centre.
 // The source does not publish an exact Route 1 sequence or GPS coordinates, so those
@@ -139,8 +134,10 @@ async function main() {
   ];
   for (const [weaknessCode, tipCode] of tipLinks) if (weaknessIds.get(weaknessCode) && tipIds.get(tipCode)) await prisma.weaknessTip.upsert({ where: { weaknessId_tipId: { weaknessId: weaknessIds.get(weaknessCode)!, tipId: tipIds.get(tipCode)! } }, update: {}, create: { weaknessId: weaknessIds.get(weaknessCode)!, tipId: tipIds.get(tipCode)! } });
 
+  const demoRouteSlugs = new Set(["brussels-south", "antwerp-north", "ghent-east"]);
   for (const centre of centres) {
     const savedCentre = await prisma.examCentre.upsert({ where: { slug: centre.slug }, update: { ...centre, isPublished: true }, create: { ...centre, isPublished: true } });
+    if (!demoRouteSlugs.has(centre.slug)) continue;
     const route = await prisma.route.upsert({ where: { slug: `${centre.slug}-route-04` }, update: { centreId: savedCentre.id, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date() }, create: { centreId: savedCentre.id, slug: `${centre.slug}-route-04`, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date() } });
     await prisma.routePoint.deleteMany({ where: { routeId: route.id } });
     await prisma.routePoint.createMany({ data: routePoints.map((point) => ({ ...point, routeId: route.id })) });

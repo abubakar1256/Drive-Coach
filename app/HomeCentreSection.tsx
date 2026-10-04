@@ -3,14 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { isLocale, type Locale } from "../lib/i18n";
 import { belgianProvinces, canonicalBelgianRegion } from "../lib/belgianRegions";
+import { centres as directoryCentres } from "../lib/data";
 
 type HomeCentre = { slug: string; name: string; city: string; area: string; region: string; routes: number; tone: string };
 
-const fallbackCentres: HomeCentre[] = [
-  { slug: "brussels-south", name: "Brussels South", city: "Brussels", area: "Anderlecht", region: "Brussels", routes: 12, tone: "mint" },
-  { slug: "antwerp-north", name: "Antwerp North", city: "Antwerp", area: "Deurne", region: "Antwerp", routes: 9, tone: "blue" },
-  { slug: "ghent-east", name: "Ghent East", city: "Ghent", area: "Sint-Denijs-Westrem", region: "East Flanders", routes: 8, tone: "sand" },
-];
+const fallbackCentres: HomeCentre[] = directoryCentres.map((centre, index) => ({ slug: centre.slug, name: centre.name, city: centre.city, area: centre.area, region: centre.region, routes: centre.routes, tone: ["mint", "blue", "sand"][index % 3] }));
 
 const text: Record<Locale, { eyebrow: string; title: string; view: string; search: string; routes: string; regions: string; allRegions: string; noResults: string }> = {
   en: { eyebrow: "Start where your test starts", title: "Find your test centre", view: "View all centres", search: "Search by city or test centre...", routes: "practice routes", regions: "Provinces", allRegions: "All provinces", noResults: "No test centres found" },

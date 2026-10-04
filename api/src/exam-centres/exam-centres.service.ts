@@ -1,15 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
+import { officialCentres } from "./official-centres";
 
-const fallbackCentres = [
-  { slug: "brussels-south", name: "Brussels South", city: "Brussels", area: "Anderlecht", region: "Brussels", routes: 12 },
-  { slug: "antwerp-north", name: "Antwerp North", city: "Antwerp", area: "Deurne", region: "Antwerp", routes: 9 },
-  { slug: "ghent-east", name: "Ghent East", city: "Ghent", area: "Sint-Denijs-Westrem", region: "East Flanders", routes: 8 },
-];
+const fallbackCentres = officialCentres.map((centre) => ({ ...centre, routes: 0 }));
 
 @Injectable()
 export class ExamCentresService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async onModuleInit() {
+    try {
+      await Promise.all(officialCentres.map((centre) => this.prisma.examCentre.upsert({
+        where: { slug: centre.slug },
+        update: { ...centre, isPublished: true },
+        create: { ...centre, isPublished: true },
+      })));
+    } catch {
+      // The API can still serve its static centre directory while the database is unavailable.
+    }
+  }
 
   async list() {
     try {

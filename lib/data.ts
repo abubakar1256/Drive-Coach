@@ -22,10 +22,10 @@ export type Centre = {
   routeCoordinates: [number, number][];
 };
 
-export const centres: Centre[] = [
+const featuredCentres: Centre[] = [
   {
     slug: "brussels-south",
-    name: "Brussels South",
+    name: "Anderlecht",
     city: "Brussels",
     area: "Anderlecht",
     routes: 12,
@@ -42,7 +42,7 @@ export const centres: Centre[] = [
   },
   {
     slug: "antwerp-north",
-    name: "Antwerp North",
+    name: "Deurne",
     city: "Antwerp",
     area: "Deurne",
     routes: 9,
@@ -58,7 +58,7 @@ export const centres: Centre[] = [
   },
   {
     slug: "ghent-east",
-    name: "Ghent East",
+    name: "Sint-Denijs-Westrem",
     city: "Ghent",
     area: "Sint-Denijs-Westrem",
     routes: 8,
@@ -73,6 +73,40 @@ export const centres: Centre[] = [
     ],
   },
 ];
+
+const additionalCentres: Centre[] = [
+  { slug: "brussels-schaerbeek", name: "Schaerbeek–Evere", city: "Brussels", area: "Schaerbeek / Evere", routes: 0, region: "Brussels", description: "Official driving-test centre serving Schaerbeek and Evere.", highlights: ["Urban junctions", "Lane positioning", "Priority situations"], routePoints: [], routeCoordinates: [[4.3900, 50.8765]] },
+  { slug: "antwerp-geel", name: "Geel", city: "Geel", area: "Geel", routes: 0, region: "Antwerp", description: "Official driving-test centre in Geel.", highlights: ["Urban roads", "Roundabouts", "Speed-zone changes"], routePoints: [], routeCoordinates: [[4.9893, 51.1604]] },
+  { slug: "antwerp-kontich", name: "Kontich", city: "Kontich", area: "Kontich", routes: 0, region: "Antwerp", description: "Official driving-test centre in Kontich.", highlights: ["Busy junctions", "Lane positioning", "Priority situations"], routePoints: [], routeCoordinates: [[4.4520, 51.1320]] },
+  { slug: "alken", name: "Alken", city: "Alken", area: "Alken", routes: 0, region: "Limburg", description: "Official driving-test centre in Alken.", highlights: ["Official passage points", "Roundabouts", "Speed-zone changes"], routePoints: [], routeCoordinates: [[5.3070, 50.8750]] },
+  { slug: "bree", name: "Bree", city: "Bree", area: "Bree", routes: 0, region: "Limburg", description: "Official driving-test centre in Bree.", highlights: ["Residential roads", "Priority situations", "Open-road observation"], routePoints: [], routeCoordinates: [[5.5980, 51.1410]] },
+  { slug: "haasrode", name: "Haasrode", city: "Haasrode", area: "Haasrode", routes: 0, region: "Flemish Brabant", description: "Official driving-test centre in Haasrode.", highlights: ["Lane choice", "Roundabouts", "Changing speed zones"], routePoints: [], routeCoordinates: [[4.7330, 50.8460]] },
+  { slug: "asse-mollem", name: "Asse–Mollem", city: "Asse", area: "Mollem", routes: 0, region: "Flemish Brabant", description: "Official driving-test centre in Asse–Mollem.", highlights: ["Rural transitions", "Junctions", "Speed awareness"], routePoints: [], routeCoordinates: [[4.2120, 50.9080]] },
+  { slug: "brugge", name: "Brugge", city: "Brugge", area: "Brugge", routes: 0, region: "West Flanders", description: "Official driving-test centre in Brugge.", highlights: ["Urban junctions", "Cyclist observation", "Lane choice"], routePoints: [], routeCoordinates: [[3.2240, 51.2300]] },
+  { slug: "oostende", name: "Oostende", city: "Oostende", area: "Oostende", routes: 0, region: "West Flanders", description: "Official driving-test centre in Oostende.", highlights: ["Urban roads", "Cyclist observation", "Priority situations"], routePoints: [], routeCoordinates: [[2.9250, 51.1990]] },
+  { slug: "roeselare", name: "Roeselare", city: "Roeselare", area: "Roeselare", routes: 0, region: "West Flanders", description: "Official driving-test centre in Roeselare.", highlights: ["Roundabouts", "Lane positioning", "Speed zones"], routePoints: [], routeCoordinates: [[3.1250, 50.9450]] },
+  { slug: "wevelgem", name: "Wevelgem", city: "Wevelgem", area: "Wevelgem", routes: 0, region: "West Flanders", description: "Official driving-test centre in Wevelgem.", highlights: ["Junctions", "Priority situations", "Open-road observation"], routePoints: [], routeCoordinates: [[3.1640, 50.8060]] },
+  { slug: "erembodegem", name: "Erembodegem", city: "Aalst", area: "Erembodegem", routes: 0, region: "East Flanders", description: "Official driving-test centre in Erembodegem.", highlights: ["Urban roads", "Roundabouts", "Lane choice"], routePoints: [], routeCoordinates: [[4.0430, 50.9190]] },
+  { slug: "sint-niklaas", name: "Sint-Niklaas", city: "Sint-Niklaas", area: "Sint-Niklaas", routes: 0, region: "East Flanders", description: "Official driving-test centre in Sint-Niklaas.", highlights: ["Urban junctions", "Cyclist observation", "Priority situations"], routePoints: [], routeCoordinates: [[4.1430, 51.1640]] },
+  { slug: "eeklo", name: "Eeklo", city: "Eeklo", area: "Eeklo", routes: 0, region: "East Flanders", description: "Official driving-test centre in Eeklo.", highlights: ["Changing speed zones", "Junctions", "Open-road observation"], routePoints: [], routeCoordinates: [[3.5680, 51.1840]] },
+  { slug: "brakel", name: "Brakel", city: "Brakel", area: "Brakel", routes: 0, region: "East Flanders", description: "Official driving-test centre in Brakel.", highlights: ["Rural roads", "Priority situations", "Speed awareness"], routePoints: [], routeCoordinates: [[3.7640, 50.8010]] },
+  { slug: "louvain-la-neuve", name: "Louvain-la-Neuve", city: "Ottignies-Louvain-la-Neuve", area: "Louvain-la-Neuve", routes: 0, region: "Walloon Brabant", description: "Official driving-test centre in Louvain-la-Neuve.", highlights: ["Urban junctions", "Roundabouts", "Lane positioning"], routePoints: [], routeCoordinates: [[4.5680, 50.6680]] },
+  { slug: "braine-le-comte", name: "Braine-le-Comte", city: "Braine-le-Comte", area: "Braine-le-Comte", routes: 0, region: "Hainaut", description: "Official driving-test centre in Braine-le-Comte.", highlights: ["Junctions", "Priority situations", "Speed zones"], routePoints: [], routeCoordinates: [[4.1390, 50.6090]] },
+  { slug: "charleroi-couillet", name: "Charleroi–Couillet", city: "Charleroi", area: "Couillet", routes: 0, region: "Hainaut", description: "Official driving-test centre in Couillet, Charleroi.", highlights: ["Busy urban roads", "Lane changes", "Junction observation"], routePoints: [], routeCoordinates: [[4.4440, 50.3920]] },
+  { slug: "mons-cuesmes", name: "Mons–Cuesmes", city: "Mons", area: "Cuesmes", routes: 0, region: "Hainaut", description: "Official driving-test centre in Cuesmes, Mons.", highlights: ["Urban junctions", "Roundabouts", "Priority situations"], routePoints: [], routeCoordinates: [[3.9460, 50.4310]] },
+  { slug: "lobbes", name: "Lobbes", city: "Lobbes", area: "Lobbes", routes: 0, region: "Hainaut", description: "Official driving-test centre in Lobbes.", highlights: ["Rural transitions", "Speed awareness", "Priority situations"], routePoints: [], routeCoordinates: [[4.2670, 50.3500]] },
+  { slug: "tournai-marquain", name: "Tournai–Marquain", city: "Tournai", area: "Marquain", routes: 0, region: "Hainaut", description: "Official driving-test centre in Marquain, Tournai.", highlights: ["Junctions", "Lane choice", "Roundabouts"], routePoints: [], routeCoordinates: [[3.3280, 50.6260]] },
+  { slug: "liege-wandre", name: "Liège–Wandre", city: "Liège", area: "Wandre", routes: 0, region: "Liège", description: "Official driving-test centre in Wandre, Liège.", highlights: ["Urban junctions", "Lane positioning", "Priority situations"], routePoints: [], routeCoordinates: [[5.6280, 50.6620]] },
+  { slug: "huy-tihange", name: "Huy–Tihange", city: "Huy", area: "Tihange", routes: 0, region: "Liège", description: "Official driving-test centre in Tihange, Huy.", highlights: ["Junctions", "Speed zones", "Open-road observation"], routePoints: [], routeCoordinates: [[5.2360, 50.5320]] },
+  { slug: "eupen-lontzen", name: "Eupen–Lontzen", city: "Eupen", area: "Lontzen", routes: 0, region: "Liège", description: "Official driving-test centre in Lontzen, serving Eupen.", highlights: ["Priority situations", "Rural roads", "Speed awareness"], routePoints: [], routeCoordinates: [[6.0070, 50.6810]] },
+  { slug: "namur-suarlee", name: "Namur–Suarlée", city: "Namur", area: "Suarlée", routes: 0, region: "Namur", description: "Official driving-test centre in Suarlée, Namur.", highlights: ["Urban junctions", "Roundabouts", "Lane choice"], routePoints: [], routeCoordinates: [[4.8060, 50.4990]] },
+  { slug: "couvin-mariembourg", name: "Couvin–Mariembourg", city: "Couvin", area: "Mariembourg", routes: 0, region: "Namur", description: "Official driving-test centre in Mariembourg, Couvin.", highlights: ["Rural transitions", "Priority situations", "Speed zones"], routePoints: [], routeCoordinates: [[4.5400, 50.0940]] },
+  { slug: "marche-en-famenne", name: "Marche-en-Famenne", city: "Marche-en-Famenne", area: "Marche-en-Famenne", routes: 0, region: "Luxembourg", description: "Official driving-test centre in Marche-en-Famenne.", highlights: ["Rural roads", "Junctions", "Speed awareness"], routePoints: [], routeCoordinates: [[5.3440, 50.2260]] },
+  { slug: "bastogne", name: "Bastogne", city: "Bastogne", area: "Bastogne", routes: 0, region: "Luxembourg", description: "Official driving-test centre in Bastogne.", highlights: ["Rural roads", "Priority situations", "Open-road observation"], routePoints: [], routeCoordinates: [[5.7200, 50.0000]] },
+  { slug: "arlon-weyler", name: "Arlon–Weyler", city: "Arlon", area: "Weyler", routes: 0, region: "Luxembourg", description: "Official driving-test centre in Weyler, Arlon.", highlights: ["Urban junctions", "Lane choice", "Roundabouts"], routePoints: [], routeCoordinates: [[5.8170, 49.6740]] },
+];
+
+export const centres: Centre[] = [...featuredCentres, ...additionalCentres];
 
 export function getCentre(slug: string) {
   return centres.find((centre) => centre.slug === slug);
