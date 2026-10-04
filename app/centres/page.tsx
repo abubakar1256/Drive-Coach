@@ -5,6 +5,7 @@ import AccountNavLink from "../AccountNavLink";
 import LanguageSwitcher from "../LanguageSwitcher";
 import MobileMenu from "../MobileMenu";
 import DirectoryHero from "./DirectoryHero";
+import LocalizedNavLinks, { LocalizedNavText } from "../LocalizedNavLinks";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,8 @@ export default async function CentresPage() {
     <main>
       <nav className="nav shell inner-nav">
         <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link>
-        <div className="nav-links"><Link href="/#how-it-works">How it works</Link><Link href="/centres">Test centres</Link><Link href="/#pricing">Pricing</Link></div>
-        <div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/#pricing">View plans <span>↗</span></Link></div>
+        <LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} />
+        <div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/#pricing"><LocalizedNavText item="viewPlans" /> <span>↗</span></Link></div>
         <MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} />
       </nav>
 

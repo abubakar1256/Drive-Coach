@@ -2,8 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { isLocale, type Locale } from "../lib/i18n";
+import { navLabel, type NavKey } from "../lib/navCopy";
 
 type MenuLink = { href: string; label: string };
+
+function navKeyForLink(link: MenuLink): NavKey | null {
+  if (link.href.includes("#how-it-works")) return "howItWorks";
+  if (link.href === "/centres" || link.href === "#centres") return "testCentres";
+  if (link.href.includes("#pricing")) return "pricing";
+  if (link.href.includes("#faq")) return "faq";
+  if (link.href === "/blog") return "guides";
+  if (link.href === "/dashboard") return "dashboard";
+  if (link.href === "/account") return "account";
+  if (link.href === "/auth/login") return "logIn";
+  return null;
+}
 
 export default function MobileMenu({ links }: { links: MenuLink[] }) {
   const [open, setOpen] = useState(false);
@@ -37,11 +50,15 @@ export default function MobileMenu({ links }: { links: MenuLink[] }) {
     window.location.assign("/");
   }
 
-  const visibleLinks = signedIn ? links.map((link) => link.href === "/auth/login" ? { href: "/account", label: locale === "nl" ? "Mijn account" : "My account" } : link) : links;
+  const translatedLinks = links.map((link) => {
+    const key = navKeyForLink(link);
+    return key ? { ...link, label: navLabel(locale, key) } : link;
+  });
+  const visibleLinks = signedIn ? translatedLinks.map((link) => link.href === "/auth/login" ? { href: "/account", label: navLabel(locale, "account") } : link) : translatedLinks;
 
   return (
     <div className="mobile-menu">
-      <button className="menu-button" type="button" aria-label={open ? "Close navigation menu" : "Open navigation menu"} aria-controls={menuId} aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+      <button className="menu-button" type="button" aria-label={open ? (locale === "nl" ? "Navigatiemenu sluiten" : "Close navigation menu") : (locale === "nl" ? "Navigatiemenu openen" : "Open navigation menu")} aria-controls={menuId} aria-expanded={open} onClick={() => setOpen((value) => !value)}>
         {open ? "×" : "☰"}
       </button>
       {open && (
