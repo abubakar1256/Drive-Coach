@@ -9,6 +9,7 @@ FROM dependencies AS builder
 ARG API_SERVER_URL=http://api:4000
 ENV API_SERVER_URL=${API_SERVER_URL}
 COPY . .
+ARG NEXT_PUBLIC_MAPBOX_TOKEN
 RUN pnpm build
 
 FROM node:22-alpine AS runner
