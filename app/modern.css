@@ -66,6 +66,10 @@ body { background: radial-gradient(circle at 12% -8%, #e9f5eb 0, transparent 31r
 .feature-card { padding-left: 20px; border-right: 0; border: 1px solid var(--line); margin-right: 0; border-radius: 18px; }
 .feature-grid { gap: 16px; border-top: 0; }
 .feature-card h3 { margin-top: 30px; }
+.feature-detail { display: grid; gap: 12px; }
+.feature-detail p { min-height: 0; margin: 0; }
+.feature-detail-subheading { color: var(--ink) !important; font-weight: 700; }
+.feature-detail-action { margin-top: 3px !important; }
 .centre-section, .route-list-section { background: linear-gradient(180deg, #f0f7f1, #f7faf7); }
 .centre-card:hover, .directory-card:hover, .route-list-row:hover { box-shadow: 0 20px 40px rgba(15,106,83,.11); }
 .search-bar, .directory-search, .filter-button { border-radius: 13px; box-shadow: 0 7px 20px rgba(15, 67, 50, .04); }
