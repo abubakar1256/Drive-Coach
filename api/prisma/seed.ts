@@ -47,12 +47,27 @@ const officialPassageSource = {
   sourceRevision: "NGD-EC126-GN 01-11-2024 (1005)",
 };
 
-const routePoints = [
-  { sequence: 1, category: "start", title: "Leave the test centre", description: "Check mirrors and position before joining traffic", warning: null, latitude: 50.8382, longitude: 4.3047 },
-  { sequence: 2, category: "lane-change", title: "Lane change before junction", description: "Move over early and keep the junction clear", warning: "Check the mirror and blind spot before moving over", latitude: 50.8371, longitude: 4.3104 },
-  { sequence: 3, category: "roundabout", title: "Two-lane roundabout", description: "Choose the correct lane for the second exit", warning: "Signal only when leaving the roundabout", latitude: 50.8404, longitude: 4.3185 },
-  { sequence: 4, category: "speed-zone", title: "Residential speed zone", description: "Look for cyclists and changing speed limits", warning: "Read the next speed sign before the zone begins", latitude: 50.8355, longitude: 4.3257 },
-];
+const practicePointOffsets = [
+  { category: "start", title: "Leave the test centre", description: "Check mirrors and position before joining traffic", warning: null, latitude: 0, longitude: 0 },
+  { category: "lane-change", title: "Lane change before junction", description: "Move over early and keep the junction clear", warning: "Check the mirror and blind spot before moving over", latitude: 0.0035, longitude: 0.0055 },
+  { category: "roundabout", title: "Two-lane roundabout", description: "Choose the correct lane for the second exit", warning: "Signal only when leaving the roundabout", latitude: 0.001, longitude: 0.011 },
+  { category: "speed-zone", title: "Residential speed zone", description: "Look for cyclists and changing speed limits", warning: "Read the next speed sign before the zone begins", latitude: -0.004, longitude: 0.007 },
+] as const;
+
+function buildPracticeRoutePoints(centre: (typeof centres)[number]) {
+  const direction = centre.slug.length % 2 === 0 ? 1 : -1;
+  const round = (value: number) => Math.round(value * 1_000_000) / 1_000_000;
+
+  return practicePointOffsets.map((point, index) => ({
+    sequence: index + 1,
+    category: point.category,
+    title: point.title,
+    description: point.description,
+    warning: point.warning,
+    latitude: round(centre.latitude + point.latitude * direction),
+    longitude: round(centre.longitude + point.longitude * direction),
+  }));
+}
 
 const drivingSkills = [
   ["SPEED", "Speed awareness"], ["PRIORITY", "Priority and right of way"], ["OBSERVATION", "Observation"], ["HAZARD", "Hazard recognition"],
@@ -134,13 +149,12 @@ async function main() {
   ];
   for (const [weaknessCode, tipCode] of tipLinks) if (weaknessIds.get(weaknessCode) && tipIds.get(tipCode)) await prisma.weaknessTip.upsert({ where: { weaknessId_tipId: { weaknessId: weaknessIds.get(weaknessCode)!, tipId: tipIds.get(tipCode)! } }, update: {}, create: { weaknessId: weaknessIds.get(weaknessCode)!, tipId: tipIds.get(tipCode)! } });
 
-  const demoRouteSlugs = new Set(["brussels-south", "antwerp-north", "ghent-east"]);
   for (const centre of centres) {
     const savedCentre = await prisma.examCentre.upsert({ where: { slug: centre.slug }, update: { ...centre, isPublished: true }, create: { ...centre, isPublished: true } });
-    if (!demoRouteSlugs.has(centre.slug)) continue;
-    const route = await prisma.route.upsert({ where: { slug: `${centre.slug}-route-04` }, update: { centreId: savedCentre.id, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date() }, create: { centreId: savedCentre.id, slug: `${centre.slug}-route-04`, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date() } });
+    const route = await prisma.route.upsert({ where: { slug: `${centre.slug}-route-04` }, update: { centreId: savedCentre.id, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date(), sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" }, create: { centreId: savedCentre.id, slug: `${centre.slug}-route-04`, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date(), sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" } });
     await prisma.routePoint.deleteMany({ where: { routeId: route.id } });
-    await prisma.routePoint.createMany({ data: routePoints.map((point) => ({ ...point, routeId: route.id })) });
+    const centreRoutePoints = buildPracticeRoutePoints(centre);
+    await prisma.routePoint.createMany({ data: centreRoutePoints.map((point) => ({ ...point, routeId: route.id })) });
     const savedPoints = await prisma.routePoint.findMany({ where: { routeId: route.id }, orderBy: { sequence: "asc" } });
     await prisma.routePointFeature.deleteMany({ where: { routePointId: { in: savedPoints.map((point) => point.id) } } });
     const featureMap: Record<string, string[]> = { start: ["START"], "lane-change": ["LANE_SELECTION_REQUIRED", "MIRROR_CHECK"], roundabout: ["ROUNDABOUT", "MULTI_LANE", "LANE_SELECTION_REQUIRED", "CYCLIST_CONFLICT"], "speed-zone": ["SPEED_ZONE", "SIGN_CHANGE", "CYCLIST_CONFLICT"] };
