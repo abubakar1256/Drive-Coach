@@ -182,14 +182,13 @@ async function main() {
     });
   }
 
+  await prisma.plan.updateMany({ where: { name: { notIn: ["Premium", "Diamond"] } }, data: { isActive: false } });
   for (const plan of [
-    { name: "1 day", durationHours: 24, priceCents: 295 },
-    { name: "1 week", durationHours: 168, priceCents: 895 },
-    { name: "1 month", durationHours: 720, priceCents: 1295 },
-    { name: "3 months", durationHours: 2160, priceCents: 1395 },
+    { name: "Premium", durationHours: 2160, priceCents: 1499 },
+    { name: "Diamond", durationHours: 2160, priceCents: 1999 },
   ]) await prisma.plan.upsert({ where: { name: plan.name }, update: { ...plan, isActive: true }, create: { ...plan, currency: "EUR", isActive: true } });
 
-  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${allWeaknesses.length} weaknesses, ${tipCatalog.length} tips (${verifiedTips.length} approved) and 4 access plans.`);
+  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${allWeaknesses.length} weaknesses, ${tipCatalog.length} tips (${verifiedTips.length} approved) and 2 access plans.`);
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; }).finally(() => prisma.$disconnect());

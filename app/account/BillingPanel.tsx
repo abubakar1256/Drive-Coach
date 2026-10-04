@@ -21,7 +21,7 @@ export default function BillingPanel() {
     if (!token) return;
     Promise.all([fetch(`${API}/plans`), fetch(`${API}/me/payments`, { headers: { Authorization: `Bearer ${token}` } }), fetch(`${API}/me/invoices`, { headers: { Authorization: `Bearer ${token}` } })]).then(async ([planResponse, paymentResponse, invoiceResponse]) => {
       const [planData, paymentData, invoiceData] = await Promise.all([planResponse.json(), paymentResponse.json(), invoiceResponse.json()]);
-      setPlans((planData as Plan[]).filter((plan) => plan.name.toLowerCase() !== "free"));
+      setPlans((planData as Plan[]).filter((plan) => plan.name === "Premium" || plan.name === "Diamond"));
       if (paymentResponse.ok) setPayments(paymentData as Payment[]);
       if (invoiceResponse.ok) setInvoices(invoiceData as Invoice[]);
     }).catch(() => setMessage("Billing information is temporarily unavailable."));

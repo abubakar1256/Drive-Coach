@@ -10,7 +10,7 @@ export class BillingService {
   constructor(private readonly prisma: PrismaService) {}
 
   listPlans() {
-    return this.prisma.plan.findMany({ where: { isActive: true }, orderBy: { priceCents: "asc" }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true } });
+    return this.prisma.plan.findMany({ where: { isActive: true, name: { in: ["Premium", "Diamond"] } }, orderBy: { priceCents: "asc" }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true } });
   }
 
   async subscription(userId: string) {
