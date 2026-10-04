@@ -32,24 +32,6 @@ const copy: Record<Locale, HowItWorksCopy> = {
       { number: "04", title: "Zelfreflectie & feedback", summary: "Vertel Drive Coach waar je aan wilt werken.", detail: "Na je oefenrit kun je aangeven wat goed ging en waar je nog moeite mee had. Feedback van je rijinstructeur of begeleider kan ook worden toegevoegd. De AI verwerkt deze informatie om je volgende oefenritten beter op jouw aandachtspunten af te stemmen." },
     ],
   },
-  fr: {
-    eyebrow: "UNE PRÉPARATION PLUS SIMPLE", title: "Moins de doutes.", titleAccent: "Plus de confiance.", intro: "Une bonne préparation ne consiste pas à mémoriser chaque rue, mais à savoir où porter votre attention.", readMore: "En savoir plus", readLess: "Réduire",
-    cards: [
-      { number: "01", title: "Choisissez votre centre d’examen", summary: "Commencez par le centre où vous passerez votre examen pratique.", detail: "Découvrez les itinéraires d’entraînement et les situations importantes autour de votre centre d’examen." },
-      { number: "02", title: "Choisissez votre façon de vous entraîner", summary: "Entraînez-vous autour du centre ou près de chez vous.", detail: "Travaillez les ronds-points, priorités, carrefours, voies et autres situations utiles à votre conduite." },
-      { number: "03", title: "Points d’attention pendant la conduite", summary: "Recevez des conseils courts au bon moment.", detail: "Les conseils peuvent porter sur la vitesse, les voies, les rétroviseurs, les cyclistes et les situations particulières. La guidance vocale peut être désactivée." },
-      { number: "04", title: "Auto-évaluation et feedback", summary: "Dites-nous ce que vous voulez améliorer.", detail: "Votre réflexion et le feedback de votre instructeur aident l’IA à personnaliser vos prochains entraînements." },
-    ],
-  },
-  de: {
-    eyebrow: "EINFACHER VORBEREITEN", title: "Weniger Zweifel.", titleAccent: "Mehr Sicherheit.", intro: "Gute Vorbereitung bedeutet nicht, jede Straße auswendig zu lernen, sondern zu wissen, worauf du achten musst.", readMore: "Mehr lesen", readLess: "Weniger lesen",
-    cards: [
-      { number: "01", title: "Prüfungszentrum wählen", summary: "Beginne bei dem Zentrum, an dem du die Prüfung machst.", detail: "Entdecke Übungsrouten und wichtige Verkehrssituationen rund um dein Prüfungszentrum." },
-      { number: "02", title: "Übungsart wählen", summary: "Übe rund um dein Zentrum oder in deiner Region.", detail: "Trainiere Kreisverkehre, Vorfahrt, Kreuzungen, Fahrstreifen und andere wichtige Situationen." },
-      { number: "03", title: "Aufmerksamkeit beim Fahren", summary: "Erhalte kurze Hinweise im richtigen Moment.", detail: "Die Hinweise betreffen Geschwindigkeit, Fahrstreifen, Spiegel, Radfahrer und besondere Situationen. Die Sprachbegleitung kann jederzeit ausgeschaltet werden." },
-      { number: "04", title: "Selbstreflexion und Feedback", summary: "Sag Drive Coach, woran du arbeiten möchtest.", detail: "Deine Reflexion und das Feedback deines Fahrlehrers helfen der KI, die nächsten Übungen zu personalisieren." },
-    ],
-  },
 };
 
 export default function HowItWorks() {

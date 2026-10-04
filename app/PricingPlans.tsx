@@ -16,16 +16,6 @@ const plans: Record<Locale, { eyebrow: string; title: string; titleAccent: strin
     { name: "Premium", subtitle: "Alles voor je voorbereiding bij één examencentrum", price: "€14,99", access: "90 dagen toegang", featured: true, features: ["Alle routes van 1 gekozen examencentrum", "Doorgangspunten & aandachtspunten", "Interactieve routebegeleiding", "AI gesproken tips tijdens het rijden", "Zelfreflectie & feedback instructeur", "Persoonlijke route-aanbevelingen", "Persoonlijke aandachtspunten & begeleiding"], action: "Kies Premium" },
     { name: "💎 Diamond", subtitle: "De meest complete Drive Coach-ervaring", price: "€19,99", access: "90 dagen toegang", features: ["Alle routes van alle examencentra", "Doorgangspunten & aandachtspunten", "Interactieve routebegeleiding", "AI gesproken tips tijdens het rijden", "Zelfreflectie & feedback instructeur", "Persoonlijke route-aanbevelingen", "Persoonlijke aandachtspunten & begeleiding", "Lokale praktijkexamen-oefenroutes"], action: "Kies Diamond" },
   ] },
-  fr: { eyebrow: "UN ACCÈS SIMPLE", title: "Choisissez votre", titleAccent: "formule.", intro: "Commencez gratuitement ou débloquez toute l’expérience Drive Coach.", compare: "Choisir", plans: [
-    { name: "Gratuit", subtitle: "Pour découvrir Drive Coach", price: "€0", access: "Accès gratuit", features: ["Voir tous les centres", "1 itinéraire gratuit", "Carte interactive"], action: "Commencer" },
-    { name: "Premium", subtitle: "Préparation dans un centre", price: "€14,99", access: "90 jours", featured: true, features: ["Tous les itinéraires d’un centre", "Points de passage et d’attention", "Guidance interactive", "Conseils vocaux IA", "Auto-évaluation et feedback"], action: "Choisir Premium" },
-    { name: "💎 Diamond", subtitle: "L’expérience complète", price: "€19,99", access: "90 jours", features: ["Tous les centres", "Guidance interactive", "Conseils vocaux IA", "Recommandations personnalisées", "Itinéraires locaux"], action: "Choisir Diamond" },
-  ] },
-  de: { eyebrow: "EINFACHER ZUGANG", title: "Wähle deinen", titleAccent: "Vorbereitungsplan.", intro: "Starte kostenlos oder schalte die komplette Drive Coach-Erfahrung frei.", compare: "Plan wählen", plans: [
-    { name: "Kostenlos", subtitle: "Drive Coach entdecken", price: "€0", access: "Kostenloser Zugang", features: ["Alle Prüfungszentren ansehen", "1 kostenlose Route", "Interaktive Karte"], action: "Kostenlos starten" },
-    { name: "Premium", subtitle: "Vorbereitung bei einem Zentrum", price: "€14,99", access: "90 Tage Zugang", featured: true, features: ["Alle Routen eines Zentrums", "Passage- und Aufmerksamkeitspunkte", "Interaktive Routenführung", "KI-Sprachtipps", "Selbstreflexion und Feedback"], action: "Premium wählen" },
-    { name: "💎 Diamond", subtitle: "Die komplette Erfahrung", price: "€19,99", access: "90 Tage Zugang", features: ["Alle Routen aller Zentren", "Interaktive Routenführung", "KI-Sprachtipps", "Persönliche Empfehlungen", "Lokale Übungsrouten"], action: "Diamond wählen" },
-  ] },
 };
 
 export default function PricingPlans() {

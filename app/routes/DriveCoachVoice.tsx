@@ -38,12 +38,12 @@ export default function DriveCoachVoice({ routePoints, sessionId }: { routePoint
         delivered.add(nearest.point.id!);
         if (!payload.speak || !payload.tip?.voiceTextEn) return;
         const locale = window.localStorage.getItem("routepilot.locale");
-        const message = locale === "fr" && payload.tip.voiceTextFr ? payload.tip.voiceTextFr : locale === "nl" && payload.tip.voiceTextNl ? payload.tip.voiceTextNl : payload.tip.voiceTextEn;
+        const message = locale === "nl" && payload.tip.voiceTextNl ? payload.tip.voiceTextNl : payload.tip.voiceTextEn;
         setStatus(`${payload.tip.skillName}: ${message}`);
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(message);
-          utterance.lang = locale === "fr" ? "fr-BE" : locale === "nl" ? "nl-BE" : "en-GB";
+          utterance.lang = locale === "nl" ? "nl-BE" : "en-GB";
           utterance.rate = 0.88;
           window.speechSynthesis.speak(utterance);
         }

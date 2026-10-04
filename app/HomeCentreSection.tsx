@@ -12,8 +12,6 @@ const centres = [
 const text: Record<Locale, { eyebrow: string; title: string; view: string; search: string; routes: string }> = {
   en: { eyebrow: "Start where your test starts", title: "Find your test centre", view: "View all centres", search: "Search by city or test centre...", routes: "practice routes" },
   nl: { eyebrow: "START WAAR JE EXAMEN BEGINT", title: "Vind je examencentrum", view: "Bekijk alle examencentra", search: "Zoek op stad of examencentrum...", routes: "oefenroutes" },
-  fr: { eyebrow: "COMMENCEZ LÀ OÙ EST VOTRE EXAMEN", title: "Trouvez votre centre d’examen", view: "Voir tous les centres", search: "Rechercher une ville ou un centre...", routes: "itinéraires" },
-  de: { eyebrow: "BEGINNE AM PRÜFUNGSZENTRUM", title: "Prüfungszentrum finden", view: "Alle Zentren ansehen", search: "Stadt oder Zentrum suchen...", routes: "Übungsrouten" },
 };
 
 export default function HomeCentreSection() {
