@@ -5,8 +5,11 @@ import { useEffect, useState } from "react";
 import { homeCopy } from "../lib/homeCopy";
 import { isLocale, type Locale } from "../lib/i18n";
 
+const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
+
 export default function AccountNavLink({ className = "login-link" }: { className?: string }) {
   const [signedIn, setSignedIn] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => {
     const sync = () => {
@@ -16,7 +19,24 @@ export default function AccountNavLink({ className = "login-link" }: { className
     };
     sync();
     window.addEventListener("routepilot-locale-change", sync);
-    return () => window.removeEventListener("routepilot-locale-change", sync);
+    window.addEventListener("routepilot-auth-change", sync);
+    return () => {
+      window.removeEventListener("routepilot-locale-change", sync);
+      window.removeEventListener("routepilot-auth-change", sync);
+    };
   }, []);
-  return <Link className={className} href={signedIn ? "/account" : "/auth/login"}>{signedIn ? homeCopy[locale].nav.myAccount : homeCopy[locale].nav.logIn}</Link>;
+
+  async function logout() {
+    setLoggingOut(true);
+    const refreshToken = window.sessionStorage.getItem("routepilot.refreshToken");
+    if (refreshToken) await fetch(`${API}/auth/logout`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ refreshToken }) }).catch(() => undefined);
+    window.sessionStorage.removeItem("routepilot.accessToken");
+    window.sessionStorage.removeItem("routepilot.refreshToken");
+    window.sessionStorage.removeItem("routepilot.user");
+    window.dispatchEvent(new Event("routepilot-auth-change"));
+    window.location.assign("/");
+  }
+
+  if (!signedIn) return <Link className={className} href="/auth/login">{homeCopy[locale].nav.logIn}</Link>;
+  return <><Link className={className} href="/account">{homeCopy[locale].nav.myAccount}</Link><button className="nav-logout" type="button" onClick={() => void logout()} disabled={loggingOut}>{loggingOut ? "..." : locale === "nl" ? "Uitloggen" : "Log out"}</button></>;
 }
