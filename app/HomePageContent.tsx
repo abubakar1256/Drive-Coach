@@ -16,7 +16,7 @@ function Arrow() { return <span aria-hidden="true">↗</span>; }
 function getCopy(locale: Locale) { return homeCopy[locale]; }
 
 function HeroScene() {
-  return <div className="drive-scene" role="img" aria-label="Stylised driving practice scene with a winding road and learner car">
+  return <div className="drive-scene" role="img" aria-label="Animated driving practice scene with a learner car following a winding navigation route">
     <svg className="drive-scene-art" viewBox="0 0 700 560" aria-hidden="true">
       <defs>
         <linearGradient id="scene-sky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#dff4e4" /><stop offset=".58" stopColor="#b9ddb0" /><stop offset="1" stopColor="#f2dfaa" /></linearGradient>
@@ -25,6 +25,7 @@ function HeroScene() {
         <linearGradient id="scene-car" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ff8b74" /><stop offset="1" stopColor="#dc4f4c" /></linearGradient>
         <filter id="scene-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="10" /></filter>
         <filter id="scene-soft-shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="5" /></filter>
+        <path id="scene-route" d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" />
         <g id="scene-tree">
           <ellipse cx="0" cy="7" rx="32" ry="10" fill="#3b704f" opacity=".2" filter="url(#scene-soft-shadow)" />
           <path d="M-5 11 L-3-28 L8-28 L11 11Z" fill="#936b4b" />
@@ -40,7 +41,7 @@ function HeroScene() {
       <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#46604e" strokeWidth="142" opacity=".22" filter="url(#scene-shadow)" />
       <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#f1f3e7" strokeWidth="130" strokeLinecap="round" />
       <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="url(#scene-road)" strokeWidth="114" strokeLinecap="round" />
-      <path d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#f5edcf" strokeWidth="5" strokeDasharray="27 31" strokeLinecap="round" opacity=".95" />
+      <path className="scene-route-flow" d="M520-35 C365 62 313 128 379 188 C432 237 611 229 622 318 C634 411 421 425 253 463 C163 484 88 521 26 600" fill="none" stroke="#f5edcf" strokeWidth="5" strokeDasharray="27 31" strokeLinecap="round" opacity=".95" />
       <use href="#scene-tree" transform="translate(85 160) scale(.82)" />
       <use href="#scene-tree" transform="translate(170 245) scale(.62)" />
       <use href="#scene-tree" transform="translate(615 145) scale(.86)" />
@@ -48,21 +49,25 @@ function HeroScene() {
       <use href="#scene-tree" transform="translate(112 420) scale(1.08)" />
       <use href="#scene-tree" transform="translate(575 485) scale(.78)" />
       <path d="M205 220 l-11-20 m11 20 10-22 m-10 22 18-10 M87 355 l-13-24 m13 24 12-26 m-12 26 20-13 M620 405 l-12-23 m12 23 14-25" stroke="#558e5d" strokeWidth="5" strokeLinecap="round" opacity=".8" />
-      <g transform="translate(455 362) rotate(-14)">
-        <ellipse cx="7" cy="62" rx="91" ry="24" fill="#203e32" opacity=".35" filter="url(#scene-soft-shadow)" />
-        <path d="M-68 38 C-67 14-51 1-30-3 L-13-39 C-8-50 5-55 26-51 L53-40 C67-34 76-18 79 4 L84 32 C82 50 69 59 49 61 L-43 60 C-59 59-68 51-68 38Z" fill="url(#scene-car)" stroke="#c34848" strokeWidth="3" />
-        <path d="M-20-5 L-7-33 C-4-40 5-43 19-40 L43-32 C53-27 58-17 61-5Z" fill="#30465c" stroke="#f9aa8e" strokeWidth="3" />
-        <path d="M-9-30 L7-34 L3-7 L-21-7Z M12-35 L38-29 C45-25 49-17 52-7 L8-7Z" fill="#8ea9b4" opacity=".8" />
-        <path d="M-66 24 L-78 19 C-85 16-86 9-81 5 L-68 6Z M81 22 L91 17 C97 14 98 7 93 4 L82 7Z" fill="#e6635b" />
-        <ellipse cx="-40" cy="57" rx="15" ry="22" fill="#29343d" /><ellipse cx="-40" cy="57" rx="7" ry="11" fill="#9babb0" />
-        <ellipse cx="52" cy="54" rx="15" ry="22" fill="#29343d" /><ellipse cx="52" cy="54" rx="7" ry="11" fill="#9babb0" />
-        <path d="M-55 19 L-33 16 M61 15 L76 12" stroke="#ffd9a4" strokeWidth="6" strokeLinecap="round" />
+      <g className="scene-car-animated">
+        <g transform="rotate(180) translate(7 0) scale(.72)">
+          <ellipse cx="7" cy="62" rx="91" ry="24" fill="#203e32" opacity=".35" filter="url(#scene-soft-shadow)" />
+          <path d="M-68 38 C-67 14-51 1-30-3 L-13-39 C-8-50 5-55 26-51 L53-40 C67-34 76-18 79 4 L84 32 C82 50 69 59 49 61 L-43 60 C-59 59-68 51-68 38Z" fill="url(#scene-car)" stroke="#c34848" strokeWidth="3" />
+          <path d="M-20-5 L-7-33 C-4-40 5-43 19-40 L43-32 C53-27 58-17 61-5Z" fill="#30465c" stroke="#f9aa8e" strokeWidth="3" />
+          <path d="M-9-30 L7-34 L3-7 L-21-7Z M12-35 L38-29 C45-25 49-17 52-7 L8-7Z" fill="#a8c1c7" opacity=".82" />
+          <path d="M-66 24 L-78 19 C-85 16-86 9-81 5 L-68 6Z M81 22 L91 17 C97 14 98 7 93 4 L82 7Z" fill="#e6635b" />
+          <ellipse cx="-40" cy="57" rx="15" ry="22" fill="#29343d" /><ellipse cx="-40" cy="57" rx="7" ry="11" fill="#b8c7c9" />
+          <ellipse cx="52" cy="54" rx="15" ry="22" fill="#29343d" /><ellipse cx="52" cy="54" rx="7" ry="11" fill="#b8c7c9" />
+          <path d="M-55 19 L-33 16 M61 15 L76 12" stroke="#ffe0ab" strokeWidth="6" strokeLinecap="round" />
+          <path d="M-12-10 C3-15 29-14 49-9" stroke="#fff2d3" strokeWidth="3" strokeLinecap="round" opacity=".8" />
+        </g>
+        <animateMotion dur="18s" repeatCount="indefinite" rotate="auto-reverse" keyPoints=".13;.87" keyTimes="0;1" calcMode="linear"><mpath href="#scene-route" /></animateMotion>
       </g>
       <g transform="translate(235 338)">
         <circle r="17" fill="#f47d65" stroke="#fff8e9" strokeWidth="6" />
         <path d="M0-7v8" stroke="#fff8e9" strokeWidth="3" strokeLinecap="round" /><circle cy="7" r="2" fill="#fff8e9" />
       </g>
-      <g transform="translate(580 228)">
+      <g className="scene-nav-pulse" transform="translate(580 228)">
         <circle r="13" fill="#0f6a53" stroke="#ecf8e9" strokeWidth="5" />
         <path d="M-5 1 L-1 5 6-5" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </g>

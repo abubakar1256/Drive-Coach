@@ -5,6 +5,12 @@
 .hero-visual { isolation: isolate; }
 .drive-scene { position: relative; width: min(100%, 620px); aspect-ratio: 1.25; overflow: hidden; border: 10px solid rgba(255,255,255,.58); border-radius: 38px; background: #b9ddb0; box-shadow: 0 28px 65px rgba(35, 83, 57, .2), 0 4px 0 rgba(255,255,255,.8) inset; transform: perspective(1100px) rotateY(-4deg) rotateZ(1deg); }
 .drive-scene-art { display: block; width: 100%; height: 100%; }
+.scene-route-flow { animation: scene-route-flow 4.5s linear infinite; }
+.scene-car-animated { filter: drop-shadow(0 10px 8px rgba(29,62,47,.18)); }
+.scene-nav-pulse { animation: scene-nav-pulse 2.4s ease-in-out infinite; }
+@keyframes scene-route-flow { to { stroke-dashoffset: -58px; } }
+@keyframes scene-nav-pulse { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .scene-route-flow, .scene-car-animated, .scene-nav-pulse { animation: none; } }
 .scene-caption { position: absolute; left: 20px; bottom: 18px; display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.65); border-radius: 999px; color: #245c48; background: rgba(255,255,255,.82); box-shadow: 0 8px 20px rgba(34,78,51,.12); font-size: 10px; font-weight: 800; letter-spacing: .03em; backdrop-filter: blur(10px); }
 .scene-caption-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 4px rgba(255,138,28,.16); }
 .hero-road-scene { position: absolute; inset: -16px -42px; overflow: hidden; border-radius: 38px; background: linear-gradient(145deg, #dff1df 0%, #a9d19d 54%, #f3dd9d 100%); transform: perspective(1100px) rotateY(-3deg); z-index: -1; box-shadow: inset 0 -70px 100px rgba(43, 91, 55, .12); }
