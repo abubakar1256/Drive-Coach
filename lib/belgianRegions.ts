@@ -18,3 +18,24 @@ export const belgianProvinces: BelgianRegion[] = [
 ];
 
 export const capitalRegion: BelgianRegion = { value: "Brussels", labels: { en: "Brussels-Capital Region", nl: "Brussels Hoofdstedelijk Gewest" } };
+
+export const belgianRegions: BelgianRegion[] = [capitalRegion, ...belgianProvinces];
+
+function regionKey(value: string) {
+  return value.trim().toLocaleLowerCase("en").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+const regionAliases = new Map<string, string>();
+for (const region of belgianRegions) {
+  regionAliases.set(regionKey(region.value), region.value);
+  Object.values(region.labels).forEach((label) => regionAliases.set(regionKey(label), region.value));
+}
+
+export function canonicalBelgianRegion(value: string) {
+  return regionAliases.get(regionKey(value)) ?? value.trim();
+}
+
+export function belgianRegionLabel(value: string, locale: Locale) {
+  const canonical = canonicalBelgianRegion(value);
+  return belgianRegions.find((region) => region.value === canonical)?.labels[locale] ?? value;
+}

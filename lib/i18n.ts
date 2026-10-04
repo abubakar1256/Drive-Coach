@@ -67,7 +67,7 @@ export type DirectoryMessages = {
 };
 
 export const directoryMessages: Record<Locale, DirectoryMessages> = {
-  en: { allCentres: "All centres", whereTesting: "Where are you testing?", searchCityCentre: "Search city or centre", provinceLabel: "Province", allRegions: "All regions", centresFound: "centres found", clearFilters: "Clear filters", noCentresFound: "No centres found", tryDifferent: "Try a different city or clear the filters.", showAllCentres: "Show all centres", exploreCentre: "Explore centre", practiceRoutes: "practice routes" },
+  en: { allCentres: "All centres", whereTesting: "Where are you testing?", searchCityCentre: "Search city or centre", provinceLabel: "Provinces", allRegions: "All provinces", centresFound: "centres found", clearFilters: "Clear filters", noCentresFound: "No centres found", tryDifferent: "Try a different city or clear the filters.", showAllCentres: "Show all centres", exploreCentre: "Explore centre", practiceRoutes: "practice routes" },
   nl: { allCentres: "Alle examencentra", whereTesting: "Waar doe je examen?", searchCityCentre: "Zoek stad of examencentrum", provinceLabel: "Provincies", allRegions: "Alle provincies", centresFound: "examencentra gevonden", clearFilters: "Filters wissen", noCentresFound: "Geen examencentra gevonden", tryDifferent: "Probeer een andere stad of wis de filters.", showAllCentres: "Alle examencentra tonen", exploreCentre: "Examencentrum bekijken", practiceRoutes: "oefenroutes" },
 };
 
