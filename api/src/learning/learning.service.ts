@@ -18,7 +18,7 @@ export class LearningService {
     const [userRows, favoriteRows, sessionRows, subscriptionRows] = await Promise.all([
       this.query('SELECT "id", "email", "displayName", "role", "createdAt" FROM "User" WHERE "id" = $1', userId),
       this.query('SELECT f."id", f."createdAt", r."id" AS "routeId", r."slug", r."name", r."durationMin", c."slug" AS "centreSlug", c."name" AS "centreName", c."city", COUNT(rp."id")::int AS "pointCount" FROM "Favorite" f JOIN "Route" r ON r."id" = f."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE f."userId" = $1 GROUP BY f."id", r."id", c."id" ORDER BY f."createdAt" DESC LIMIT 6', userId),
-      this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
+      this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."overallFeeling", sr."difficultyCategories", sr."difficultyDetails", sr."instructorFeedback", sr."instructorCategories", sr."instructorNotes" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
       this.query('SELECT s."status", s."expiresAt", p."name" AS "planName" FROM "Subscription" s JOIN "Plan" p ON p."id" = s."planId" WHERE s."userId" = $1 AND s."status" = \'ACTIVE\' AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW()) ORDER BY s."createdAt" DESC LIMIT 1', userId),
     ]);
     if (!userRows[0]) throw new NotFoundException("User not found");
@@ -56,9 +56,9 @@ export class LearningService {
   async routeAssistant(userId: string, routeId: string) {
     const route = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName", rp."sequence", rp."title", rp."description", rp."warning", rp."category" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true ORDER BY rp."sequence"', routeId);
     if (!route[0]) throw new NotFoundException("Published route not found");
-    const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
+    const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."difficultyCategories", sr."difficultyDetails", sr."instructorCategories" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
     const reflection = reflections[0];
-    const focus = reflection?.flaggedSpeeding || (reflection?.speedCompliance ?? 5) <= 2 ? { skill: "Speed awareness", message: "Read the posted limit before each new section and settle at the limit early." } : reflection?.missedRightOfWay || (reflection?.rightOfWayConfidence ?? 5) <= 2 ? { skill: "Priority and right of way", message: "Approach junctions ready to yield; identify the priority sign before committing." } : (reflection?.roundaboutConfidence ?? 5) <= 2 ? { skill: "Roundabouts", message: "Choose your lane before entry, check mirrors and signal the exit early." } : { skill: "Calm consistency", message: "Keep the approved route, scan ahead and make each decision early and smoothly." };
+    const focus = this.focus(reflection);
     return { mode: "grounded-route-coach", route: { id: route[0].id, slug: route[0].slug, name: route[0].name, centreName: route[0].centreName }, focus, checklist: route.map((point) => ({ sequence: point.sequence, title: point.title, instruction: point.warning || point.description || `Prepare for ${point.category}.` })), safety: "This coach only summarizes published RoutePilot points and your reflection. It does not alter the official route or replace an instructor." };
   }
 
@@ -97,7 +97,7 @@ export class LearningService {
   async routeRecommendation(userId: string, routeId: string) {
     const selected = await this.query('SELECT r."id", r."centreId", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
     if (!selected[0]) throw new NotFoundException("Published route not found");
-    const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
+    const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."difficultyCategories", sr."difficultyDetails", sr."instructorCategories" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
     const reflection = reflections[0];
     const focus = this.focus(reflection);
     const candidates = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", rp."category", rp."warning", rp."description" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."centreId" = $1 AND r."id" <> $2 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true ORDER BY r."name", rp."sequence"', selected[0].centreId, routeId);
@@ -129,7 +129,7 @@ export class LearningService {
     const session = await this.query('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2', sessionId, userId);
     if (!session[0]) throw new NotFoundException("Practice session not found");
     const speedingObserved = dto.observedSpeedKph !== undefined && dto.speedLimitKph !== undefined && dto.observedSpeedKph > dto.speedLimitKph;
-    await this.prisma.$executeRawUnsafe('INSERT INTO "SelfReflection" ("id", "sessionId", "userId", "speedCompliance", "rightOfWayConfidence", "roundaboutConfidence", "laneChangeConfidence", "observedSpeedKph", "speedLimitKph", "flaggedSpeeding", "missedRightOfWay", "notes", "updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW()) ON CONFLICT ("sessionId") DO UPDATE SET "speedCompliance"=$4,"rightOfWayConfidence"=$5,"roundaboutConfidence"=$6,"laneChangeConfidence"=$7,"observedSpeedKph"=$8,"speedLimitKph"=$9,"flaggedSpeeding"=$10,"missedRightOfWay"=$11,"notes"=$12,"updatedAt"=NOW()', randomUUID(), sessionId, userId, dto.speedCompliance ?? null, dto.rightOfWayConfidence ?? null, dto.roundaboutConfidence ?? null, dto.laneChangeConfidence ?? null, dto.observedSpeedKph ?? null, dto.speedLimitKph ?? null, dto.flaggedSpeeding || speedingObserved, dto.missedRightOfWay ?? false, dto.notes ?? null);
+    await this.prisma.$executeRawUnsafe('INSERT INTO "SelfReflection" ("id", "sessionId", "userId", "speedCompliance", "rightOfWayConfidence", "roundaboutConfidence", "laneChangeConfidence", "observedSpeedKph", "speedLimitKph", "flaggedSpeeding", "missedRightOfWay", "overallFeeling", "difficultyCategories", "difficultyDetails", "instructorFeedback", "instructorCategories", "instructorNotes", "notes", "updatedAt") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14::jsonb,$15,$16,$17,$18,NOW()) ON CONFLICT ("sessionId") DO UPDATE SET "speedCompliance"=$4,"rightOfWayConfidence"=$5,"roundaboutConfidence"=$6,"laneChangeConfidence"=$7,"observedSpeedKph"=$8,"speedLimitKph"=$9,"flaggedSpeeding"=$10,"missedRightOfWay"=$11,"overallFeeling"=$12,"difficultyCategories"=$13,"difficultyDetails"=$14::jsonb,"instructorFeedback"=$15,"instructorCategories"=$16,"instructorNotes"=$17,"notes"=$18,"updatedAt"=NOW()', randomUUID(), sessionId, userId, dto.speedCompliance ?? null, dto.rightOfWayConfidence ?? null, dto.roundaboutConfidence ?? null, dto.laneChangeConfidence ?? null, dto.observedSpeedKph ?? null, dto.speedLimitKph ?? null, dto.flaggedSpeeding || speedingObserved, dto.missedRightOfWay ?? false, dto.overallFeeling ?? null, dto.difficultyCategories ?? [], JSON.stringify(dto.difficultyDetails ?? {}), dto.instructorFeedback ?? null, dto.instructorCategories ?? [], dto.instructorNotes ?? null, dto.notes ?? null);
     await this.recordWeaknesses(userId, sessionId, dto, speedingObserved);
     await this.audit(userId, "REFLECTION_SAVED", "PracticeSession", sessionId);
     return { success: true, sessionId, recommendations: this.recommendations(dto), coach: await this.driveCoach(userId) };
@@ -145,10 +145,23 @@ export class LearningService {
 
   private async recordWeaknesses(userId: string, sessionId: string, dto: CreateReflectionDto, speedingObserved: boolean) {
     const codes = new Set<string>();
+    const categories = new Set([...(dto.difficultyCategories ?? []), ...(dto.instructorCategories ?? [])]);
     if (speedingObserved || dto.flaggedSpeeding || (dto.speedCompliance ?? 5) <= 2) codes.add("SPEED_TOO_FAST_ZONE");
+    if (categories.has("speed")) codes.add("SPEED_TOO_FAST_ZONE");
     if (dto.missedRightOfWay || (dto.rightOfWayConfidence ?? 5) <= 2) codes.add("PRIORITY_RIGHT_UNCERTAIN");
+    if (categories.has("priority")) codes.add("PRIORITY_RIGHT_UNCERTAIN");
     if ((dto.roundaboutConfidence ?? 5) <= 2) codes.add("ROUNDABOUT_WRONG_LANE");
+    if (categories.has("roundabouts")) codes.add("ROUNDABOUT_WRONG_LANE");
     if ((dto.laneChangeConfidence ?? 5) <= 2) codes.add("LANE_CHANGE_MIRROR");
+    if (categories.has("lanes")) codes.add("LANE_CHANGE_MIRROR");
+    if (categories.has("junctions")) codes.add("JUNCTION_OBSERVATION");
+    if (categories.has("observation")) codes.add("OBS_MIRRORS");
+    if (categories.has("vulnerable")) codes.add("VULNERABLE_CYCLIST");
+    if (categories.has("merging")) codes.add("MERGING_SAFE_GAP");
+    if (categories.has("distance")) codes.add("SPACE_FOLLOWING_DISTANCE");
+    if (categories.has("control")) codes.add("CONTROL_SMOOTH_BRAKING");
+    if (categories.has("manoeuvres")) codes.add("MANOEUVRE_PARKING");
+    if (categories.has("signs")) codes.add("SIGNS_MISSED");
     const notes = (dto.notes ?? "").toLowerCase();
     if (notes.includes("cyclist") || notes.includes("fiets") || notes.includes("bike")) codes.add("OBS_CYCLIST");
     if (notes.includes("mirror") || notes.includes("spiegel")) codes.add("OBS_MIRRORS");
@@ -164,26 +177,40 @@ export class LearningService {
   }
 
   private sessionShape(row: Row) {
-    return { id: row.id, routeId: row.routeId, startedAt: row.startedAt, completedAt: row.completedAt, durationSec: row.durationSec, completionPct: row.completionPct, notes: row.notes, route: { slug: row.slug, name: row.name, centreName: row.centreName }, reflection: { speedCompliance: row.speedCompliance, rightOfWayConfidence: row.rightOfWayConfidence, roundaboutConfidence: row.roundaboutConfidence, laneChangeConfidence: row.laneChangeConfidence, observedSpeedKph: row.observedSpeedKph, speedLimitKph: row.speedLimitKph, flaggedSpeeding: row.flaggedSpeeding, missedRightOfWay: row.missedRightOfWay } };
+    return { id: row.id, routeId: row.routeId, startedAt: row.startedAt, completedAt: row.completedAt, durationSec: row.durationSec, completionPct: row.completionPct, notes: row.notes, route: { slug: row.slug, name: row.name, centreName: row.centreName }, reflection: { overallFeeling: row.overallFeeling, difficultyCategories: row.difficultyCategories ?? [], difficultyDetails: row.difficultyDetails ?? {}, instructorFeedback: row.instructorFeedback, instructorCategories: row.instructorCategories ?? [], instructorNotes: row.instructorNotes, speedCompliance: row.speedCompliance, rightOfWayConfidence: row.rightOfWayConfidence, roundaboutConfidence: row.roundaboutConfidence, laneChangeConfidence: row.laneChangeConfidence, observedSpeedKph: row.observedSpeedKph, speedLimitKph: row.speedLimitKph, flaggedSpeeding: row.flaggedSpeeding, missedRightOfWay: row.missedRightOfWay } };
   }
 
   private recommendations(reflection?: Row | null) {
     if (!reflection) return [{ skill: "Start with a reflection", message: "Complete your first practice session reflection to receive a personalized plan." }];
     const result: Array<{ skill: string; message: string }> = [];
+    const categories = new Set<string>(reflection.difficultyCategories ?? []);
     const measuredSpeeding = reflection.observedSpeedKph !== null && reflection.speedLimitKph !== null && reflection.observedSpeedKph > reflection.speedLimitKph;
     if (reflection.flaggedSpeeding || measuredSpeeding || (reflection.speedCompliance ?? 5) <= 2) result.push({ skill: "Speed awareness", message: measuredSpeeding ? `You recorded ${reflection.observedSpeedKph} km/h in a ${reflection.speedLimitKph} km/h zone. Repeat an approved route and settle at the posted limit early.` : "Repeat an approved route with speed zones and focus on reading signs early and holding the posted limit." });
     if (reflection.missedRightOfWay || (reflection.rightOfWayConfidence ?? 5) <= 2) result.push({ skill: "Priority and right of way", message: "Review priority signs and practise slowing before junctions until the order of traffic is clear." });
     if ((reflection.roundaboutConfidence ?? 5) <= 2) result.push({ skill: "Roundabouts", message: "Choose an approved route with roundabouts and review the lane and exit warnings before driving." });
     if ((reflection.laneChangeConfidence ?? 5) <= 2) result.push({ skill: "Lane changes", message: "Practise mirror, signal and blind-spot checks before changing position." });
+    if (categories.has("junctions")) result.push({ skill: "Junctions", message: "Repeat a route with junctions and practise scanning, positioning and approach speed early." });
+    if (categories.has("observation")) result.push({ skill: "Observation", message: "Build a consistent mirror, blind-spot and forward-scan routine before each decision." });
+    if (categories.has("vulnerable")) result.push({ skill: "Vulnerable road users", message: "Practise spotting cyclists and pedestrians early and leave them safe space." });
+    if (categories.has("merging")) result.push({ skill: "Merging and overtaking", message: "Choose a safe gap, check mirrors and blind spots, then merge smoothly." });
+    if (categories.has("distance")) result.push({ skill: "Distance and anticipation", message: "Look further ahead and create more time and space around changing traffic." });
+    if (categories.has("control")) result.push({ skill: "Vehicle control", message: "Repeat calm starts, braking and steering so each action stays smooth and deliberate." });
+    if (categories.has("manoeuvres")) result.push({ skill: "Manoeuvres", message: "Practise slow, controlled manoeuvres with all-round observation." });
     return result.length ? result : [{ skill: "Keep building consistency", message: "Your reflection looks positive. Try another approved route and aim for a complete, calm drive." }];
   }
 
   private focus(reflection?: Row | null) {
+    const categories = new Set<string>(reflection?.difficultyCategories ?? []);
     const measuredSpeeding = reflection?.observedSpeedKph !== null && reflection?.observedSpeedKph !== undefined && reflection?.speedLimitKph !== null && reflection?.speedLimitKph !== undefined && reflection.observedSpeedKph > reflection.speedLimitKph;
     if (reflection?.flaggedSpeeding || measuredSpeeding || (reflection?.speedCompliance ?? 5) <= 2) return { skill: "Speed awareness", message: measuredSpeeding ? `You recorded ${reflection.observedSpeedKph} km/h in a ${reflection.speedLimitKph} km/h zone. Read the next limit early and settle before the sign.` : "Read the posted limit before each new section and settle at the limit early.", keywords: ["speed", "zone", "limit"] };
     if (reflection?.missedRightOfWay || (reflection?.rightOfWayConfidence ?? 5) <= 2) return { skill: "Priority and right of way", message: "Approach junctions ready to yield; identify the priority sign before committing.", keywords: ["priority", "yield", "right", "junction"] };
     if ((reflection?.roundaboutConfidence ?? 5) <= 2) return { skill: "Roundabouts", message: "Choose your lane before entry, check mirrors and signal the exit early.", keywords: ["roundabout", "lane", "exit"] };
     if ((reflection?.laneChangeConfidence ?? 5) <= 2) return { skill: "Lane changes", message: "Practise mirror, signal and blind-spot checks before changing position.", keywords: ["lane", "change", "mirror"] };
+    if (categories.has("junctions")) return { skill: "Junctions", message: "Scan early, choose your position and settle your speed before each junction.", keywords: ["junction", "intersection", "priority"] };
+    if (categories.has("observation")) return { skill: "Observation", message: "Use a consistent mirror, blind-spot and forward-scanning routine.", keywords: ["mirror", "observation", "blind"] };
+    if (categories.has("vulnerable")) return { skill: "Vulnerable road users", message: "Scan early for cyclists and pedestrians and leave them safe space.", keywords: ["cyclist", "pedestrian", "vulnerable"] };
+    if (categories.has("merging")) return { skill: "Merging and overtaking", message: "Check mirrors, find a safe gap and merge smoothly.", keywords: ["merge", "merging", "gap"] };
+    if (categories.has("distance")) return { skill: "Distance and anticipation", message: "Look further ahead and create time and space around changing traffic.", keywords: ["distance", "space", "ahead"] };
     return { skill: "Calm consistency", message: "Keep the approved route, scan ahead and make each decision early and smoothly.", keywords: ["start", "junction", "lane"] };
   }
 
