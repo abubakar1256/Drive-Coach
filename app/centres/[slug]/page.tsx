@@ -18,7 +18,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const fallback = getCentre(params.slug);
-  const apiCentre = fallback ? null : await getCentreBySlug(params.slug);
+  const apiCentre = await getCentreBySlug(params.slug);
   const name = fallback?.name ?? apiCentre?.name ?? "Driving test centre";
   const description = fallback?.description ?? apiCentre?.description ?? `Explore practice routes and key driving points around ${name}.`;
   return { title: `${name} Driving Test Routes | Drive Coach`, description, alternates: { canonical: `/centres/${params.slug}` }, openGraph: { title: `${name} Driving Test Routes`, description, url: `/centres/${params.slug}` } };
@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function CentrePage({ params }: { params: { slug: string } }) {
   const staticCentre = getCentre(params.slug);
-  const apiCentre = staticCentre ? null : await getCentreBySlug(params.slug);
-  const centre = staticCentre ?? (apiCentre ? apiCentreToCentre(apiCentre) : null);
+  const apiCentre = await getCentreBySlug(params.slug);
+  const centre = apiCentre ? apiCentreToCentre(apiCentre, staticCentre ?? centres[0]) : staticCentre ?? null;
   if (!centre) notFound();
 
   const availableRoutes = apiCentre?.routes?.length ? apiCentre.routes : [

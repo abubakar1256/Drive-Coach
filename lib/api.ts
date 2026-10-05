@@ -64,7 +64,10 @@ export type ApiCentreSummary = {
 // Server Components must call the deployed API directly. In production on Railway,
 // API_SERVER_URL points to the API service; in the browser, client components use
 // the same-origin /api/v1 rewrite configured in next.config.mjs.
-const configuredApiUrl = process.env.API_SERVER_URL ?? process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+const defaultApiUrl = process.env.NODE_ENV === "production"
+  ? "https://courageous-embrace-production.up.railway.app"
+  : "http://localhost:4000";
+const configuredApiUrl = process.env.API_SERVER_URL ?? process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl;
 const apiBaseUrl = configuredApiUrl
   ? `${configuredApiUrl.replace(/\/$/, "")}${configuredApiUrl.endsWith("/api/v1") ? "" : "/api/v1"}`
   : "http://localhost:4000/api/v1";
