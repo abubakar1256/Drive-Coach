@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, type MouseEvent } from "react";
 import mapboxgl from "mapbox-gl";
+import { useCurrentLocale } from "../../lib/useLocale";
 
 type Point = { id: string; sequence: number; title: string; latitude: number; longitude: number };
 type Route = { centre: { latitude: number | null; longitude: number | null } };
 
 export default function AdminRouteMap({ route, points, onMove, onAdd }: { route: Route; points: Point[]; onMove: (id: string, latitude: number, longitude: number) => void; onAdd?: (latitude: number, longitude: number) => void }) {
+  const nl = useCurrentLocale() === "nl";
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -32,20 +34,20 @@ export default function AdminRouteMap({ route, points, onMove, onAdd }: { route:
       element.type = "button";
       element.className = "admin-map-marker";
       element.textContent = String(point.sequence).padStart(2, "0");
-      element.title = `Drag ${point.title}`;
+      element.title = nl ? `${point.title} slepen` : `Drag ${point.title}`;
       return new mapboxgl.Marker({ element, draggable: true }).setLngLat([point.longitude, point.latitude]).on("dragend", (event) => {
         const coordinates = event.target.getLngLat();
         onMove(point.id, coordinates.lat, coordinates.lng);
       }).addTo(map);
     });
     return () => { markersRef.current.forEach((marker) => marker.remove()); markersRef.current = []; map.remove(); mapRef.current = null; };
-  }, [token, route, points, onMove, onAdd]);
+  }, [token, route, points, onMove, onAdd, nl]);
 
-  if (!token) return <FallbackMap route={route} points={points} onAdd={onAdd} />;
-  return <div className="admin-map-shell"><div ref={containerRef} className="admin-map-container" /><div className="admin-map-help">Click to add a point · drag a marker to move it</div></div>;
+  if (!token) return <FallbackMap route={route} points={points} onAdd={onAdd} nl={nl} />;
+  return <div className="admin-map-shell"><div ref={containerRef} className="admin-map-container" /><div className="admin-map-help">{nl ? "Klik om een punt toe te voegen · sleep een marker om die te verplaatsen" : "Click to add a point · drag a marker to move it"}</div></div>;
 }
 
-function FallbackMap({ route, points, onAdd }: { route: Route; points: Point[]; onAdd?: (latitude: number, longitude: number) => void }) {
+function FallbackMap({ route, points, onAdd, nl }: { route: Route; points: Point[]; onAdd?: (latitude: number, longitude: number) => void; nl: boolean }) {
   const centreLatitude = route.centre.latitude ?? points[0]?.latitude ?? 50.8382;
   const centreLongitude = route.centre.longitude ?? points[0]?.longitude ?? 4.3047;
   function handleClick(event: MouseEvent<HTMLDivElement>) {
@@ -55,5 +57,5 @@ function FallbackMap({ route, points, onAdd }: { route: Route; points: Point[]; 
     const y = (event.clientY - bounds.top) / bounds.height;
     onAdd(centreLatitude + (0.5 - y) * 0.04, centreLongitude + (x - 0.5) * 0.06);
   }
-  return <div className="admin-map-fallback admin-map-fallback-clickable" onClick={handleClick} role="button" tabIndex={0} aria-label="Click to add a route point"><div className="admin-map-fallback-grid" /><div><span className="small-label">MAPBOX TOKEN REQUIRED</span><strong>Coordinate editor is ready</strong><p>Click this map area to add coordinates. Add `NEXT_PUBLIC_MAPBOX_TOKEN` for real tiles and draggable markers.</p></div></div>;
+  return <div className="admin-map-fallback admin-map-fallback-clickable" onClick={handleClick} role="button" tabIndex={0} aria-label={nl ? "Klik om een routepunt toe te voegen" : "Click to add a route point"}><div className="admin-map-fallback-grid" /><div><span className="small-label">{nl ? "MAPBOX-TOKEN VEREIST" : "MAPBOX TOKEN REQUIRED"}</span><strong>{nl ? "Coördinateneditor is klaar" : "Coordinate editor is ready"}</strong><p>{nl ? "Klik op dit kaartgebied om coördinaten toe te voegen. Voeg NEXT_PUBLIC_MAPBOX_TOKEN toe voor echte tegels en versleepbare markers." : "Click this map area to add coordinates. Add `NEXT_PUBLIC_MAPBOX_TOKEN` for real tiles and draggable markers."}</p></div></div>;
 }

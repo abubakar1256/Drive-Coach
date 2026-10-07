@@ -4,18 +4,21 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import AccountNavLink from "../AccountNavLink";
 import LocalizedNavLinks, { LocalizedNavText } from "../LocalizedNavLinks";
 import SiteFooter from "../SiteFooter";
+import { getServerLocale } from "../../lib/serverLocale";
+import { siteCopy } from "../../lib/siteCopy";
 
 export default function DashboardPage() {
+  const copy = siteCopy[getServerLocale()].dashboard;
   return (
     <main className="dashboard-page">
       <nav className="nav shell inner-nav">
         <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link>
         <LocalizedNavLinks items={[{ href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }, { href: "/account", label: "account" }]} />
         <div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/centres"><LocalizedNavText item="findRoute" /> <span>↗</span></Link></div>
-        <button className="menu-button" aria-label="Open navigation menu">☰</button>
+        <button className="menu-button" aria-label={copy.title}>☰</button>
       </nav>
       <section className="shell dashboard-shell">
-        <div className="dashboard-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> Your preparation space</p><h1>Keep moving<br /><em>with confidence.</em></h1><p>Track the routes you have practised and focus on the skills that need another calm repetition.</p></div><Link className="button" href="/centres">Explore routes <span>↗</span></Link></div>
+        <div className="dashboard-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.eyebrow}</p><h1>{copy.title}<br /><em>{copy.accent}</em></h1><p>{copy.description}</p></div><Link className="button" href="/centres">{copy.explore} <span>↗</span></Link></div>
         <DashboardPanel />
       </section>
       <SiteFooter />

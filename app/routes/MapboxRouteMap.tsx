@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import type { Centre } from "../../lib/data";
+import { useCurrentLocale } from "../../lib/useLocale";
 
 type Coordinate = [number, number];
 type Props = {
@@ -15,6 +16,8 @@ type Props = {
 };
 
 export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePosition, liveTrack, tracking }: Props) {
+  const locale = useCurrentLocale();
+  const nl = locale === "nl";
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -48,7 +51,7 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       const markerElement = document.createElement("button");
       markerElement.type = "button";
       markerElement.className = `mapbox-point-marker ${index === selectedIndex ? "is-active" : ""}`;
-      markerElement.setAttribute("aria-label", `Select route point ${index + 1}`);
+      markerElement.setAttribute("aria-label", nl ? `Selecteer routepunt ${index + 1}` : `Select route point ${index + 1}`);
       markerElement.addEventListener("click", () => onSelect(index));
       return new mapboxgl.Marker({ element: markerElement }).setLngLat(coordinate).addTo(map);
     });
@@ -60,7 +63,7 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       map.remove();
       mapRef.current = null;
     };
-  }, [centre, onSelect]);
+  }, [centre, onSelect, nl]);
 
   useEffect(() => {
     markersRef.current.forEach((marker, index) => marker.getElement().classList.toggle("is-active", index === selectedIndex));
@@ -83,13 +86,13 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
     if (!liveMarkerRef.current) {
       const markerElement = document.createElement("div");
       markerElement.className = "mapbox-live-marker";
-      markerElement.setAttribute("aria-label", "Your live practice position");
+      markerElement.setAttribute("aria-label", nl ? "Je live oefenpositie" : "Your live practice position");
       liveMarkerRef.current = new mapboxgl.Marker({ element: markerElement }).setLngLat(livePosition).addTo(map);
     } else {
       liveMarkerRef.current.setLngLat(livePosition);
     }
     liveMarkerRef.current.getElement().classList.toggle("is-tracking", tracking);
-  }, [livePosition, tracking]);
+  }, [livePosition, tracking, nl]);
 
-  return <div className="mapbox-shell"><div ref={containerRef} className="mapbox-container" /><div className="mapbox-helper"><span><i className={tracking ? "is-live" : ""} /> {tracking ? "Live practice GPS" : "Live map layer"}</span><small>{tracking ? "Your position and track appear here" : "Click a marker to inspect a point"}</small></div></div>;
+  return <div className="mapbox-shell"><div ref={containerRef} className="mapbox-container" /><div className="mapbox-helper"><span><i className={tracking ? "is-live" : ""} /> {tracking ? (nl ? "Live oefen-GPS" : "Live practice GPS") : (nl ? "Live kaartlaag" : "Live map layer")}</span><small>{tracking ? (nl ? "Je positie en spoor verschijnen hier" : "Your position and track appear here") : (nl ? "Klik op een punt voor details" : "Click a marker to inspect a point")}</small></div></div>;
 }

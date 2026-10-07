@@ -1,21 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { useSiteCopy } from "../lib/useLocale";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
-
-const welcomeMessage: ChatMessage = {
-  role: "assistant",
-  content: "Hi, I’m Drive Coach AI. Ask me about your route, roundabouts, observation, speed or how to prepare for test day.",
-};
-
-const quickPrompts = [
-  "How should I prepare for my test?",
-  "What should I watch for at roundabouts?",
-  "How can I improve my observation?",
-];
 
 function getPageContext() {
   if (typeof window === "undefined") return {};
@@ -26,10 +16,11 @@ function getPageContext() {
 }
 
 export default function AIChatbot() {
+  const copy = useSiteCopy();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([welcomeMessage]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ role: "assistant", content: copy.chatbot.welcome }]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +37,10 @@ export default function AIChatbot() {
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    setMessages((current) => current.length === 1 && current[0].role === "assistant" ? [{ role: "assistant", content: copy.chatbot.welcome }] : current);
+  }, [copy.chatbot.welcome]);
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -64,10 +59,10 @@ export default function AIChatbot() {
         body: JSON.stringify({ messages: nextMessages, context: getPageContext() }),
       });
       const payload = (await response.json().catch(() => ({}))) as { message?: string };
-      if (!response.ok) throw new Error(payload.message || "The AI coach is temporarily unavailable.");
-      setMessages((current) => [...current, { role: "assistant", content: payload.message || "I’m sorry, I could not answer that just now." }]);
+      if (!response.ok) throw new Error(payload.message || copy.chatbot.temporaryUnavailable);
+      setMessages((current) => [...current, { role: "assistant", content: payload.message || copy.chatbot.emptyAnswer }]);
     } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : "The AI coach is temporarily unavailable." }]);
+      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : copy.chatbot.temporaryUnavailable }]);
     } finally {
       setLoading(false);
     }
@@ -78,19 +73,19 @@ export default function AIChatbot() {
       {open && (
         <section className="ai-chat-panel" role="dialog" aria-modal="false" aria-label="Drive Coach AI chat">
           <header className="ai-chat-header">
-            <div className="ai-chat-title"><span className="ai-chat-avatar">✦</span><div><strong>Drive Coach AI</strong><span><i /> Route-aware practice coach</span></div></div>
-            <button className="ai-chat-close" type="button" onClick={() => setOpen(false)} aria-label="Close AI chat">×</button>
+            <div className="ai-chat-title"><span className="ai-chat-avatar">✦</span><div><strong>Drive Coach AI</strong><span><i /> {copy.chatbot.routeAware}</span></div></div>
+            <button className="ai-chat-close" type="button" onClick={() => setOpen(false)} aria-label={copy.chatbot.close}>×</button>
           </header>
           <div className="ai-chat-messages" ref={messagesRef} aria-live="polite">
             {messages.map((message, index) => <div className={`ai-chat-message ai-chat-message-${message.role}`} key={`${message.role}-${index}`}><span>{message.content}</span></div>)}
-            {messages.length === 1 && <div className="ai-chat-quick"><small>Try asking</small>{quickPrompts.map((prompt) => <button type="button" key={prompt} onClick={() => setDraft(prompt)}>{prompt}</button>)}</div>}
+            {messages.length === 1 && <div className="ai-chat-quick"><small>{copy.chatbot.quickLabel}</small>{copy.chatbot.quickPrompts.map((prompt) => <button type="button" key={prompt} onClick={() => setDraft(prompt)}>{prompt}</button>)}</div>}
             {loading && <div className="ai-chat-message ai-chat-message-assistant ai-chat-typing"><span><i /><i /><i /></span></div>}
           </div>
-          <form className="ai-chat-form" onSubmit={sendMessage}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Ask about your driving practice..." rows={2} maxLength={1200} aria-label="Message Drive Coach AI" onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" disabled={loading || !draft.trim()} aria-label="Send message">↗</button></form>
-          <p className="ai-chat-disclaimer">AI guidance is for practice preparation. Always follow your instructor and local road rules.</p>
+          <form className="ai-chat-form" onSubmit={sendMessage}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={copy.chatbot.placeholder} rows={2} maxLength={1200} aria-label={copy.chatbot.messageLabel} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" disabled={loading || !draft.trim()} aria-label="Send message">↗</button></form>
+          <p className="ai-chat-disclaimer">{copy.chatbot.disclaimer}</p>
         </section>
       )}
-      <button className="ai-chat-launcher" type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} aria-label={open ? "Close Drive Coach AI" : "Open Drive Coach AI"}><span className="ai-chat-launcher-icon">{open ? "×" : "✦"}</span>{!open && <span>Ask Drive Coach AI</span>}</button>
+      <button className="ai-chat-launcher" type="button" onClick={() => setOpen((current) => !current)} aria-expanded={open} aria-label={open ? copy.chatbot.close : copy.chatbot.open}><span className="ai-chat-launcher-icon">{open ? "×" : "✦"}</span>{!open && <span>{copy.chatbot.open}</span>}</button>
     </div>
   );
 }

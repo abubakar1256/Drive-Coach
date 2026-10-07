@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { RoutePoint } from "../../lib/data";
+import { useCurrentLocale } from "../../lib/useLocale";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 type Mode = "LIGHT" | "COACH" | "INTENSIVE";
@@ -15,6 +16,8 @@ function distanceM(aLat: number, aLng: number, bLat: number, bLng: number) {
 }
 
 export default function DriveCoachVoice({ routePoints, sessionId }: { routePoints: RoutePoint[]; sessionId?: string | null }) {
+  const locale = useCurrentLocale();
+  const nl = locale === "nl";
   const [mode, setMode] = useState<Mode>("COACH");
   const [enabled, setEnabled] = useState(false);
   const [status, setStatus] = useState("Voice guidance is off");
@@ -24,7 +27,7 @@ export default function DriveCoachVoice({ routePoints, sessionId }: { routePoint
     if (!enabled) return;
     const token = window.sessionStorage.getItem("routepilot.accessToken");
     if (!token || !navigator.geolocation || usablePoints.length === 0) {
-      setStatus("Start a saved route with location permission to use voice guidance.");
+      setStatus(nl ? "Start een opgeslagen route met locatietoestemming voor gesproken begeleiding." : "Start a saved route with location permission to use voice guidance.");
       setEnabled(false);
       return;
     }
@@ -37,21 +40,20 @@ export default function DriveCoachVoice({ routePoints, sessionId }: { routePoint
       void fetch(`${API}/me/drive-coach/trigger?${params.toString()}`, { headers: { Authorization: `Bearer ${token}` } }).then((response) => response.json()).then((payload) => {
         delivered.add(nearest.point.id!);
         if (!payload.speak || !payload.tip?.voiceTextEn) return;
-        const locale = window.localStorage.getItem("routepilot.locale");
-        const message = locale === "nl" && payload.tip.voiceTextNl ? payload.tip.voiceTextNl : payload.tip.voiceTextEn;
+        const message = nl && payload.tip.voiceTextNl ? payload.tip.voiceTextNl : payload.tip.voiceTextEn;
         setStatus(`${payload.tip.skillName}: ${message}`);
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(message);
-          utterance.lang = locale === "nl" ? "nl-BE" : "en-GB";
+          utterance.lang = nl ? "nl-BE" : "en-GB";
           utterance.rate = 0.88;
           window.speechSynthesis.speak(utterance);
         }
-      }).catch(() => setStatus("Voice reminder unavailable; continue with the route checklist."));
-    }, () => setStatus("Location permission was not granted."), { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
-    setStatus(`Hands-free ${mode.toLowerCase()} mode ready for ${usablePoints.length} verified points.`);
+      }).catch(() => setStatus(nl ? "Gesproken herinnering niet beschikbaar; ga verder met de routechecklist." : "Voice reminder unavailable; continue with the route checklist."));
+    }, () => setStatus(nl ? "Locatietoestemming is niet gegeven." : "Location permission was not granted."), { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+    setStatus(nl ? `Handsfree ${mode.toLowerCase()}-modus klaar voor ${usablePoints.length} geverifieerde punten.` : `Hands-free ${mode.toLowerCase()} mode ready for ${usablePoints.length} verified points.`);
     return () => { navigator.geolocation.clearWatch(watchId); if ("speechSynthesis" in window) window.speechSynthesis.cancel(); };
-  }, [enabled, mode, sessionId, usablePoints]);
+  }, [enabled, mode, sessionId, usablePoints, nl]);
 
-  return <div className="voice-guidance-card"><div><span className="small-label">DRIVE COACH VOICE</span><strong>Hands-free reminders</strong></div><label>Mode<select value={mode} onChange={(event) => setMode(event.target.value as Mode)} disabled={enabled}><option value="LIGHT">Light</option><option value="COACH">Coach</option><option value="INTENSIVE">Intensive</option></select></label><button className={enabled ? "is-active" : ""} onClick={() => setEnabled((value) => !value)}>{enabled ? "Stop voice guidance" : "Enable voice guidance"}</button><small>{status}</small></div>;
+  return <div className="voice-guidance-card"><div><span className="small-label">DRIVE COACH VOICE</span><strong>{nl ? "Handsfree herinneringen" : "Hands-free reminders"}</strong></div><label>{nl ? "Modus" : "Mode"}<select value={mode} onChange={(event) => setMode(event.target.value as Mode)} disabled={enabled}><option value="LIGHT">{nl ? "Licht" : "Light"}</option><option value="COACH">Coach</option><option value="INTENSIVE">{nl ? "Intensief" : "Intensive"}</option></select></label><button className={enabled ? "is-active" : ""} onClick={() => setEnabled((value) => !value)}>{enabled ? (nl ? "Gesproken begeleiding stoppen" : "Stop voice guidance") : (nl ? "Gesproken begeleiding inschakelen" : "Enable voice guidance")}</button><small>{status}</small></div>;
 }
