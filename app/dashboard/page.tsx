@@ -3,6 +3,7 @@ import DashboardPanel from "./DashboardPanel";
 import LanguageSwitcher from "../LanguageSwitcher";
 import AccountNavLink from "../AccountNavLink";
 import LocalizedNavLinks, { LocalizedNavText } from "../LocalizedNavLinks";
+import SiteFooter from "../SiteFooter";
 
 export default function DashboardPage() {
   return (
@@ -17,6 +18,7 @@ export default function DashboardPage() {
         <div className="dashboard-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> Your preparation space</p><h1>Keep moving<br /><em>with confidence.</em></h1><p>Track the routes you have practised and focus on the skills that need another calm repetition.</p></div><Link className="button" href="/centres">Explore routes <span>↗</span></Link></div>
         <DashboardPanel />
       </section>
+      <SiteFooter />
     </main>
   );
 }

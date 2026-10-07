@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AdminRouteEditor from "./AdminRouteEditor";
 import AdminReports from "./AdminReports";
+import SiteFooter from "../SiteFooter";
 
 export default function AdminPage() {
   return (
@@ -14,6 +15,7 @@ export default function AdminPage() {
         <AdminRouteEditor />
         <AdminReports />
       </section>
+      <SiteFooter />
     </main>
   );
 }

@@ -6,6 +6,7 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import MobileMenu from "../MobileMenu";
 import DirectoryHero from "./DirectoryHero";
 import LocalizedNavLinks, { LocalizedNavText } from "../LocalizedNavLinks";
+import SiteFooter from "../SiteFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,7 @@ export default async function CentresPage() {
       <DirectoryHero count={listedCentres.length} />
 
       <section className="directory-content shell"><CentreDirectory centres={listedCentres} /></section>
+      <SiteFooter />
     </main>
   );
 }
