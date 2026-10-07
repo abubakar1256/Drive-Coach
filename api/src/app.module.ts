@@ -12,6 +12,7 @@ import { NotificationsModule } from "./notifications/notifications.module";
 import { B2bModule } from "./b2b/b2b.module";
 import { ReferralsModule } from "./referrals/referrals.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
+import { AiChatModule } from "./ai-chat/ai-chat.module";
 
-@Module({ controllers: [HealthController], imports: [PrismaModule, ExamCentresModule, RoutesModule, AuthModule, AdminModule, LearningModule, BillingModule, MediaModule, NotificationsModule, B2bModule, ReferralsModule, AnalyticsModule] })
+@Module({ controllers: [HealthController], imports: [PrismaModule, ExamCentresModule, RoutesModule, AuthModule, AdminModule, LearningModule, BillingModule, MediaModule, NotificationsModule, B2bModule, ReferralsModule, AnalyticsModule, AiChatModule] })
 export class AppModule {}
