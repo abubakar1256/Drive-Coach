@@ -1,9 +1,14 @@
 import { HttpException, HttpStatus, Injectable, Logger, ServiceUnavailableException } from "@nestjs/common";
 import { AiChatDto } from "./dto/ai-chat.dto";
 
-type OpenAiOutputBlock = { type?: unknown; text?: unknown };
-type OpenAiOutputItem = { content?: unknown };
-type OpenAiResponse = { output_text?: unknown; output?: unknown; error?: { message?: unknown } };
+type GeminiResponse = {
+  candidates?: Array<{
+    content?: {
+      parts?: Array<{ text?: unknown }>;
+    };
+  }>;
+  error?: { message?: unknown };
+};
 
 @Injectable()
 export class AiChatService {
@@ -12,7 +17,7 @@ export class AiChatService {
 
   async answer(dto: AiChatDto, clientId: string) {
     this.enforceRateLimit(clientId);
-    const apiKey = process.env.OPENAI_API_KEY?.trim();
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
     if (!apiKey) {
       throw new ServiceUnavailableException("The AI coach is not configured yet.");
     }
@@ -32,26 +37,28 @@ export class AiChatService {
       context ? `Current page context:\n${context}` : "No specific route context is available.",
     ].join("\n\n");
 
-    const input = dto.messages
-      .slice(-12)
-      .map((message) => ({ role: message.role, content: message.content.trim().slice(0, 4000) }));
+    const contents = dto.messages.slice(-12).map((message) => ({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: message.content.trim().slice(0, 4000) }],
+    }));
 
     try {
-      const response = await fetch("https://api.openai.com/v1/responses", {
+      const model = process.env.GEMINI_MODEL?.trim() || "gemini-3-flash-preview";
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const response = await fetch(endpoint, {
         method: "POST",
-        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: process.env.OPENAI_MODEL?.trim() || "gpt-6-astra",
-          store: false,
-          max_output_tokens: 450,
-          input: [{ role: "developer", content: developerPrompt }, ...input],
+          system_instruction: { parts: [{ text: developerPrompt }] },
+          contents,
+          generationConfig: { maxOutputTokens: 450 },
         }),
       });
 
-      const payload = (await response.json().catch(() => ({}))) as OpenAiResponse;
+      const payload = (await response.json().catch(() => ({}))) as GeminiResponse;
       if (!response.ok) {
         const providerMessage = typeof payload.error?.message === "string" ? payload.error.message : "provider error";
-        this.logger.error(`OpenAI request failed (${response.status}): ${providerMessage}`);
+        this.logger.error(`Gemini request failed (${response.status}): ${providerMessage}`);
         throw new ServiceUnavailableException("The AI coach is temporarily unavailable.");
       }
 
@@ -60,22 +67,15 @@ export class AiChatService {
       return { message };
     } catch (error) {
       if (error instanceof ServiceUnavailableException) throw error;
-      this.logger.error(error instanceof Error ? error.message : "Unknown OpenAI request error");
+      this.logger.error(error instanceof Error ? error.message : "Unknown Gemini request error");
       throw new ServiceUnavailableException("The AI coach is temporarily unavailable.");
     }
   }
 
-  private extractText(payload: OpenAiResponse) {
-    if (typeof payload.output_text === "string") return payload.output_text;
-    if (!Array.isArray(payload.output)) return "";
-
-    return payload.output
-      .flatMap((item) => {
-        if (!item || typeof item !== "object") return [];
-        const content = (item as OpenAiOutputItem).content;
-        return Array.isArray(content) ? content : [];
-      })
-      .map((block) => (block && typeof block === "object" ? (block as OpenAiOutputBlock).text : ""))
+  private extractText(payload: GeminiResponse) {
+    return (payload.candidates ?? [])
+      .flatMap((candidate) => candidate.content?.parts ?? [])
+      .map((part) => part.text)
       .filter((text): text is string => typeof text === "string")
       .join("\n");
   }
