@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import type { Centre } from "../../lib/data";
 import { useCurrentLocale } from "../../lib/useLocale";
@@ -22,11 +22,13 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const liveMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token || !containerRef.current) return;
 
+    setMapReady(false);
     mapboxgl.accessToken = token;
     const coordinates = centre.routeCoordinates;
     const map = new mapboxgl.Map({
@@ -45,6 +47,7 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       map.addLayer({ id: "practice-track-line", type: "line", source: "practice-track", paint: { "line-color": "#ef8069", "line-width": 5, "line-opacity": 0.95, "line-dasharray": [1, 1.2] } });
       const bounds = coordinates.reduce((bounds, coordinate) => bounds.extend(coordinate as [number, number]), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
       map.fitBounds(bounds, { padding: 70, duration: 0 });
+      setMapReady(true);
     });
 
     markersRef.current = coordinates.slice(0, centre.routePoints.length).map((coordinate, index) => {
@@ -57,6 +60,7 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
     });
 
     return () => {
+      setMapReady(false);
       markersRef.current.forEach((marker) => marker.remove());
       liveMarkerRef.current?.remove();
       liveMarkerRef.current = null;
@@ -78,11 +82,11 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       type: "FeatureCollection",
       features: liveTrack.length > 1 ? [{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: liveTrack } }] : [],
     });
-  }, [liveTrack]);
+  }, [liveTrack, mapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !livePosition) return;
+    if (!map || !mapReady || !livePosition) return;
     if (!liveMarkerRef.current) {
       const markerElement = document.createElement("div");
       markerElement.className = "mapbox-live-marker";
@@ -92,7 +96,8 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       liveMarkerRef.current.setLngLat(livePosition);
     }
     liveMarkerRef.current.getElement().classList.toggle("is-tracking", tracking);
-  }, [livePosition, tracking, nl]);
+    if (tracking) map.easeTo({ center: livePosition, duration: 650, essential: true });
+  }, [livePosition, tracking, nl, mapReady]);
 
   return <div className="mapbox-shell"><div ref={containerRef} className="mapbox-container" /><div className="mapbox-helper"><span><i className={tracking ? "is-live" : ""} /> {tracking ? (nl ? "Live oefen-GPS" : "Live practice GPS") : (nl ? "Live kaartlaag" : "Live map layer")}</span><small>{tracking ? (nl ? "Je positie en spoor verschijnen hier" : "Your position and track appear here") : (nl ? "Klik op een punt voor details" : "Click a marker to inspect a point")}</small></div></div>;
 }
