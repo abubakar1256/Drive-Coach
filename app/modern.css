@@ -237,6 +237,37 @@ body { background: radial-gradient(circle at 12% -8%, #e9f5eb 0, transparent 31r
   .admin-editor { padding: 20px 16px; }
 }
 
+/* Homepage centre carousel and premium surface polish */
+.centre-section .centre-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.centre-carousel-toolbar { display: flex; align-items: center; justify-content: space-between; min-height: 42px; margin: 4px 0 14px; color: #83958a; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.centre-carousel-toolbar > div { display: flex; gap: 8px; }
+.centre-carousel-button { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #d5e5d8; border-radius: 50%; color: var(--deep-green); background: rgba(255,255,255,.82); font-size: 17px; cursor: pointer; transition: transform .2s, background .2s, opacity .2s; }
+.centre-carousel-button:hover:not(:disabled) { transform: translateY(-2px); background: #e9f7eb; }
+.centre-carousel-button:disabled { cursor: not-allowed; opacity: .38; }
+.stats-section { margin-top: -14px; padding: 32px 0 38px; border-radius: 0 0 28px 28px; background: linear-gradient(135deg, #0d6852, #16785d); box-shadow: 0 18px 38px rgba(13,104,82,.13); }
+.stats-grid > div { padding: 22px 25px; }
+.pricing-section { border-radius: 28px; margin: 18px 0; box-shadow: 0 20px 55px rgba(24,83,55,.08); }
+.plans-grid .plan-card { border: 1px solid rgba(205,225,209,.9); border-radius: 24px; box-shadow: 0 18px 42px rgba(22,73,47,.08); }
+.plans-grid .plan-card-featured { border: 2px solid var(--deep-green); transform: translateY(-8px); box-shadow: 0 24px 58px rgba(15,106,83,.16); }
+.plans-grid .plan-card:hover { transform: translateY(-5px); box-shadow: 0 25px 65px rgba(15,106,83,.15); }
+.plans-grid .plan-card-featured:hover { transform: translateY(-12px); }
+.account-card { border-color: rgba(205,225,209,.9); }
+.subscription-card { background: linear-gradient(145deg, #0d6b53, #168168); box-shadow: 0 20px 45px rgba(13,104,82,.17); }
+
+@media (max-width: 900px) {
+  .centre-section .centre-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plans-grid .plan-card-featured { transform: none; }
+  .plans-grid .plan-card-featured:hover { transform: translateY(-5px); }
+}
+
+@media (max-width: 600px) {
+  .centre-section .centre-grid { grid-template-columns: 1fr; }
+  .centre-carousel-toolbar { margin-top: 0; }
+  .stats-section { margin-top: -8px; padding: 24px 0 27px; border-radius: 0 0 22px 22px; }
+  .stats-grid > div { padding: 16px 12px; }
+  .pricing-section { margin: 10px 0; border-radius: 22px; }
+}
+
 /* Drive Coach AI assistant */
 .ai-chat { position: fixed; right: 24px; bottom: 24px; z-index: 1200; font-family: 'DM Sans', sans-serif; }
 .ai-chat-open .ai-chat-launcher { display: none; }

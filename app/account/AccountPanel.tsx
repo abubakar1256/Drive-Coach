@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocaleMessages } from "../../lib/useLocale";
 import { useCurrentLocale, useSiteCopy } from "../../lib/useLocale";
+import { authFetch, loginRedirectPath, SessionExpiredError } from "../../lib/clientSession";
 
 type Account = { email: string; displayName: string | null; role: string; createdAt: string; emailVerified?: boolean; subscription: { status: string; planName: string; expiresAt: string | null } };
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
@@ -24,12 +25,15 @@ export default function AccountPanel() {
     const token = window.sessionStorage.getItem("routepilot.accessToken");
     if (!token) { router.replace("/auth/login"); return; }
     try {
-      const response = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await authFetch(`${API}/auth/me`);
       const payload = await response.json().catch(() => null);
       if (!response.ok) throw new Error(locale === "nl" ? "Je sessie is verlopen. Log opnieuw in." : "Your session has expired. Please log in again.");
       setAccount(payload as Account);
       window.sessionStorage.setItem("routepilot.user", JSON.stringify(payload));
-    } catch (caught) { setError(caught instanceof Error ? caught.message : locale === "nl" ? "Je account kon niet worden geladen." : "Unable to load your account"); }
+    } catch (caught) {
+      if (caught instanceof SessionExpiredError) { router.replace(loginRedirectPath()); return; }
+      setError(caught instanceof Error ? caught.message : locale === "nl" ? "Je account kon niet worden geladen." : "Unable to load your account");
+    }
     finally { setLoading(false); }
   }
 
@@ -39,13 +43,15 @@ export default function AccountPanel() {
     event.preventDefault(); setError(""); setSuccess("");
     if (passwords.newPassword !== passwords.confirmPassword) { setError(locale === "nl" ? "Nieuw wachtwoord en bevestiging komen niet overeen." : "New password and confirmation do not match."); return; }
     try {
-      const token = window.sessionStorage.getItem("routepilot.accessToken");
-      const response = await fetch(`${API}/auth/change-password`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ currentPassword: passwords.currentPassword, newPassword: passwords.newPassword }) });
+      const response = await authFetch(`${API}/auth/change-password`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ currentPassword: passwords.currentPassword, newPassword: passwords.newPassword }) });
       const payload = await response.json().catch(() => null);
       if (!response.ok) throw new Error(Array.isArray(payload?.message) ? payload.message[0] : payload?.message ?? (locale === "nl" ? "Wachtwoord wijzigen lukt niet." : "Unable to change password"));
       setSuccess(payload.message); setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
       window.sessionStorage.removeItem("routepilot.accessToken"); window.sessionStorage.removeItem("routepilot.refreshToken");
-    } catch (caught) { setError(caught instanceof Error ? caught.message : locale === "nl" ? "Wachtwoord wijzigen lukt niet." : "Unable to change password"); }
+    } catch (caught) {
+      if (caught instanceof SessionExpiredError) { router.replace(loginRedirectPath()); return; }
+      setError(caught instanceof Error ? caught.message : locale === "nl" ? "Wachtwoord wijzigen lukt niet." : "Unable to change password");
+    }
   }
 
   async function logout() {

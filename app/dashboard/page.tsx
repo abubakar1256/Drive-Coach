@@ -6,6 +6,7 @@ import LocalizedNavLinks, { LocalizedNavText } from "../LocalizedNavLinks";
 import SiteFooter from "../SiteFooter";
 import { getServerLocale } from "../../lib/serverLocale";
 import { siteCopy } from "../../lib/siteCopy";
+import MobileMenu from "../MobileMenu";
 
 export default function DashboardPage() {
   const copy = siteCopy[getServerLocale()].dashboard;
@@ -15,7 +16,7 @@ export default function DashboardPage() {
         <Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link>
         <LocalizedNavLinks items={[{ href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }, { href: "/account", label: "account" }]} />
         <div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/centres"><LocalizedNavText item="findRoute" /> <span>↗</span></Link></div>
-        <button className="menu-button" aria-label={copy.title}>☰</button>
+        <MobileMenu links={[{ href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} />
       </nav>
       <section className="shell dashboard-shell">
         <div className="dashboard-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.eyebrow}</p><h1>{copy.title}<br /><em>{copy.accent}</em></h1><p>{copy.description}</p></div><Link className="button" href="/centres">{copy.explore} <span>↗</span></Link></div>

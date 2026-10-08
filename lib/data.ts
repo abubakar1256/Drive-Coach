@@ -126,7 +126,7 @@ function withFallbackPracticeRoute(centre: Centre): Centre {
     latitude: latitude + point.latitude * direction,
     longitude: longitude + point.longitude * direction,
   }));
-  return { ...centre, routes: Math.max(centre.routes, 1), routePoints: points, routeCoordinates: points.map((point) => [point.longitude, point.latitude]) };
+  return { ...centre, routes: Math.max(centre.routes, 7), routePoints: points, routeCoordinates: points.map((point) => [point.longitude, point.latitude]) };
 }
 
 export const centres: Centre[] = [...featuredCentres, ...additionalCentres].map(withFallbackPracticeRoute);

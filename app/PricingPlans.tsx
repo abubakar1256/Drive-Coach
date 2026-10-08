@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { isLocale, type Locale } from "../lib/i18n";
+import { authFetch, SessionExpiredError } from "../lib/clientSession";
 
 type Plan = { name: string; subtitle: string; price: string; access: string; features: string[]; featured?: boolean; action: string };
 
@@ -20,7 +21,18 @@ const plans: Record<Locale, { eyebrow: string; title: string; titleAccent: strin
 
 export default function PricingPlans() {
   const [locale, setLocale] = useState<Locale>("en");
+  const [accountState, setAccountState] = useState<"unknown" | "signed-out" | "free" | "active">("unknown");
   useEffect(() => { const sync = () => { const stored = window.localStorage.getItem("routepilot.locale"); if (isLocale(stored)) setLocale(stored); }; sync(); window.addEventListener("routepilot-locale-change", sync); return () => window.removeEventListener("routepilot-locale-change", sync); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    if (!window.sessionStorage.getItem("routepilot.accessToken")) { setAccountState("signed-out"); return () => { cancelled = true; }; }
+    authFetch(`${process.env.NEXT_PUBLIC_API_URL ?? "/api/v1"}/auth/me`).then(async (response) => {
+      if (!response.ok) return;
+      const account = await response.json().catch(() => null);
+      if (!cancelled) setAccountState(account?.subscription?.status === "ACTIVE" && account?.subscription?.planName !== "Free" ? "active" : "free");
+    }).catch((error) => { if (!cancelled && error instanceof SessionExpiredError) setAccountState("signed-out"); });
+    return () => { cancelled = true; };
+  }, []);
   const active = plans[locale];
-  return <section className="pricing-section" id="pricing"><div className="shell"><div className="pricing-heading"><div><p className="eyebrow">{active.eyebrow}</p><h2>{active.title}<br /><span>{active.titleAccent}</span></h2></div><p>{active.intro}</p></div><div className="plans-grid">{active.plans.map((plan) => <article className={`plan-card ${plan.featured ? "plan-card-featured" : ""}`} key={plan.name}>{plan.featured && <span className="plan-tag">{active.popularLabel}</span>}<h3>{plan.name}</h3><p className="plan-subtitle">{plan.subtitle}</p><div className="plan-price"><strong>{plan.price}</strong><small>{plan.access}</small></div><ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul><a className={`button button-full ${plan.featured ? "" : "button-outline"}`} href="/auth/register">{plan.action} <span>↗</span></a></article>)}</div></div></section>;
+  return <section className="pricing-section" id="pricing"><div className="shell"><div className="pricing-heading"><div><p className="eyebrow">{active.eyebrow}</p><h2>{active.title}<br /><span>{active.titleAccent}</span></h2></div><p>{active.intro}</p></div><div className="plans-grid">{active.plans.map((plan, index) => { const paid = index > 0; const href = accountState === "active" ? "/account" : accountState === "free" ? (paid ? "/account#billing" : "/dashboard") : index === 0 ? "/auth/register" : `/auth/register?plan=${index === 1 ? "premium" : "diamond"}`; const label = accountState === "active" && paid ? (locale === "nl" ? "Toegang beheren" : "Manage access") : accountState === "free" && paid ? (locale === "nl" ? "Verder naar betaling" : "Continue to checkout") : plan.action; return <article className={`plan-card ${plan.featured ? "plan-card-featured" : ""}`} key={plan.name}>{plan.featured && <span className="plan-tag">{active.popularLabel}</span>}<h3>{plan.name}</h3><p className="plan-subtitle">{plan.subtitle}</p><div className="plan-price"><strong>{plan.price}</strong><small>{plan.access}</small></div><ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul><a className={`button button-full ${plan.featured ? "" : "button-outline"}`} href={href}>{label} <span>↗</span></a></article>; })}</div></div></section>;
 }

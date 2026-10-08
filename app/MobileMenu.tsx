@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { isLocale, type Locale } from "../lib/i18n";
 import { navLabel, type NavKey } from "../lib/navCopy";
+import { accessTokenKey, clearClientSession, refreshTokenKey, validateClientSession } from "../lib/clientSession";
 
 type MenuLink = { href: string; label: string };
 
@@ -25,27 +26,32 @@ export default function MobileMenu({ links }: { links: MenuLink[] }) {
   const menuId = "mobile-navigation-menu";
 
   useEffect(() => {
+    let cancelled = false;
     const sync = () => {
-      setSignedIn(Boolean(window.sessionStorage.getItem("routepilot.accessToken")));
+      const token = window.sessionStorage.getItem(accessTokenKey);
+      setSignedIn(Boolean(token));
       const stored = window.localStorage.getItem("routepilot.locale");
       if (isLocale(stored)) setLocale(stored);
+      if (token) void validateClientSession().then((valid) => {
+        if (cancelled || valid === null) return;
+        setSignedIn(valid);
+        if (!valid) clearClientSession();
+      });
     };
     sync();
     window.addEventListener("routepilot-locale-change", sync);
     window.addEventListener("routepilot-auth-change", sync);
     return () => {
+      cancelled = true;
       window.removeEventListener("routepilot-locale-change", sync);
       window.removeEventListener("routepilot-auth-change", sync);
     };
   }, []);
 
   async function logout() {
-    const refreshToken = window.sessionStorage.getItem("routepilot.refreshToken");
+    const refreshToken = window.sessionStorage.getItem(refreshTokenKey);
     if (refreshToken) await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "/api/v1"}/auth/logout`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ refreshToken }) }).catch(() => undefined);
-    window.sessionStorage.removeItem("routepilot.accessToken");
-    window.sessionStorage.removeItem("routepilot.refreshToken");
-    window.sessionStorage.removeItem("routepilot.user");
-    window.dispatchEvent(new Event("routepilot-auth-change"));
+    clearClientSession();
     setOpen(false);
     window.location.assign("/");
   }

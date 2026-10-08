@@ -37,10 +37,17 @@ export default async function CentrePage({ params }: { params: { slug: string } 
   const locale = getServerLocale();
   const centre = localizeCentre(rawCentre, locale);
 
-  const availableRoutes = apiCentre?.routes?.length ? apiCentre.routes : [
-    { slug: `${centre.slug}-route-04`, name: "Route 04", durationMin: 24, points: centre.routePoints },
-    ...["Route 01", "Route 02", "Route 03"].map((name, index) => ({ slug: `${centre.slug}-route-${String(index + 1).padStart(2, "0")}`, name, durationMin: 24, points: centre.routePoints })),
-  ];
+  // Keep the centre experience useful while a centre's routes are still being
+  // entered in the database. The reference journey presents seven routes per
+  // centre, with the first route available and the remaining routes reserved
+  // for premium access.
+  const fallbackRouteNames = ["A", "B", "C", "D", "E", "F", "G"];
+  const availableRoutes = apiCentre?.routes?.length ? apiCentre.routes : fallbackRouteNames.map((letter, index) => ({
+    slug: `${centre.slug}-route-${letter.toLowerCase()}`,
+    name: `Route ${letter}`,
+    durationMin: index === 0 ? 23 : 22,
+    points: centre.routePoints,
+  }));
   const featuredRoute = availableRoutes[0];
   const routeCards = availableRoutes.map((route, index) => ({
     ...route,

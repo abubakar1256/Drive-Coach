@@ -7,6 +7,7 @@ import NotificationsPanel from "./NotificationsPanel";
 import PartnershipPanel from "./PartnershipPanel";
 import { useLocaleMessages } from "../../lib/useLocale";
 import { useCurrentLocale, useSiteCopy } from "../../lib/useLocale";
+import { authFetch, loginRedirectPath, SessionExpiredError } from "../../lib/clientSession";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 
@@ -31,13 +32,16 @@ export default function DashboardPanel() {
   useEffect(() => {
     const token = window.sessionStorage.getItem("routepilot.accessToken");
     if (!token) { router.replace("/auth/login"); return; }
-    fetch(`${API}/me/dashboard`, { headers: { Authorization: `Bearer ${token}` } })
+    authFetch(`${API}/me/dashboard`)
       .then(async (response) => {
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.message ?? (locale === "nl" ? "Je sessie is verlopen. Log opnieuw in." : "Your session has expired. Please log in again."));
         setData(payload as DashboardData);
       })
-      .catch((caught) => setError(caught instanceof Error ? caught.message : locale === "nl" ? "Je dashboard kon niet worden geladen." : "Unable to load your dashboard."))
+      .catch((caught) => {
+        if (caught instanceof SessionExpiredError) { router.replace(loginRedirectPath()); return; }
+        setError(caught instanceof Error ? caught.message : locale === "nl" ? "Je dashboard kon niet worden geladen." : "Unable to load your dashboard.");
+      })
       .finally(() => setLoading(false));
   }, [router]);
 

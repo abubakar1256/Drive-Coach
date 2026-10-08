@@ -26,7 +26,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       const response = await fetch(`${apiUrl}/auth/${isRegister ? "register" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password, ...(isRegister ? { displayName } : {}) }) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(Array.isArray(payload.message) ? payload.message[0] : payload.message ?? copy.auth.genericError);
-      if (isRegister) { setSuccess(copy.auth.accountCreated); setTimeout(() => router.push("/auth/login"), 700); } else { sessionStorage.setItem("routepilot.accessToken", payload.accessToken); sessionStorage.setItem("routepilot.refreshToken", payload.refreshToken); sessionStorage.setItem("routepilot.user", JSON.stringify(payload.user)); router.push("/dashboard"); }
+      if (isRegister) { setSuccess(copy.auth.accountCreated); setTimeout(() => router.push("/auth/login"), 700); } else { sessionStorage.setItem("routepilot.accessToken", payload.accessToken); sessionStorage.setItem("routepilot.refreshToken", payload.refreshToken); sessionStorage.setItem("routepilot.user", JSON.stringify(payload.user)); window.dispatchEvent(new Event("routepilot-auth-change")); const nextParam = new URLSearchParams(window.location.search).get("next"); const next = nextParam?.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null; router.push(next || "/dashboard"); }
     } catch (submissionError) { setError(submissionError instanceof Error ? submissionError.message : copy.auth.apiError); } finally { setLoading(false); }
   }
 
