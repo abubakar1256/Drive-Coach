@@ -64,3 +64,8 @@ export class VerifyEmailDto {
   @MinLength(32)
   token!: string;
 }
+
+export class ResendVerificationDto {
+  @IsEmail()
+  email!: string;
+}

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthenticatedRequest, JwtAuthGuard } from "./auth.guard";
 import { AuthService } from "./auth.service";
-import { ChangePasswordDto, ForgotPasswordDto, LoginDto, RefreshTokenDto, RegisterDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
+import { ChangePasswordDto, ForgotPasswordDto, LoginDto, RefreshTokenDto, RegisterDto, ResendVerificationDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -54,9 +54,8 @@ export class AuthController {
     return this.authService.changePassword(request.user.sub, dto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post("resend-verification")
-  resendVerification(@Req() request: AuthenticatedRequest) {
-    return this.authService.resendVerification(request.user.sub);
+  resendVerification(@Body() dto: ResendVerificationDto) {
+    return this.authService.resendVerification(dto);
   }
 }
