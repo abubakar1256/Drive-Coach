@@ -45,3 +45,14 @@ export function googleMapsRouteUrl(points: RoutePointLike[]): string | null {
   if (waypoints) params.set("waypoints", waypoints);
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
+
+export function googleMapsNavigationUrl(points: RoutePointLike[]): string | null {
+  const coordinates = points.filter(hasCoordinates).map((point) => `${point.latitude},${point.longitude}`);
+  if (!coordinates.length) return null;
+
+  const destination = coordinates[coordinates.length - 1];
+  const waypoints = coordinates.slice(0, -1).join("|");
+  const params = new URLSearchParams({ api: "1", destination, travelmode: "driving", dir_action: "navigate" });
+  if (waypoints) params.set("waypoints", waypoints);
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+}
