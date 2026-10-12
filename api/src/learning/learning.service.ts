@@ -3,12 +3,13 @@ import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CreatePracticeSessionDto, CreateReflectionDto, UpdatePracticeSessionDto } from "./dto/learning.dto";
 import { CreateTrackPointDto } from "./dto/track.dto";
+import { DrivingRouteService } from "../routes/driving-route.service";
 
 type Row = Record<string, any>;
 
 @Injectable()
 export class LearningService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
 
   private query<T extends Row = Row>(sql: string, ...values: unknown[]) {
     return this.prisma.$queryRawUnsafe<T[]>(sql, ...values);
@@ -111,6 +112,8 @@ export class LearningService {
   async startSession(userId: string, dto: CreatePracticeSessionDto) {
     const route = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', dto.routeId);
     if (!route[0]) throw new NotFoundException("Published route not found");
+    const points = await this.prisma.routePoint.findMany({ where: { routeId: dto.routeId }, orderBy: { sequence: "asc" } });
+    await this.driving.requireValid(points);
     const id = randomUUID();
     const rows = await this.query('INSERT INTO "PracticeSession" ("id", "userId", "routeId", "updatedAt") VALUES ($1, $2, $3, NOW()) RETURNING "id", "routeId", "startedAt", "completionPct"', id, userId, dto.routeId);
     await this.audit(userId, "PRACTICE_STARTED", "PracticeSession", id);

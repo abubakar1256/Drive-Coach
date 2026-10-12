@@ -151,7 +151,9 @@ async function main() {
 
   for (const centre of centres) {
     const savedCentre = await prisma.examCentre.upsert({ where: { slug: centre.slug }, update: { ...centre, isPublished: true }, create: { ...centre, isPublished: true } });
-    const route = await prisma.route.upsert({ where: { slug: `${centre.slug}-route-04` }, update: { centreId: savedCentre.id, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date(), sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" }, create: { centreId: savedCentre.id, slug: `${centre.slug}-route-04`, name: "Route 04", status: RouteStatus.PUBLISHED, durationMin: 24, verifiedAt: new Date(), sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" } });
+    // Never replace instructor-edited waypoints when the deployment reruns seed.
+    if (await prisma.route.findUnique({ where: { slug: `${centre.slug}-route-04` } })) continue;
+    const route = await prisma.route.upsert({ where: { slug: `${centre.slug}-route-04` }, update: { centreId: savedCentre.id, name: "Route 04", status: RouteStatus.DRAFT, durationMin: null, verifiedAt: null, sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" }, create: { centreId: savedCentre.id, slug: `${centre.slug}-route-04`, name: "Route 04", status: RouteStatus.DRAFT, durationMin: null, verifiedAt: null, sourceLabel: "Drive Coach centre-area practice preview", verificationStatus: "PRACTICE_PREVIEW" } });
     await prisma.routePoint.deleteMany({ where: { routeId: route.id } });
     const centreRoutePoints = buildPracticeRoutePoints(centre);
     await prisma.routePoint.createMany({ data: centreRoutePoints.map((point) => ({ ...point, routeId: route.id })) });

@@ -5,6 +5,7 @@ export type ApiRoute = {
   slug: string;
   name: string;
   durationMin: number | null;
+  driving?: { valid: boolean; issues: string[]; durationSec: number | null; distanceM: number | null; coordinates: [number, number][] };
   centre: {
     slug: string;
     name: string;
@@ -148,6 +149,7 @@ export function routeToCentre(route: ApiRoute, fallback: Centre): Centre {
     routes: route.centre._count.routes,
     description: route.centre.description ?? fallback.description,
     routeCoordinates: route.points.map((point) => [point.longitude, point.latitude]),
+    roadGeometry: route.driving?.coordinates ?? [],
     routePoints: route.points.map((point) => ({
       id: point.id,
       number: String(point.sequence).padStart(2, "0"),

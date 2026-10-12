@@ -6,10 +6,11 @@ import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateOfficialPa
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
+import { DrivingRouteService } from "../routes/driving-route.service";
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
 
   listCentres() {
     return this.prisma.examCentre.findMany({
@@ -113,6 +114,7 @@ export class AdminService {
   }
 
   async createRoute(dto: CreateRouteDto) {
+    if (dto.status === "PUBLISHED") throw new BadRequestException("Create a draft, add road waypoints, then publish after driving validation.");
     const centre = await this.prisma.examCentre.findUnique({ where: { id: dto.centreId }, select: { id: true } });
     if (!centre) throw new NotFoundException("Exam centre not found");
     return this.prisma.route.create({ data: dto, include: { points: true } });
@@ -120,12 +122,23 @@ export class AdminService {
 
   async updateRoute(id: string, dto: UpdateRouteDto) {
     await this.ensureRoute(id);
+    if (dto.status === "PUBLISHED") {
+      const points = await this.prisma.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
+      const result = await this.driving.requireValid(points);
+      dto.durationMin = Math.ceil(result.durationSec! / 60);
+    }
     return this.prisma.route.update({ where: { id }, data: dto, include: { points: { orderBy: { sequence: "asc" } } } });
   }
 
   async archiveRoute(id: string) {
     await this.ensureRoute(id);
     return this.prisma.route.update({ where: { id }, data: { status: "ARCHIVED" } });
+  }
+
+  async checkDrivingRoute(id: string) {
+    await this.ensureRoute(id);
+    const points = await this.prisma.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
+    return this.driving.evaluate(points);
   }
 
   async createPoint(routeId: string, dto: CreateRoutePointDto) {

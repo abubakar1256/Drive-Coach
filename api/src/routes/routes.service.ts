@@ -1,10 +1,11 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { RouteStatus } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
+import { DrivingRouteService } from "./driving-route.service";
 
 @Injectable()
 export class RoutesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
 
   private async hasPremiumAccess(userId: string) {
     const rows = await this.prisma.$queryRawUnsafe<Array<{ id: string }>>(
@@ -42,15 +43,20 @@ export class RoutesService {
   }
 
   async getBySlug(slug: string) {
-    return this.prisma.route.findFirst({
+    const route = await this.prisma.route.findFirst({
       where: { slug, status: RouteStatus.PUBLISHED, centre: { isPublished: true } },
       include: {
         centre: {
           include: { _count: { select: { routes: true } } },
         },
-        points: { orderBy: { sequence: "asc" }, take: 3 },
+        points: { orderBy: { sequence: "asc" } },
       },
-    }).then((route) => route ? { ...route, points: route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })), access: { premium: false, preview: true } } : null);
+    });
+    if (!route) return null;
+    // Check the entire route, but do not leak paid waypoints/geometry through
+    // the public preview. Free practice still gets the same quality gate.
+    const driving = await this.driving.evaluate(route.points);
+    return { ...route, durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving: { ...driving, coordinates: [] }, points: route.points.slice(0, 3).map((point) => ({ ...point, imageUrl: null, videoUrl: null })), access: { premium: false, preview: true } };
   }
 
   async points(slug: string) {
@@ -71,7 +77,9 @@ export class RoutesService {
         points: { orderBy: { sequence: "asc" } },
       },
     });
-    return route ? { ...route, access: { premium: true, preview: false } } : null;
+    if (!route) return null;
+    const driving = await this.driving.evaluate(route.points);
+    return { ...route, durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving, access: { premium: true, preview: false } };
   }
 
   async accessiblePoints(userId: string, slug: string) {

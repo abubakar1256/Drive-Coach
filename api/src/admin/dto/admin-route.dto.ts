@@ -23,7 +23,7 @@ export class CreateRouteDto {
 
   @IsOptional()
   @IsInt()
-  @Min(1)
+  @Min(24)
   durationMin?: number;
 
   @IsOptional()
@@ -54,7 +54,7 @@ export class UpdateRouteDto {
 
   @IsOptional()
   @IsInt()
-  @Min(1)
+  @Min(24)
   durationMin?: number;
 
   @IsOptional()

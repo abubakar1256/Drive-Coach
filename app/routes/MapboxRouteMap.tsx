@@ -26,7 +26,7 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
 
   useEffect(() => {
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-    if (!token || !containerRef.current) return;
+    if (!token || !containerRef.current || !centre.routeCoordinates.length) return;
 
     setMapReady(false);
     mapboxgl.accessToken = token;
@@ -41,11 +41,13 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
     mapRef.current = map;
 
     map.on("load", () => {
-      map.addSource("practice-route", { type: "geojson", data: { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates } } });
+      // Attention-point anchors are not road geometry; show markers only until
+      // the server has obtained an actual driving route.
+      map.addSource("practice-route", { type: "geojson", data: { type: "FeatureCollection", features: (centre.roadGeometry?.length ?? 0) > 1 ? [{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: centre.roadGeometry! } }] : [] } });
       map.addLayer({ id: "practice-route-line", type: "line", source: "practice-route", paint: { "line-color": "#1e5c4a", "line-width": 5, "line-opacity": 0.9 } });
       map.addSource("practice-track", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
       map.addLayer({ id: "practice-track-line", type: "line", source: "practice-track", paint: { "line-color": "#ef8069", "line-width": 5, "line-opacity": 0.95, "line-dasharray": [1, 1.2] } });
-      const bounds = coordinates.reduce((bounds, coordinate) => bounds.extend(coordinate as [number, number]), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+      const bounds = (centre.roadGeometry?.length ? centre.roadGeometry : coordinates).reduce((bounds, coordinate) => bounds.extend(coordinate as [number, number]), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
       map.fitBounds(bounds, { padding: 70, duration: 0 });
       setMapReady(true);
     });

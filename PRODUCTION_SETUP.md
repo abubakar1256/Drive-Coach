@@ -102,4 +102,14 @@ If `MEDIA_PROVIDER=local` (the default), files are stored under `api/uploads/med
 
 ## Mobile/PWA
 
+### Driving-route quality checks (all centres)
+
+Set `MAPBOX_DIRECTIONS_TOKEN` on the **backend** Railway service to a Mapbox token that can call Directions. `NEXT_PUBLIC_MAPBOX_TOKEN` on that same service is a fallback; the frontend's token is not automatically available to the backend. A browser URL-restricted token may not work server-side. Directions requests are subject to Mapbox account limits/pricing.
+
+Admin → select route → Check driving route. Keep accurate start/finish coordinates and add/reorder actual road waypoints until the road-based estimate is at least 1,440 seconds. Publishing and starting practice reject shorter routes, U-turns, repeated geometry and 2D self-crossings. A bridge/tunnel may trigger the conservative crossing screen; this is not evidence of an illegal road crossing. Normal junctions on a simple path remain allowed. This check does not replace instructor review or verify that a supplied starting point is the actual test-centre entrance.
+
+Full-route responses contain driving geometry and calculated duration/distance. Preview points never provide full-route navigation. Google Maps links use driving mode, fixed start and full waypoint order, but are disabled above three intermediate waypoints for mobile compatibility rather than silently dropping points. Google independently recalculates roads and time; its result is not guaranteed identical to Mapbox. Longer routes remain visible in the in-app road map.
+
+Existing route records are **not automatically extended, verified or overwritten**. Invalid legacy previews cannot start practice and need actual instructor-selected waypoints. Missing/unavailable routing fails closed. Newly seeded example routes remain drafts and seed reruns preserve existing route points. Road results are cached by exact waypoint order for five minutes, bounded to 200 entries; no database migration is required.
+
 The web app exposes `/manifest.webmanifest`, `/sw.js`, and `/icon.svg`. The service worker caches the app shell and public centre/route API responses. Mapbox tiles still require connectivity.

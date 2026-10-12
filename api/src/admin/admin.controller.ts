@@ -37,6 +37,11 @@ export class AdminController {
     return this.adminService.listRoutes();
   }
 
+  @Get("routes/:id/driving-check")
+  drivingCheck(@Param("id") id: string) {
+    return this.adminService.checkDrivingRoute(id);
+  }
+
   @Get("reports/overview")
   overview() {
     return this.adminService.overview();

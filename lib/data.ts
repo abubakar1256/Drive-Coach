@@ -20,6 +20,7 @@ export type Centre = {
   highlights: string[];
   routePoints: RoutePoint[];
   routeCoordinates: [number, number][];
+  roadGeometry?: [number, number][];
 };
 
 const featuredCentres: Centre[] = [
@@ -106,30 +107,8 @@ const additionalCentres: Centre[] = [
   { slug: "arlon-weyler", name: "Arlon–Weyler", city: "Arlon", area: "Weyler", routes: 0, region: "Luxembourg", description: "Official driving-test centre in Weyler, Arlon.", highlights: ["Urban junctions", "Lane choice", "Roundabouts"], routePoints: [], routeCoordinates: [[5.8170, 49.6740]] },
 ];
 
-const fallbackPracticeOffsets = [
-  { category: "start", title: "Leave the test centre", detail: "Check mirrors and position before joining traffic", tone: "mint" as const, latitude: 0, longitude: 0 },
-  { category: "lane-change", title: "Lane change before junction", detail: "Move over early and keep the junction clear", tone: "blue" as const, latitude: 0.0035, longitude: 0.0055 },
-  { category: "roundabout", title: "Two-lane roundabout", detail: "Choose the correct lane for the second exit", tone: "coral" as const, latitude: 0.001, longitude: 0.011 },
-  { category: "speed-zone", title: "Residential speed zone", detail: "Look for cyclists and changing speed limits", tone: "mint" as const, latitude: -0.004, longitude: 0.007 },
-];
-
-function withFallbackPracticeRoute(centre: Centre): Centre {
-  if (centre.routePoints.length || centre.routeCoordinates.length > 1) return centre;
-  const [longitude, latitude] = centre.routeCoordinates[0] ?? [0, 0];
-  const direction = centre.slug.length % 2 === 0 ? 1 : -1;
-  const points = fallbackPracticeOffsets.map((point, index) => ({
-    number: String(index + 1).padStart(2, "0"),
-    title: point.title,
-    detail: point.detail,
-    tone: point.tone,
-    category: point.category,
-    latitude: latitude + point.latitude * direction,
-    longitude: longitude + point.longitude * direction,
-  }));
-  return { ...centre, routes: Math.max(centre.routes, 7), routePoints: points, routeCoordinates: points.map((point) => [point.longitude, point.latitude]) };
-}
-
-export const centres: Centre[] = [...featuredCentres, ...additionalCentres].map(withFallbackPracticeRoute);
+// No fabricated coordinate offsets or route counts for centres awaiting routes.
+export const centres: Centre[] = [...featuredCentres, ...additionalCentres];
 
 export function getCentre(slug: string) {
   return centres.find((centre) => centre.slug === slug);

@@ -1,5 +1,5 @@
-const SHELL_CACHE = "routepilot-shell-v1";
-const DATA_CACHE = "routepilot-public-data-v1";
+const SHELL_CACHE = "routepilot-shell-v2";
+const DATA_CACHE = "routepilot-public-data-v2";
 const SHELL = ["/", "/centres", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
@@ -15,6 +15,8 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // Never replay an old authenticated full-route quality check offline.
+  if (request.headers.has("Authorization") || url.pathname.endsWith("/access")) return;
   const isPublicData = url.pathname.startsWith("/api/v1/routes/") || url.pathname.startsWith("/api/v1/exam-centres");
   if (isPublicData) {
     event.respondWith(fetch(request).then((response) => { const copy = response.clone(); caches.open(DATA_CACHE).then((cache) => cache.put(request, copy)); return response; }).catch(() => caches.match(request)));

@@ -36,23 +36,25 @@ export function routeDistanceKm(points: RoutePointLike[]): number | null {
 
 export function googleMapsRouteUrl(points: RoutePointLike[]): string | null {
   const coordinates = points.filter(hasCoordinates).map((point) => `${point.latitude},${point.longitude}`);
-  if (!coordinates.length) return null;
+  // Mobile browsers support only three intermediate waypoints. Never silently
+  // drop points from a longer instructor route.
+  if (coordinates.length < 2 || coordinates.length > 5 || coordinates.length !== points.length) return null;
 
   const origin = coordinates[0];
   const destination = coordinates[coordinates.length - 1] ?? origin;
   const waypoints = coordinates.slice(1, -1).join("|");
-  const params = new URLSearchParams({ api: "1", origin, destination });
+  const params = new URLSearchParams({ api: "1", origin, destination, travelmode: "driving" });
   if (waypoints) params.set("waypoints", waypoints);
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
 export function googleMapsNavigationUrl(points: RoutePointLike[]): string | null {
   const coordinates = points.filter(hasCoordinates).map((point) => `${point.latitude},${point.longitude}`);
-  if (!coordinates.length) return null;
+  if (coordinates.length < 2 || coordinates.length > 5 || coordinates.length !== points.length) return null;
 
   const destination = coordinates[coordinates.length - 1];
-  const waypoints = coordinates.slice(0, -1).join("|");
-  const params = new URLSearchParams({ api: "1", destination, travelmode: "driving", dir_action: "navigate" });
+  const waypoints = coordinates.slice(1, -1).join("|");
+  const params = new URLSearchParams({ api: "1", origin: coordinates[0], destination, travelmode: "driving", dir_action: "navigate" });
   if (waypoints) params.set("waypoints", waypoints);
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }

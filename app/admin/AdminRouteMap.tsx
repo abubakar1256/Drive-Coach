@@ -24,7 +24,7 @@ export default function AdminRouteMap({ route, points, onMove, onAdd }: { route:
     map.on("load", () => {
       if (points.length > 1) {
         map.addSource("admin-route", { type: "geojson", data: { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: points.map((point) => [point.longitude, point.latitude]) } } });
-        map.addLayer({ id: "admin-route-line", type: "line", source: "admin-route", paint: { "line-color": "#17604b", "line-width": 5, "line-opacity": 0.85 } });
+        map.addLayer({ id: "admin-route-line", type: "line", source: "admin-route", paint: { "line-color": "#17604b", "line-width": 5, "line-opacity": 0.5, "line-dasharray": [2, 2] } });
         const bounds = points.reduce((value, point) => value.extend([point.longitude, point.latitude] as [number, number]), new mapboxgl.LngLatBounds([first.longitude, first.latitude], [first.longitude, first.latitude]));
         map.fitBounds(bounds, { padding: 55, duration: 0 });
       }
