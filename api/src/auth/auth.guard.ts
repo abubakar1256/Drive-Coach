@@ -23,3 +23,13 @@ export class JwtAuthGuard implements CanActivate {
     }
   }
 }
+
+// Guests can chat, but supplied credentials must be valid before full-route access.
+@Injectable()
+export class OptionalJwtAuthGuard extends JwtAuthGuard {
+  canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest<Request>();
+    if (!request.headers.authorization) return true;
+    return super.canActivate(context);
+  }
+}

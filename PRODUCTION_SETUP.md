@@ -49,6 +49,18 @@ This creates the demo centres, plans, coaching data, Alken and its official pass
 
 Set the API health check path to `/api/v1/health`. Generate public domains for both Web and API; the client receives the Web domain only. Keep `DATABASE_URL`, `JWT_ACCESS_SECRET`, Stripe secrets and email-provider secrets private.
 
+## Drive Coach AI chat
+
+Set `GEMINI_API_KEY` and `GEMINI_MODEL` on the **API service**, not the Web service. Existing configured keys and models can be kept; no new variable is required for the chatbot fixes.
+
+The chat reserves 4,096 output tokens (including thinking), uses low thinking for Gemini 3 or a small thinking budget for Gemini 2.5, and regenerates once with 8,192 tokens if an answer is empty, truncated or has unfinished formatting. Only a complete `STOP` response is shown as a successful answer. Provider failures, quota limits and timeouts have separate localized messages, and the question remains available for retry.
+
+Each request sends at most 19 recent messages; the displayed conversation can be longer. The welcome text and failed questions are excluded from model history. Earlier messages outside that window are not remembered.
+
+On `/routes/:slug`, chat retrieves published route notes on the server. Guests/free users receive preview points; authenticated users receive full points only when the existing route-access check allows them. Selected points are resolved against those accessible points. Precise GPS positions, credentials, private reflections and account details are not included in the model prompt. Stored notes are not a guarantee of current signs or an official test route.
+
+Deploy **both API and Web** to activate these changes on Railway. Test locally with `pnpm test:chatbot` (mocked provider regression tests) and `pnpm build`. Free-provider quota and external outages can still prevent an answer; a complete response is not guaranteed on every request.
+
 ## Payments
 
 Add these values to `api/.env`:

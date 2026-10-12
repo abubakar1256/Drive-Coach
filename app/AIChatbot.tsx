@@ -2,16 +2,19 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSiteCopy } from "../lib/useLocale";
+import { buildChatHistory, chatErrorCode, type ChatMessage } from "../lib/aiChat";
+import { accessTokenKey, authFetch, SessionExpiredError } from "../lib/clientSession";
+import ChatMessageContent from "./ChatMessageContent";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 
-type ChatMessage = { role: "user" | "assistant"; content: string };
-
 function getPageContext() {
   if (typeof window === "undefined") return {};
+  const route = document.querySelector<HTMLElement>("[data-chat-route]");
   return {
     page: window.location.pathname,
     title: document.title,
+    selectedPointId: route?.dataset.chatPoint,
   };
 }
 
@@ -20,7 +23,8 @@ export default function AIChatbot() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([{ role: "assistant", content: copy.chatbot.welcome }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ role: "assistant", content: copy.chatbot.welcome, kind: "welcome" }]);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
 
@@ -36,10 +40,10 @@ export default function AIChatbot() {
 
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, errorCode]);
 
   useEffect(() => {
-    setMessages((current) => current.length === 1 && current[0].role === "assistant" ? [{ role: "assistant", content: copy.chatbot.welcome }] : current);
+    setMessages((current) => current.map((message) => message.kind === "welcome" ? { ...message, content: copy.chatbot.welcome } : message));
   }, [copy.chatbot.welcome]);
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
@@ -51,22 +55,39 @@ export default function AIChatbot() {
     setMessages(nextMessages);
     setDraft("");
     setLoading(true);
+    setErrorCode(null);
 
     try {
-      const response = await fetch(`${API}/ai/chat`, {
+      const options: RequestInit = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages, context: getPageContext() }),
-      });
-      const payload = (await response.json().catch(() => ({}))) as { message?: string };
-      if (!response.ok) throw new Error(payload.message || copy.chatbot.temporaryUnavailable);
-      setMessages((current) => [...current, { role: "assistant", content: payload.message || copy.chatbot.emptyAnswer }]);
+        body: JSON.stringify({ messages: buildChatHistory(nextMessages), context: getPageContext() }),
+      };
+      const response = window.sessionStorage.getItem(accessTokenKey)
+        ? await authFetch(`${API}/ai/chat`, options)
+        : await fetch(`${API}/ai/chat`, options);
+      const payload = (await response.json().catch(() => ({}))) as { message?: unknown; code?: unknown };
+      if (!response.ok) throw new Error(chatErrorCode(payload, response.status));
+      if (typeof payload.message !== "string" || !payload.message.trim()) throw new Error("AI_INCOMPLETE");
+      setMessages((current) => [...current, { role: "assistant", content: payload.message as string }]);
     } catch (error) {
-      setMessages((current) => [...current, { role: "assistant", content: error instanceof Error ? error.message : copy.chatbot.temporaryUnavailable }]);
+      // Keep failures out of subsequent model requests, and preserve the question
+      // so it can be retried without asking the learner to retype it.
+      setMessages((current) => current.map((message, index) => index === nextMessages.length - 1 ? { ...message, failed: true } : message));
+      setErrorCode(error instanceof SessionExpiredError ? "SESSION_EXPIRED" : error instanceof Error ? error.message : "AI_UNAVAILABLE");
+      setDraft((current) => current || content);
     } finally {
       setLoading(false);
     }
   }
+
+  const errorText = errorCode === "AI_NOT_CONFIGURED" ? copy.chatbot.notConfigured
+    : ["CHAT_RATE_LIMITED", "AI_PROVIDER_RATE_LIMIT"].includes(errorCode ?? "") ? copy.chatbot.rateLimited
+    : errorCode === "AI_TIMEOUT" ? copy.chatbot.timeout
+    : errorCode === "AI_INCOMPLETE" ? copy.chatbot.incomplete
+    : errorCode === "AI_BLOCKED" ? copy.chatbot.blocked
+    : errorCode === "SESSION_EXPIRED" ? copy.chatbot.sessionExpired
+    : copy.chatbot.temporaryUnavailable;
 
   return (
     <div className={`ai-chat ${open ? "ai-chat-open" : ""}`}>
@@ -77,11 +98,12 @@ export default function AIChatbot() {
             <button className="ai-chat-close" type="button" onClick={() => setOpen(false)} aria-label={copy.chatbot.close}>×</button>
           </header>
           <div className="ai-chat-messages" ref={messagesRef} aria-live="polite">
-            {messages.map((message, index) => <div className={`ai-chat-message ai-chat-message-${message.role}`} key={`${message.role}-${index}`}><span>{message.content}</span></div>)}
+            {messages.map((message, index) => <div className={`ai-chat-message ai-chat-message-${message.role}`} key={`${message.role}-${index}`}>{message.role === "assistant" ? <ChatMessageContent content={message.content} /> : <span className="ai-chat-bubble">{message.content}</span>}</div>)}
             {messages.length === 1 && <div className="ai-chat-quick"><small>{copy.chatbot.quickLabel}</small>{copy.chatbot.quickPrompts.map((prompt) => <button type="button" key={prompt} onClick={() => setDraft(prompt)}>{prompt}</button>)}</div>}
-            {loading && <div className="ai-chat-message ai-chat-message-assistant ai-chat-typing"><span><i /><i /><i /></span></div>}
+            {loading && <div className="ai-chat-message ai-chat-message-assistant ai-chat-typing" role="status" aria-label={copy.chatbot.thinking}><span className="ai-chat-bubble"><i /><i /><i /></span></div>}
+            {errorCode && <div className="ai-chat-error" role="alert">{errorText}<small>{copy.chatbot.retryHint}</small></div>}
           </div>
-          <form className="ai-chat-form" onSubmit={sendMessage}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={copy.chatbot.placeholder} rows={2} maxLength={1200} aria-label={copy.chatbot.messageLabel} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" disabled={loading || !draft.trim()} aria-label="Send message">↗</button></form>
+          <form className="ai-chat-form" onSubmit={sendMessage}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={copy.chatbot.placeholder} rows={2} maxLength={1200} aria-label={copy.chatbot.messageLabel} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" disabled={loading || !draft.trim()} aria-label={errorCode ? copy.chatbot.retry : copy.chatbot.send}>{errorCode ? "↻" : "↗"}</button></form>
           <p className="ai-chat-disclaimer">{copy.chatbot.disclaimer}</p>
         </section>
       )}

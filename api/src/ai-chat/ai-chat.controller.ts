@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Req } from "@nestjs/common";
+import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
+import { AuthenticatedRequest, OptionalJwtAuthGuard } from "../auth/auth.guard";
 import { AiChatDto } from "./dto/ai-chat.dto";
 import { AiChatService } from "./ai-chat.service";
 
@@ -8,7 +9,8 @@ export class AiChatController {
   constructor(private readonly aiChatService: AiChatService) {}
 
   @Post("chat")
-  answer(@Body() dto: AiChatDto, @Req() request: Request) {
-    return this.aiChatService.answer(dto, request.ip || "unknown");
+  @UseGuards(OptionalJwtAuthGuard)
+  answer(@Body() dto: AiChatDto, @Req() request: Request & Partial<AuthenticatedRequest>) {
+    return this.aiChatService.answer(dto, request.ip || "unknown", request.user?.sub);
   }
 }

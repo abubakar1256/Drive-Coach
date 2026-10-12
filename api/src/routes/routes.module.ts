@@ -4,5 +4,5 @@ import { PrismaModule } from "../prisma.module";
 import { RoutesController } from "./routes.controller";
 import { RoutesService } from "./routes.service";
 
-@Module({ imports: [PrismaModule, AuthModule], controllers: [RoutesController], providers: [RoutesService] })
+@Module({ imports: [PrismaModule, AuthModule], controllers: [RoutesController], providers: [RoutesService], exports: [RoutesService] })
 export class RoutesModule {}

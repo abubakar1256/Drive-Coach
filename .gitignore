@@ -14,6 +14,7 @@ api/dist/
 
 # Local review and runtime files
 docx-review/
+output/chatbot-audit/
 *.log
 logs/
 coverage/

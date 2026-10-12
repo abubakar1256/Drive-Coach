@@ -287,11 +287,17 @@ body { background: radial-gradient(circle at 12% -8%, #e9f5eb 0, transparent 31r
 .ai-chat-close:hover { background: rgba(255,255,255,.19); }
 .ai-chat-messages { flex: 1; overflow-y: auto; padding: 19px 16px 12px; background: linear-gradient(180deg, #f5fbf5, #fbfdfb); }
 .ai-chat-message { display: flex; margin: 0 0 11px; }
-.ai-chat-message span { max-width: 86%; padding: 11px 13px; border-radius: 15px; color: #21483a; font-size: 12px; line-height: 1.55; white-space: pre-wrap; }
+.ai-chat-message > .ai-chat-bubble { max-width: 86%; min-width: 0; overflow-wrap: anywhere; padding: 11px 13px; border-radius: 15px; color: #21483a; font-size: 12px; line-height: 1.55; white-space: pre-wrap; }
 .ai-chat-message-assistant { justify-content: flex-start; }
-.ai-chat-message-assistant span { border: 1px solid #dceee0; border-top-left-radius: 5px; background: #fff; }
+.ai-chat-message-assistant > .ai-chat-bubble { border: 1px solid #dceee0; border-top-left-radius: 5px; background: #fff; }
 .ai-chat-message-user { justify-content: flex-end; }
-.ai-chat-message-user span { border-bottom-right-radius: 5px; color: #fff; background: #12735a; }
+.ai-chat-message-user > .ai-chat-bubble { border-bottom-right-radius: 5px; color: #fff; background: #12735a; }
+.ai-chat-answer p { margin: 0 0 9px; }
+.ai-chat-answer ul, .ai-chat-answer ol { margin: 0 0 9px; padding-left: 18px; white-space: normal; }
+.ai-chat-answer li { margin: 0 0 6px; }
+.ai-chat-answer > :last-child, .ai-chat-answer li:last-child { margin-bottom: 0; }
+.ai-chat-error { margin: 0 0 11px; padding: 11px 13px; border: 1px solid #edcfb9; border-radius: 12px; color: #7c4222; background: #fff8f2; font-size: 12px; line-height: 1.5; }
+.ai-chat-error small { display: block; margin-top: 4px; font-size: 10px; }
 .ai-chat-quick { display: grid; gap: 7px; margin: 8px 0 17px 4px; }
 .ai-chat-quick small { color: #91a49a; font-size: 10px; }
 .ai-chat-quick button { width: fit-content; max-width: 100%; padding: 8px 11px; border: 1px solid #d2e8d7; border-radius: 999px; color: #14684f; background: #f7fcf8; font: 600 10px 'DM Sans', sans-serif; text-align: left; cursor: pointer; }

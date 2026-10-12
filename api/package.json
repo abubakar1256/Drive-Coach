@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
+    "test:chatbot": "pnpm build && node --test test/ai-chat.test.cjs",
     "start": "node dist/src/main.js",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",

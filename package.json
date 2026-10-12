@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:chatbot": "node --test tests/ai-chat.test.cjs && pnpm --dir api test:chatbot",
     "api:dev": "pnpm --dir api dev",
     "api:build": "pnpm --dir api build",
     "api:prisma:validate": "pnpm --dir api prisma:validate"
