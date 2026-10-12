@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException, HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { RoutesService } from "../routes/routes.service";
+import { BillingService } from "../billing/billing.service";
 import { AiChatDto } from "./dto/ai-chat.dto";
 
 type GeminiResponse = {
@@ -20,9 +21,16 @@ export class AiChatService {
   private readonly logger = new Logger(AiChatService.name);
   private readonly requestLog = new Map<string, number[]>();
 
-  constructor(private readonly routesService: RoutesService) {}
+  constructor(private readonly routesService: RoutesService, private readonly billingService: BillingService) {}
 
   async answer(dto: AiChatDto, clientId: string, userId?: string) {
+    // Always use the authenticated account's current database entitlement. A
+    // client plan flag or a checkout-success URL is never proof of payment.
+    if (!userId) this.fail("SESSION_EXPIRED", "Please log in to use Drive Coach AI.", HttpStatus.UNAUTHORIZED);
+    let allowed: boolean;
+    try { allowed = (await this.billingService.entitlements(userId)).features.aiChat; }
+    catch { this.fail("AI_ACCESS_UNAVAILABLE", "Your AI coach access could not be checked. Please try again."); }
+    if (!allowed) this.fail("AI_PLAN_REQUIRED", "An active Premium or Diamond plan is required for Drive Coach AI.", HttpStatus.FORBIDDEN);
     if (!dto.messages.length || dto.messages[dto.messages.length - 1].role !== "user") {
       throw new BadRequestException("The last chat message must be a question from the user.");
     }

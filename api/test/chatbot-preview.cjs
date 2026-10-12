@@ -6,11 +6,22 @@ const { ForbiddenException, Logger, ValidationPipe } = require("@nestjs/common")
 const { AiChatModule } = require("../dist/src/ai-chat/ai-chat.module");
 const { PrismaService } = require("../dist/src/prisma.service");
 const { RoutesService } = require("../dist/src/routes/routes.service");
+const { BillingService } = require("../dist/src/billing/billing.service");
+const { AuthService, JWT_ACCESS_SECRET } = require("../dist/src/auth/auth.service");
+const { JwtService } = require("@nestjs/jwt");
 
 Logger.overrideLogger(false);
 process.env.GEMINI_API_KEY = "local-mock-key";
 process.env.GEMINI_MODEL = "gemini-3-flash-preview";
 const attempts = new Map();
+const expiryByUser = new Map();
+// Local fake logins only: premium/diamond/free/expired/expiring@local.test.
+const entitlement = (userId) => {
+  const expiresAt = expiryByUser.get(userId) ?? (userId === "expired" ? new Date(Date.now() - 1000).toISOString() : new Date(Date.now() + 86_400_000).toISOString());
+  const active = ["premium", "diamond", "expiring"].includes(userId) && Date.parse(expiresAt) > Date.now();
+  return { plan: active ? userId === "diamond" ? "Diamond" : "Premium" : "Free", status: active ? "ACTIVE" : "FREE", expiresAt, features: { aiChat: active } };
+};
+const mockUser = (id) => ({ id, email: `${id}@local.test`, displayName: "Local QA learner", role: "LEARNER", emailVerified: true, subscription: { status: entitlement(id).status, planName: entitlement(id).plan, expiresAt: entitlement(id).expiresAt } });
 
 global.fetch = async (_url, options) => {
   const body = JSON.parse(options.body);
@@ -35,6 +46,16 @@ async function main() {
   const moduleRef = await Test.createTestingModule({ imports: [AiChatModule] })
     .overrideProvider(PrismaService).useValue({})
     .overrideProvider(RoutesService).useValue({ list: async () => [route], getBySlug: async () => route, points: async () => route.points, getAccessibleBySlug: async () => { throw new ForbiddenException(); } })
+    .overrideProvider(BillingService).useValue({ entitlements: async (id) => entitlement(id) })
+    .overrideProvider(AuthService).useValue({
+      me: async (id) => mockUser(id),
+      login: async ({ email }) => {
+        const id = email.split("@")[0];
+        if (id === "expiring") expiryByUser.set(id, new Date(Date.now() + 15_000).toISOString());
+        return { accessToken: new JwtService().sign({ sub: id }, { secret: JWT_ACCESS_SECRET, expiresIn: "15m" }), refreshToken: "local-mock-refresh", user: mockUser(id) };
+      },
+      logout: async () => ({ ok: true }),
+    })
     .compile();
   const app = moduleRef.createNestApplication();
   app.setGlobalPrefix("api/v1");

@@ -15,18 +15,29 @@ export class BillingService {
   }
 
   async subscription(userId: string) {
+    const now = new Date();
     const [user, subscription] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
-      this.prisma.subscription.findFirst({ where: { userId, status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] }, include: { plan: true }, orderBy: { createdAt: "desc" } }),
+      this.prisma.subscription.findFirst({
+        where: {
+          userId, status: "ACTIVE",
+          AND: [
+            { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+            { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+          ],
+        },
+        include: { plan: true }, orderBy: { createdAt: "desc" },
+      }),
     ]);
     if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Diamond", startsAt: null, expiresAt: null, provider: "INTERNAL" };
-    return subscription ? { status: subscription.status, plan: subscription.plan.name, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", startsAt: null, expiresAt: null, provider: null };
+    return user && subscription ? { status: subscription.status, plan: subscription.plan.name, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", startsAt: null, expiresAt: null, provider: null };
   }
 
   async entitlements(userId: string) {
     const subscription = await this.subscription(userId);
     const premium = subscription.status === "ACTIVE" && subscription.plan !== "Free";
-    return { premium, plan: subscription.plan, status: subscription.status, features: { routeDetails: true, fullRouteMedia: premium, practiceSessions: true, progressHistory: true, savedRoutes: true, prioritySupport: premium } };
+    const aiChat = subscription.status === "ACTIVE" && ["Premium", "Diamond"].includes(subscription.plan);
+    return { premium, plan: subscription.plan, status: subscription.status, expiresAt: subscription.expiresAt, features: { routeDetails: true, fullRouteMedia: premium, practiceSessions: true, progressHistory: true, savedRoutes: true, prioritySupport: premium, aiChat } };
   }
 
   payments(userId: string) {

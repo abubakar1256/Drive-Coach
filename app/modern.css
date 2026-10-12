@@ -298,6 +298,16 @@ body { background: radial-gradient(circle at 12% -8%, #e9f5eb 0, transparent 31r
 .ai-chat-answer > :last-child, .ai-chat-answer li:last-child { margin-bottom: 0; }
 .ai-chat-error { margin: 0 0 11px; padding: 11px 13px; border: 1px solid #edcfb9; border-radius: 12px; color: #7c4222; background: #fff8f2; font-size: 12px; line-height: 1.5; }
 .ai-chat-error small { display: block; margin-top: 4px; font-size: 10px; }
+.ai-chat-access { display: flex; flex: 1; min-height: 0; flex-direction: column; align-items: center; justify-content: center; gap: 14px; overflow-y: auto; padding: 30px 25px; text-align: center; background: radial-gradient(circle at top, #e3f5e7, #fbfdfb 65%); }
+.ai-chat-lock-icon { display: grid; place-items: center; flex-shrink: 0; width: 60px; height: 60px; border: 1px solid #cae5d2; border-radius: 19px; color: #14684f; background: #fff; box-shadow: 0 8px 22px rgba(18,101,78,.08); font-size: 28px; }
+.ai-chat-access-label { color: #4f806c; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.ai-chat-access h2 { margin: 0; color: #153f31; font-size: 25px; line-height: 1.2; letter-spacing: -.03em; }
+.ai-chat-access p { margin: 0; color: #5c7b6b; font-size: 13px; line-height: 1.6; }
+.ai-chat-plan-badges { display: flex; gap: 8px; }
+.ai-chat-plan-badges span { padding: 6px 12px; border: 1px solid #c7dfcc; border-radius: 999px; color: #14684f; background: #fff; font-size: 11px; font-weight: 700; }
+.ai-chat-access .button { min-height: 45px; margin-top: 3px; }
+.ai-chat-access small { color: #718e7f; font-size: 11px; line-height: 1.5; }
+.ai-chat-access-link { padding: 4px; border: 0; color: #14684f; background: transparent; font: 700 12px 'DM Sans', sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ai-chat-quick { display: grid; gap: 7px; margin: 8px 0 17px 4px; }
 .ai-chat-quick small { color: #91a49a; font-size: 10px; }
 .ai-chat-quick button { width: fit-content; max-width: 100%; padding: 8px 11px; border: 1px solid #d2e8d7; border-radius: 999px; color: #14684f; background: #f7fcf8; font: 600 10px 'DM Sans', sans-serif; text-align: left; cursor: pointer; }

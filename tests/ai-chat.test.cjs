@@ -24,6 +24,42 @@ function loadTs(relativePath) {
 
 const chat = loadTs("lib/aiChat.ts");
 const Renderer = loadTs("app/ChatMessageContent.tsx").default;
+const AccessGate = loadTs("app/AIChatAccessGate.tsx").default;
+const copy = loadTs("lib/siteCopy.ts").siteCopy;
+
+test("only explicit active Premium/Diamond entitlements unlock the frontend", () => {
+  const now = Date.now();
+  const paid = { plan: "Premium", status: "ACTIVE", expiresAt: new Date(now + 1000).toISOString(), features: { aiChat: true } };
+  assert.equal(chat.canUseAIChat(paid, now), true);
+  assert.equal(chat.canUseAIChat({ ...paid, plan: "Diamond", expiresAt: null }, now), true);
+  for (const overrides of [{ plan: "Free" }, { plan: "Other" }, { status: "PENDING" }, { status: "REFUNDED" }, { features: { aiChat: false } }, { features: {} }, { expiresAt: new Date(now).toISOString() }, { expiresAt: "invalid" }, { expiresAt: undefined }]) {
+    assert.equal(chat.canUseAIChat({ ...paid, ...overrides }, now), false);
+  }
+  assert.equal(chat.canUseAIChat({}), false);
+});
+
+test("English and Dutch locked screens offer plans and login, never a chat input", () => {
+  for (const locale of ["en", "nl"]) {
+    const html = renderToStaticMarkup(React.createElement(AccessGate, { status: "guest", copy: copy[locale].chatbot, loginHref: "/auth/login?next=%2Fcentres", onRetry() {}, onNavigate() {} }));
+    assert.match(html, /href="\/#pricing"/);
+    assert.match(html, /href="\/auth\/login\?next=%2Fcentres"/);
+    assert.ok(html.includes(copy[locale].chatbot.lockedTitle));
+    assert.ok(html.includes(copy[locale].chatbot.logIn));
+    assert.ok(!html.includes("textarea"));
+    const free = renderToStaticMarkup(React.createElement(AccessGate, { status: "locked", copy: copy[locale].chatbot, loginHref: "/auth/login", onRetry() {}, onNavigate() {} }));
+    assert.ok(free.includes(copy[locale].chatbot.refreshAccess));
+    assert.ok(!free.includes("href=\"/auth/login\""));
+  }
+});
+
+test("access-check loading and failure do not unlock or send a user to buy again", () => {
+  for (const status of ["checking", "unavailable"]) {
+    const html = renderToStaticMarkup(React.createElement(AccessGate, { status, copy: copy.en.chatbot, loginHref: "/auth/login", onRetry() {}, onNavigate() {} }));
+    assert.ok(!html.includes("textarea"));
+    assert.ok(!html.includes("href=\"/#pricing\""));
+    assert.match(html, status === "checking" ? /role="status"/ : /role="alert"/);
+  }
+});
 
 test("100 exchanges stay within the API limit and retain the latest question", () => {
   const history = [{ role: "assistant", content: "Welcome", kind: "welcome" }];
@@ -83,5 +119,6 @@ test("HTTP errors are mapped without exposing raw validation arrays or provider 
   assert.equal(chat.chatErrorCode({}, 429), "CHAT_RATE_LIMITED");
   assert.equal(chat.chatErrorCode({}, 504), "AI_TIMEOUT");
   assert.equal(chat.chatErrorCode({}, 401), "SESSION_EXPIRED");
+  assert.equal(chat.chatErrorCode({}, 403), "AI_PLAN_REQUIRED");
   assert.equal(chat.chatErrorCode({ code: "AI_INCOMPLETE" }, 503), "AI_INCOMPLETE");
 });

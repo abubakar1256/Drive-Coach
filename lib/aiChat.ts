@@ -5,6 +5,21 @@ export type ChatMessage = {
   failed?: boolean;
 };
 
+export type ChatEntitlements = {
+  plan?: string;
+  status?: string;
+  expiresAt?: string | null;
+  features?: { aiChat?: boolean };
+};
+
+// Fail closed until the server explicitly confirms the paid chat feature.
+// The server still independently enforces the entitlement on every question.
+export function canUseAIChat(access: ChatEntitlements, now = Date.now()) {
+  return access.status === "ACTIVE" && ["Premium", "Diamond"].includes(access.plan ?? "")
+    && access.features?.aiChat === true
+    && (access.expiresAt === null || (typeof access.expiresAt === "string" && Date.parse(access.expiresAt) > now));
+}
+
 // The UI can retain the conversation, while each API request stays within the
 // validated limit. Welcome text and failed requests are not model history.
 export function buildChatHistory(messages: ChatMessage[]) {
@@ -43,5 +58,6 @@ export function chatErrorCode(payload: { code?: unknown }, status: number) {
   if (status === 429) return "CHAT_RATE_LIMITED";
   if (status === 504) return "AI_TIMEOUT";
   if (status === 401) return "SESSION_EXPIRED";
+  if (status === 403) return "AI_PLAN_REQUIRED";
   return "AI_UNAVAILABLE";
 }
