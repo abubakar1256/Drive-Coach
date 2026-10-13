@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Coordinate, geometryIssues, MIN_DRIVING_SECONDS } from "./route-quality";
 
-type Point = { latitude: number; longitude: number };
+type Point = { latitude: number; longitude: number; bearing?: number | null };
 export type DrivingRoute = {
   valid: boolean; issues: string[]; durationSec: number | null;
   distanceM: number | null; coordinates: Coordinate[];
+  snappedPoints?: Array<{ latitude: number; longitude: number; name: string; bearing?: number | null }>;
 };
 const invalid = (issue: string): DrivingRoute => ({ valid: false, issues: [issue], durationSec: null, distanceM: null, coordinates: [] });
 
@@ -12,25 +13,32 @@ const invalid = (issue: string): DrivingRoute => ({ valid: false, issues: [issue
 export class DrivingRouteService {
   private readonly cache = new Map<string, { expires: number; value: Promise<DrivingRoute> }>();
 
-  async evaluate(points: Point[]): Promise<DrivingRoute> {
+  async evaluate(points: Point[], snapRadiusM = 50): Promise<DrivingRoute> {
     if (points.length < 2 || points.length > 25) return invalid("WAYPOINT_COUNT");
     if (points.some(p => !Number.isFinite(p.latitude) || !Number.isFinite(p.longitude) || Math.abs(p.latitude) > 90 || Math.abs(p.longitude) > 180)) return invalid("INVALID_COORDINATES");
     const token = process.env.MAPBOX_DIRECTIONS_TOKEN ?? process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token) return invalid("ROUTING_NOT_CONFIGURED");
     const coordinates = points.map(p => `${p.longitude},${p.latitude}`).join(";");
-    const existing = this.cache.get(coordinates);
+    const bearings = points.map(p => Number.isFinite(p.bearing) ? `${Math.round(p.bearing!) % 360},20` : "").join(";");
+    const cacheKey = `${snapRadiusM}:${bearings}:${coordinates}`;
+    const existing = this.cache.get(cacheKey);
     if (existing && existing.expires > Date.now()) return existing.value;
     if (this.cache.size >= 200) this.cache.delete(this.cache.keys().next().value!);
-    const value = this.fetchRoute(coordinates, points.length, token);
-    this.cache.set(coordinates, { expires: Date.now() + 300_000, value });
+    const value = this.fetchRoute(coordinates, points.length, token, snapRadiusM, bearings);
+    this.cache.set(cacheKey, { expires: Date.now() + 300_000, value });
     const result = await value;
-    if (result.issues.includes("ROUTING_UNAVAILABLE") || result.issues.includes("ROUTING_NOT_CONFIGURED")) this.cache.delete(coordinates);
+    if (result.issues.includes("ROUTING_UNAVAILABLE") || result.issues.includes("ROUTING_NOT_CONFIGURED")) this.cache.delete(cacheKey);
     return result;
   }
 
-  private async fetchRoute(coordinates: string, count: number, token: string): Promise<DrivingRoute> {
+  private async fetchRoute(coordinates: string, count: number, token: string, snapRadiusM: number, bearings: string): Promise<DrivingRoute> {
     try {
-      const params = new URLSearchParams({ access_token: token, geometries: "geojson", overview: "full", steps: "true", continue_straight: "true", radiuses: Array(count).fill("50").join(";") });
+      const params = new URLSearchParams({ access_token: token, geometries: "geojson", overview: "full", steps: "true", continue_straight: "true", radiuses: Array(count).fill(String(snapRadiusM)).join(";") });
+      if (/\d/.test(bearings)) {
+        params.set("bearings", bearings);
+        // Generated geometry anchors shape a continuous drive, not stopovers.
+        params.set("waypoints", `0;${count - 1}`);
+      }
       const response = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?${params}`, { signal: AbortSignal.timeout(12_000) });
       if (!response.ok) return invalid("ROUTING_UNAVAILABLE");
       const payload = await response.json();
@@ -44,7 +52,8 @@ export class DrivingRouteService {
       if (route.legs?.some((leg: { steps?: Array<{ maneuver?: { modifier?: string } }> }) => leg.steps?.some(step => step.maneuver?.modifier === "uturn"))) issues.push("U_TURN");
       // Preserve the exact seconds for the minimum check, never round a short
       // route up to 24 minutes before deciding whether it can be practised.
-      return { valid: !issues.length, issues, durationSec: route.duration, distanceM: route.distance, coordinates: geometry };
+      const snappedPoints = Array.isArray(payload.waypoints) && payload.waypoints.length === count && payload.waypoints.every((p: { location?: unknown[] }) => Array.isArray(p.location) && p.location.length === 2 && p.location.every(Number.isFinite)) ? payload.waypoints.map((p: { location: number[]; name?: string }) => ({ latitude: p.location[1], longitude: p.location[0], name: typeof p.name === "string" ? p.name : "" })) : undefined;
+      return { valid: !issues.length, issues, durationSec: route.duration, distanceM: route.distance, coordinates: geometry, ...(snappedPoints ? { snappedPoints } : {}) };
     } catch { return invalid("ROUTING_UNAVAILABLE"); }
   }
 

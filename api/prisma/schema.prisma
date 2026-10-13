@@ -57,6 +57,9 @@ model User {
   displayName  String?
   role         UserRole       @default(LEARNER)
   emailVerifiedAt DateTime?
+  examDate DateTime?
+  practiceReminderAt DateTime?
+  remindersEnabled Boolean @default(false)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   subscriptions Subscription[]
@@ -96,6 +99,7 @@ model ExamCentre {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   routes      Route[]
+  subscriptions Subscription[]
   officialPassagePoints OfficialPassagePoint[]
 }
 
@@ -108,6 +112,7 @@ model Route {
   durationMin Int?
   version     Int         @default(1)
   verifiedAt  DateTime?
+  reviewedBy  String?
   sourceLabel String?
   sourceUrl   String?
   verificationStatus String @default("UNVERIFIED")
@@ -119,6 +124,7 @@ model Route {
   favorites   Favorite[]
   practiceSessions PracticeSession[]
   recommendations RouteRecommendation[]
+  assignments RouteAssignment[]
 }
 
 model OfficialPassagePoint {
@@ -156,6 +162,7 @@ model RoutePoint {
   videoUrl    String?
   latitude    Float
   longitude   Float
+  bearing     Float?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   route       Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
@@ -180,6 +187,7 @@ model Subscription {
   id            String             @id @default(cuid())
   userId        String
   planId        String
+  centreId      String?
   status        SubscriptionStatus @default(PENDING)
   provider      String?
   providerRef   String?            @unique
@@ -189,6 +197,7 @@ model Subscription {
   updatedAt     DateTime           @updatedAt
   user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan          Plan               @relation(fields: [planId], references: [id])
+  centre        ExamCentre?        @relation(fields: [centreId], references: [id], onDelete: SetNull)
   payments      Payment[]
 }
 
@@ -225,12 +234,17 @@ model PracticeSession {
   durationSec    Int?
   completionPct  Int             @default(0)
   notes          String?
+  routeSnapshot  Json?
+  progressM      Float @default(0)
+  visitedPoints  Int @default(0)
+  completionKind String @default("TRACKING")
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   route          Route           @relation(fields: [routeId], references: [id], onDelete: Cascade)
   reflection     SelfReflection?
   trackPoints    PracticeTrackPoint[]
+  instructorFeedback InstructorFeedback[]
 
   @@index([userId, createdAt])
 }
@@ -458,6 +472,7 @@ model EmailVerificationToken {
 }
 
 model MediaAsset {
+  dataBytes Bytes?
   id           String     @id @default(cuid())
   routePointId String
   storageKey   String     @unique
@@ -472,6 +487,7 @@ model MediaAsset {
 }
 
 model Notification {
+  dedupeKey String? @unique
   id        String   @id @default(cuid())
   userId    String
   type      String
@@ -509,6 +525,7 @@ model DrivingSchool {
   createdBy       User                @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
   instructors     InstructorProfile[]
   referralCodes   ReferralCode[]
+  payments Payment[]
 }
 
 model InstructorProfile {
@@ -532,6 +549,8 @@ model StudentEnrollment {
   createdAt    DateTime          @default(now())
   instructor   InstructorProfile @relation(fields: [instructorId], references: [id], onDelete: Cascade)
   student      User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignments RouteAssignment[]
+  feedback InstructorFeedback[]
 
   @@unique([instructorId, studentId])
   @@index([studentId])
@@ -564,7 +583,9 @@ model Commission {
   id             String       @id @default(cuid())
   referralCodeId String
   referredUserId String
-  paymentId      String?
+  paymentId      String? @unique
+  paidAt         DateTime?
+  payoutReference String?
   amountCents    Int
   commissionCents Int
   status         String       @default("PENDING")
@@ -578,6 +599,7 @@ model Payment {
   id                 String        @id @default(cuid())
   userId             String
   planId             String
+  schoolId           String?
   subscriptionId     String?
   provider           String
   providerPaymentId String?       @unique
@@ -590,6 +612,7 @@ model Payment {
   updatedAt          DateTime      @updatedAt
   user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan               Plan          @relation(fields: [planId], references: [id])
+  school             DrivingSchool? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
   subscription       Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
   invoices           Invoice[]
   refunds            Refund[]
@@ -667,4 +690,29 @@ model AnalyticsEvent {
   @@index([eventType, createdAt])
   @@index([centreSlug, createdAt])
   @@index([routeSlug, createdAt])
+}
+
+model RouteAssignment {
+  id String @id @default(cuid())
+  enrollmentId String
+  routeId String
+  notes String?
+  dueAt DateTime?
+  completedAt DateTime?
+  createdAt DateTime @default(now())
+  enrollment StudentEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  @@unique([enrollmentId, routeId])
+}
+
+model InstructorFeedback {
+  id String @id @default(cuid())
+  enrollmentId String
+  sessionId String
+  body String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  enrollment StudentEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  session PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@unique([enrollmentId, sessionId])
 }

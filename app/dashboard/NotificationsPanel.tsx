@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocaleMessages } from "../../lib/useLocale";
+import { authFetch } from "../../lib/clientSession";
 import { useCurrentLocale } from "../../lib/useLocale";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
@@ -14,19 +15,21 @@ export default function NotificationsPanel() {
   const locale = useCurrentLocale();
 
   useEffect(() => {
-    const token = window.sessionStorage.getItem("routepilot.accessToken");
-    if (!token) return;
-    fetch(`${API}/me/notifications`, { headers: { Authorization: `Bearer ${token}` } }).then(async (response) => {
-      const payload = await response.json().catch(() => []);
-      if (!response.ok) throw new Error(payload?.message ?? (locale === "nl" ? "Meldingen konden niet worden geladen." : "Unable to load notifications."));
-      setItems(payload as Notification[]);
-    }).catch((caught) => setError(caught instanceof Error ? caught.message : locale === "nl" ? "Meldingen konden niet worden geladen." : "Unable to load notifications."));
+    let cancelled = false;
+    const load = async () => {
+      if (!window.sessionStorage.getItem("routepilot.accessToken")) return;
+      try { const response = await authFetch(`${API}/me/notifications`); const payload = await response.json(); if (!response.ok) throw Error(payload.message ?? "Notifications unavailable"); if (!cancelled) { setItems(payload); setError(""); } }
+      catch { if (!cancelled) setError("Unable to load notifications. Please retry."); }
+    };
+    void load(); const timer = window.setInterval(() => void load(), 60000);
+    window.addEventListener("focus", load);
+    return () => { cancelled = true; window.clearInterval(timer); window.removeEventListener("focus", load); };
   }, []);
 
   async function markRead(id: string) {
     const token = window.sessionStorage.getItem("routepilot.accessToken");
     if (!token) return;
-    const response = await fetch(`${API}/me/notifications/${id}/read`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+    const response = await authFetch(`${API}/me/notifications/${id}/read`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
     if (response.ok) setItems((current) => current.map((item) => item.id === id ? { ...item, readAt: new Date().toISOString() } : item));
   }
 

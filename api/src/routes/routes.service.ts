@@ -2,33 +2,16 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { RouteStatus } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { DrivingRouteService } from "./driving-route.service";
+import { RouteAccessService } from "./route-access.service";
 
 @Injectable()
 export class RoutesService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
-
-  private async hasPremiumAccess(userId: string) {
-    const rows = await this.prisma.$queryRawUnsafe<Array<{ id: string }>>(
-      `SELECT u."id"
-       FROM "User" u
-       LEFT JOIN "Subscription" s ON s."userId" = u."id"
-       LEFT JOIN "Plan" p ON p."id" = s."planId"
-       WHERE u."id" = $1
-         AND (
-           u."role" IN ('ADMIN', 'SUPER_ADMIN')
-           OR (s."status" = 'ACTIVE' AND p."name" <> 'Free' AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW()))
-         )
-       ORDER BY s."createdAt" DESC
-       LIMIT 1`,
-      userId,
-    );
-    return Boolean(rows[0]);
-  }
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService) {}
 
   async list(centreSlug?: string) {
     return this.prisma.route.findMany({
       where: {
-        status: RouteStatus.PUBLISHED,
+        status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null },
         centre: {
           isPublished: true,
           ...(centreSlug ? { slug: centreSlug } : {}),
@@ -44,10 +27,10 @@ export class RoutesService {
 
   async getBySlug(slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, centre: { isPublished: true } },
+      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
       include: {
         centre: {
-          include: { _count: { select: { routes: true } } },
+          include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } },
         },
         points: { orderBy: { sequence: "asc" } },
       },
@@ -61,7 +44,7 @@ export class RoutesService {
 
   async points(slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, centre: { isPublished: true } },
+      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
       select: { id: true },
     });
     if (!route) return null;
@@ -69,26 +52,27 @@ export class RoutesService {
   }
 
   async getAccessibleBySlug(userId: string, slug: string) {
-    if (!(await this.hasPremiumAccess(userId))) throw new ForbiddenException("Premium access is required for the full route");
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, centre: { isPublished: true } },
+      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
       include: {
-        centre: { include: { _count: { select: { routes: true } } } },
+        centre: { include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } } },
         points: { orderBy: { sequence: "asc" } },
       },
     });
     if (!route) return null;
+    const access = await this.routeAccess.requireAccess(userId, route.id);
     const driving = await this.driving.evaluate(route.points);
-    return { ...route, durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving, access: { premium: true, preview: false } };
+    return { ...route, points: access.premium ? route.points : route.points.map(p => ({ ...p, imageUrl: null, videoUrl: null })), durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving, access: { premium: access.premium, preview: false } };
   }
 
   async accessiblePoints(userId: string, slug: string) {
-    if (!(await this.hasPremiumAccess(userId))) throw new ForbiddenException("Premium access is required for the full route");
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, centre: { isPublished: true } },
+      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
       select: { id: true },
     });
     if (!route) return null;
-    return this.prisma.routePoint.findMany({ where: { routeId: route.id }, orderBy: { sequence: "asc" } });
+    const access = await this.routeAccess.requireAccess(userId, route.id);
+    const points = await this.prisma.routePoint.findMany({ where: { routeId: route.id }, orderBy: { sequence: "asc" } });
+    return access.premium ? points : points.map(p => ({ ...p, imageUrl: null, videoUrl: null }));
   }
 }

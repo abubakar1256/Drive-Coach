@@ -7,16 +7,26 @@ import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { DrivingRouteService } from "../routes/driving-route.service";
+import { NotificationsService } from "../notifications/notifications.service";
+import { PracticeLoopService } from "../routes/practice-loop.service";
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly notifications: NotificationsService, private readonly loops: PracticeLoopService) {}
 
   listCentres() {
     return this.prisma.examCentre.findMany({
       include: { _count: { select: { routes: true } } },
       orderBy: { name: "asc" },
     });
+  }
+
+  async announce(actorId: string, role: UserRole, title: string, body: string) {
+    if (!["ADMIN", "SUPER_ADMIN"].includes(role)) throw new ForbiddenException("Administrator permission required");
+    const users = await this.prisma.user.findMany({ select: { id: true } });
+    for (let i = 0; i < users.length; i += 500) await this.prisma.notification.createMany({ data: users.slice(i, i + 500).map(user => ({ userId: user.id, type: "ANNOUNCEMENT", title, body })) });
+    await this.prisma.auditLog.create({ data: { userId: actorId, action: "ANNOUNCEMENT_SENT", entity: "Notification", metadata: { recipients: users.length, title } } });
+    return { recipients: users.length };
   }
 
   createCentre(dto: CreateCentreDto) {
@@ -120,14 +130,45 @@ export class AdminService {
     return this.prisma.route.create({ data: dto, include: { points: true } });
   }
 
-  async updateRoute(id: string, dto: UpdateRouteDto) {
-    await this.ensureRoute(id);
+  async generatePracticeLoop(actorId: string, centreId: string, variant = 0, publish = false) {
+    const centre = await this.prisma.examCentre.findUnique({ where: { id: centreId } });
+    if (!centre || centre.latitude === null || centre.longitude === null) throw new BadRequestException("Centre map anchor is unavailable");
+    const generated = await this.loops.generate(centre.latitude, centre.longitude, variant);
+    const created = await this.prisma.$transaction(async tx => {
+      const route = await tx.route.create({ data: {
+        centreId, slug: `${centre.slug}-practice-loop-${randomUUID().slice(0, 8)}`, name: `Road practice loop ${variant + 1}`,
+        status: publish ? "PUBLISHED" : "DRAFT", durationMin: Math.ceil(generated.durationSec! / 60),
+        verificationStatus: "ROAD_VALIDATED", reviewedBy: "ROAD_ROUTING_ENGINE", verifiedAt: new Date(),
+        sourceLabel: "Drive Coach road-network practice loop — not an official examiner route",
+        sourceUrl: "https://docs.mapbox.com/api/navigation/directions/",
+        points: { create: generated.snappedPoints.map((point, index) => ({ sequence: index + 1, bearing: point.bearing, category: index === 0 ? "start" : index === generated.snappedPoints.length - 1 ? "finish" : "waypoint", title: index === 0 ? "Mapped practice meeting point" : index === generated.snappedPoints.length - 1 ? "Return to practice meeting point" : point.name || `Road waypoint ${index + 1}`, description: "Road-network practice point. Follow current signs and instructor guidance. The meeting point is not a confirmed exam-centre entrance.", latitude: point.latitude, longitude: point.longitude })) },
+      }, include: { points: { orderBy: { sequence: "asc" } }, centre: true } });
+      await tx.auditLog.create({ data: { userId: actorId, action: "PRACTICE_LOOP_GENERATED", entity: "Route", entityId: route.id, metadata: { variant, published: publish, durationSec: generated.durationSec, provider: "MAPBOX", instructorApproved: false } } });
+      return route;
+    });
+    if (publish) await this.notifications.routePublished(created.id, created.version);
+    return created;
+  }
+
+  async updateRoute(id: string, dto: UpdateRouteDto, actorId?: string) {
+    const current = await this.prisma.route.findUnique({ where: { id }, include: { points: { orderBy: { sequence: "asc" } } } });
+    if (!current) throw new NotFoundException("Route not found");
+    const reviewed = dto.verificationStatus === "VERIFIED" || (dto.verificationStatus === undefined && ["VERIFIED", "ROAD_VALIDATED"].includes(current.verificationStatus));
+    const sourceLabel = dto.sourceLabel ?? current.sourceLabel;
+    if (reviewed && !sourceLabel?.trim()) throw new BadRequestException("Add the instructor/source reference before content review");
     if (dto.status === "PUBLISHED") {
+      if (!reviewed || (!actorId && !current.reviewedBy)) throw new BadRequestException("Confirm instructor/content review before publishing");
       const points = await this.prisma.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
       const result = await this.driving.requireValid(points);
       dto.durationMin = Math.ceil(result.durationSec! / 60);
     }
-    return this.prisma.route.update({ where: { id }, data: dto, include: { points: { orderBy: { sequence: "asc" } } } });
+    const updated = await this.prisma.$transaction(async tx => {
+      const changed = await tx.route.updateMany({ where: { id, version: current.version }, data: { ...dto, verifiedAt: reviewed ? new Date() : null, reviewedBy: reviewed ? actorId ?? current.reviewedBy : null, version: { increment: 1 } } });
+      if (!changed.count) throw new BadRequestException("Route changed during review; refresh and validate again");
+      return tx.route.findUniqueOrThrow({ where: { id }, include: { points: { orderBy: { sequence: "asc" } } } });
+    });
+    if (dto.status === "PUBLISHED") await this.notifications.routePublished(id, updated.version);
+    return updated;
   }
 
   async archiveRoute(id: string) {
@@ -141,21 +182,42 @@ export class AdminService {
     return this.driving.evaluate(points);
   }
 
+  async importPoints(actorId: string, id: string, points: CreateRoutePointDto[]) {
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRawUnsafe('SELECT "id" FROM "Route" WHERE "id" = $1 FOR UPDATE', id);
+      const route = await tx.route.findUnique({ where: { id }, include: { points: true } });
+      if (!route) throw new NotFoundException("Route not found");
+      await tx.auditLog.create({ data: { userId: actorId, action: "ROUTE_POINTS_IMPORTED", entity: "Route", entityId: id, metadata: { previousPoints: route.points, incomingPointCount: points.length } } });
+      await tx.routePoint.deleteMany({ where: { routeId: id } });
+      await tx.routePoint.createMany({ data: points.map((point, index) => ({ ...point, routeId: id, sequence: index + 1 })) });
+      return tx.route.update({ where: { id }, data: { status: "DRAFT", verificationStatus: "PENDING_REVIEW", reviewedBy: null, verifiedAt: null, version: { increment: 1 } }, include: { points: { orderBy: { sequence: "asc" } } } });
+    });
+  }
+
   async createPoint(routeId: string, dto: CreateRoutePointDto) {
     await this.ensureRoute(routeId);
-    return this.prisma.routePoint.create({ data: { ...dto, routeId } });
+    return this.prisma.$transaction(async tx => {
+      await tx.route.update({ where: { id: routeId }, data: { status: "DRAFT", verificationStatus: "PENDING_REVIEW", reviewedBy: null, verifiedAt: null, version: { increment: 1 } } });
+      return tx.routePoint.create({ data: { ...dto, routeId } });
+    });
   }
 
   async updatePoint(id: string, dto: UpdateRoutePointDto) {
-    const point = await this.prisma.routePoint.findUnique({ where: { id }, select: { id: true } });
+    const point = await this.prisma.routePoint.findUnique({ where: { id }, select: { id: true, routeId: true } });
     if (!point) throw new NotFoundException("Route point not found");
-    return this.prisma.routePoint.update({ where: { id }, data: dto });
+    return this.prisma.$transaction(async tx => {
+      await tx.route.update({ where: { id: point.routeId }, data: { status: "DRAFT", verificationStatus: "PENDING_REVIEW", reviewedBy: null, verifiedAt: null, version: { increment: 1 } } });
+      return tx.routePoint.update({ where: { id }, data: { ...dto, ...((dto.latitude !== undefined || dto.longitude !== undefined) ? { bearing: null } : {}) } });
+    });
   }
 
   async deletePoint(id: string) {
-    const point = await this.prisma.routePoint.findUnique({ where: { id }, select: { id: true } });
+    const point = await this.prisma.routePoint.findUnique({ where: { id }, select: { id: true, routeId: true } });
     if (!point) throw new NotFoundException("Route point not found");
-    await this.prisma.routePoint.delete({ where: { id } });
+    await this.prisma.$transaction(async tx => {
+      await tx.route.update({ where: { id: point.routeId }, data: { status: "DRAFT", verificationStatus: "PENDING_REVIEW", reviewedBy: null, verifiedAt: null, version: { increment: 1 } } });
+      await tx.routePoint.delete({ where: { id } });
+    });
     return { success: true };
   }
 
@@ -163,11 +225,12 @@ export class AdminService {
     await this.ensureRoute(routeId);
     const points = await this.prisma.routePoint.findMany({ where: { routeId }, select: { id: true } });
     const existingIds = new Set(points.map((point) => point.id));
-    if (dto.pointIds.length !== points.length || dto.pointIds.some((id) => !existingIds.has(id))) {
+    if (new Set(dto.pointIds).size !== points.length || dto.pointIds.length !== points.length || dto.pointIds.some((id) => !existingIds.has(id))) {
       throw new NotFoundException("Point list does not match this route");
     }
 
     return this.prisma.$transaction(async (transaction) => {
+      await transaction.route.update({ where: { id: routeId }, data: { status: "DRAFT", verificationStatus: "PENDING_REVIEW", reviewedBy: null, verifiedAt: null, version: { increment: 1 } } });
       for (const [index, id] of dto.pointIds.entries()) {
         await transaction.routePoint.update({ where: { id }, data: { sequence: 100000 + index } });
       }

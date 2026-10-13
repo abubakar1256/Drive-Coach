@@ -4,6 +4,7 @@ import { AdminModule } from "../admin/admin.module";
 import { PrismaModule } from "../prisma.module";
 import { BillingController } from "./billing.controller";
 import { BillingService } from "./billing.service";
+import { FinanceGuard } from "../admin/finance.guard";
 
-@Module({ imports: [PrismaModule, AuthModule, AdminModule], controllers: [BillingController], providers: [BillingService], exports: [BillingService] })
+@Module({ imports: [PrismaModule, AuthModule, AdminModule], controllers: [BillingController], providers: [BillingService, FinanceGuard], exports: [BillingService] })
 export class BillingModule {}

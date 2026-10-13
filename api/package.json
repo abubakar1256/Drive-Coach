@@ -10,7 +10,9 @@
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "content:import": "ts-node scripts/import-road-content.ts",
+    "db:backup": "node --env-file=.env scripts/backup-database.cjs"
   },
   "prisma": {
     "seed": "pnpm exec ts-node prisma/seed.ts"

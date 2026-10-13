@@ -7,6 +7,8 @@ export type RoutePoint = {
   latitude?: number;
   longitude?: number;
   category?: string;
+  imageUrl?: string | null;
+  videoUrl?: string | null;
 };
 
 export type Centre = {

@@ -22,7 +22,7 @@ export class ExamCentresService {
 
   async list() {
     try {
-      return await this.prisma.examCentre.findMany({ where: { isPublished: true }, include: { _count: { select: { routes: true } } }, orderBy: { name: "asc" } });
+      return await this.prisma.examCentre.findMany({ where: { isPublished: true }, include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } }, orderBy: { name: "asc" } });
     } catch {
       return fallbackCentres;
     }
@@ -30,7 +30,7 @@ export class ExamCentresService {
 
   async getBySlug(slug: string) {
     try {
-      const centre = await this.prisma.examCentre.findFirst({ where: { slug, isPublished: true }, include: { routes: { where: { status: "PUBLISHED" }, include: { points: { orderBy: { sequence: "asc" }, take: 3 } } } } });
+      const centre = await this.prisma.examCentre.findFirst({ where: { slug, isPublished: true }, include: { routes: { orderBy: [{ name: "asc" }, { id: "asc" }], where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } }, include: { points: { orderBy: { sequence: "asc" }, take: 3 } } } } });
       return centre ? { ...centre, routes: centre.routes.map((route) => ({ ...route, points: route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) })) } : null;
     } catch {
       return fallbackCentres.find((centre) => centre.slug === slug) ?? null;

@@ -9,3 +9,7 @@ export class CreateReferralCodeDto {
 export class ClaimReferralDto {
   @IsString() @MinLength(3) @MaxLength(40) code!: string;
 }
+
+export class PayoutDto {
+  @IsString() @MinLength(3) @MaxLength(200) reference!: string;
+}

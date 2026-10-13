@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AdminRouteEditor from "./AdminRouteEditor";
 import AdminReports from "./AdminReports";
+import AdminPlatformTools from "./AdminPlatformTools";
 import SiteFooter from "../SiteFooter";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { getServerLocale } from "../../lib/serverLocale";
@@ -18,6 +19,7 @@ export default function AdminPage() {
         <div className="admin-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {nl ? "Contentbeheer" : "Content operations"}</p><h1>{nl ? "Routecontrole" : "Route control room"}</h1><p>{nl ? "Beheer gepubliceerde routes en de punten waarop bestuurders moeten letten." : "Manage published routes and the points drivers need to watch."}</p></div><span className="admin-badge">{nl ? "Alleen admin" : "Admin only"}</span></div>
         <AdminRouteEditor />
         <AdminReports />
+        <AdminPlatformTools />
       </section>
       <SiteFooter />
     </main>

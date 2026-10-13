@@ -1,15 +1,18 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CreatePracticeSessionDto, CreateReflectionDto, UpdatePracticeSessionDto } from "./dto/learning.dto";
 import { CreateTrackPointDto } from "./dto/track.dto";
 import { DrivingRouteService } from "../routes/driving-route.service";
+import { RouteAccessService } from "../routes/route-access.service";
+import { snapshotDistance, trackProgress, type PracticeSnapshot } from "./practice-progress";
+import type { Prisma } from "@prisma/client";
 
 type Row = Record<string, any>;
 
 @Injectable()
 export class LearningService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService) {}
 
   private query<T extends Row = Row>(sql: string, ...values: unknown[]) {
     return this.prisma.$queryRawUnsafe<T[]>(sql, ...values);
@@ -19,12 +22,12 @@ export class LearningService {
     const [userRows, favoriteRows, sessionRows, subscriptionRows] = await Promise.all([
       this.query('SELECT "id", "email", "displayName", "role", "createdAt" FROM "User" WHERE "id" = $1', userId),
       this.query('SELECT f."id", f."createdAt", r."id" AS "routeId", r."slug", r."name", r."durationMin", c."slug" AS "centreSlug", c."name" AS "centreName", c."city", COUNT(rp."id")::int AS "pointCount" FROM "Favorite" f JOIN "Route" r ON r."id" = f."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE f."userId" = $1 GROUP BY f."id", r."id", c."id" ORDER BY f."createdAt" DESC LIMIT 6', userId),
-      this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."overallFeeling", sr."difficultyCategories", sr."difficultyDetails", sr."instructorFeedback", sr."instructorCategories", sr."instructorNotes" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
+      this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."completionKind", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."overallFeeling", sr."difficultyCategories", sr."difficultyDetails", sr."instructorFeedback", sr."instructorCategories", sr."instructorNotes" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
       this.query('SELECT s."status", s."expiresAt", p."name" AS "planName" FROM "Subscription" s JOIN "Plan" p ON p."id" = s."planId" WHERE s."userId" = $1 AND s."status" = \'ACTIVE\' AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW()) ORDER BY s."createdAt" DESC LIMIT 1', userId),
     ]);
     if (!userRows[0]) throw new NotFoundException("User not found");
     const sessions = sessionRows.map((row) => this.sessionShape(row));
-    const completed = sessions.filter((session) => session.completedAt).length;
+    const completed = sessions.filter((session) => session.completionKind === "COMPLETED").length;
     const averageProgress = sessions.length ? Math.round(sessions.reduce((sum, session) => sum + session.completionPct, 0) / sessions.length) : 0;
     const reflection = sessionRows.find((row) => row.speedCompliance !== null || row.rightOfWayConfidence !== null || row.roundaboutConfidence !== null || row.laneChangeConfidence !== null || row.observedSpeedKph !== null || row.speedLimitKph !== null || row.flaggedSpeeding || row.missedRightOfWay);
     const adminHasDiamond = userRows[0].role === "ADMIN" || userRows[0].role === "SUPER_ADMIN";
@@ -36,7 +39,7 @@ export class LearningService {
   }
 
   async addFavorite(userId: string, routeId: string) {
-    const route = await this.query('SELECT r."id" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
+    const route = await this.query('SELECT r."id" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true', routeId);
     if (!route[0]) throw new NotFoundException("Published route not found");
     await this.prisma.$executeRawUnsafe('INSERT INTO "Favorite" ("id", "userId", "routeId") VALUES ($1, $2, $3) ON CONFLICT ("userId", "routeId") DO NOTHING', randomUUID(), userId, routeId);
     await this.audit(userId, "FAVORITE_ADDED", "Route", routeId);
@@ -50,12 +53,13 @@ export class LearningService {
   }
 
   async listSessions(userId: string) {
-    const rows = await this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC', userId);
+    const rows = await this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."completionKind", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC', userId);
     return rows.map((row) => this.sessionShape(row));
   }
 
   async routeAssistant(userId: string, routeId: string) {
-    const route = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName", rp."sequence", rp."title", rp."description", rp."warning", rp."category" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true ORDER BY rp."sequence"', routeId);
+    await this.routeAccess.requireAccess(userId, routeId);
+    const route = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName", rp."sequence", rp."title", rp."description", rp."warning", rp."category" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true ORDER BY rp."sequence"', routeId);
     if (!route[0]) throw new NotFoundException("Published route not found");
     const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."difficultyCategories", sr."difficultyDetails", sr."instructorCategories" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
     const reflection = reflections[0];
@@ -67,16 +71,16 @@ export class LearningService {
     const coachingMode = this.coachingMode(mode);
     const weaknessRows = await this.query('SELECT uwh."occurrenceCount", uwh."lastSeenAt", w."code", w."label", ds."code" AS "skillCode", ds."name" AS "skillName" FROM "UserWeaknessHistory" uwh JOIN "Weakness" w ON w."id" = uwh."weaknessId" JOIN "DrivingSkill" ds ON ds."id" = w."skillId" WHERE uwh."userId" = $1 AND w."active" = true ORDER BY uwh."occurrenceCount" DESC, uwh."lastSeenAt" DESC LIMIT 8', userId);
     const focus = weaknessRows[0] ? { skill: weaknessRows[0].skillName, skillCode: weaknessRows[0].skillCode, message: `Based on your recent practice, focus on ${weaknessRows[0].label.toLowerCase()} before your next drive.` } : { skill: "Start with a reflection", skillCode: null, message: "Complete a practice reflection to build your personal Drive Coach plan." };
-    const recommendationRows = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", COALESCE(SUM(CASE WHEN uwh."id" IS NOT NULL THEN rsc."coverageWeight" * (1 + LEAST(uwh."occurrenceCount", 5)) ELSE 0 END), 0)::int AS "score", COALESCE(ARRAY_AGG(DISTINCT ds."code") FILTER (WHERE uwh."id" IS NOT NULL), ARRAY[]::text[]) AS "matchedSkills" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RouteSkillCoverage" rsc ON rsc."routeId" = r."id" AND rsc."verified" = true LEFT JOIN "DrivingSkill" ds ON ds."id" = rsc."skillId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."userId" = $1 AND uwh."weaknessId" IN (SELECT w2."id" FROM "Weakness" w2 WHERE w2."skillId" = ds."id") WHERE r."status" = \'PUBLISHED\' AND c."isPublished" = true AND ($2::text IS NULL OR r."id" <> $2) GROUP BY r."id", c."id" ORDER BY "score" DESC, r."name" ASC LIMIT 3', userId, routeId ?? null);
+    const recommendationRows = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", COALESCE(SUM(CASE WHEN uwh."id" IS NOT NULL THEN rsc."coverageWeight" * (1 + LEAST(uwh."occurrenceCount", 5)) ELSE 0 END), 0)::int AS "score", COALESCE(ARRAY_AGG(DISTINCT ds."code") FILTER (WHERE uwh."id" IS NOT NULL), ARRAY[]::text[]) AS "matchedSkills" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RouteSkillCoverage" rsc ON rsc."routeId" = r."id" AND rsc."verified" = true LEFT JOIN "DrivingSkill" ds ON ds."id" = rsc."skillId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."userId" = $1 AND uwh."weaknessId" IN (SELECT w2."id" FROM "Weakness" w2 WHERE w2."skillId" = ds."id") WHERE r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true AND ($2::text IS NULL OR r."id" <> $2) GROUP BY r."id", c."id" ORDER BY "score" DESC, r."name" ASC LIMIT 3', userId, routeId ?? null);
     const recommendations = recommendationRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, score: row.score, matchedSkills: row.matchedSkills ?? [], reason: row.score > 0 ? `${row.name} covers your recent focus: ${(row.matchedSkills ?? []).join(", ")}.` : `${row.name} is an approved route available for continued practice.` }));
     const tipLimit = coachingMode === "LIGHT" ? 3 : coachingMode === "INTENSIVE" ? 8 : 5;
     const tips = await this.query(`SELECT DISTINCT ON (vt."id") vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."skillId", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(uwh."occurrenceCount", 0)::int AS "occurrenceCount" FROM "VerifiedTip" vt JOIN "DrivingSkill" ds ON ds."id" = vt."skillId" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "Weakness" w ON w."id" = wt."weaknessId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = w."id" AND uwh."userId" = $1 WHERE vt."verified" = true AND vt."adminApproved" = true ORDER BY vt."id", "occurrenceCount" DESC, vt."priority" DESC LIMIT ${tipLimit}`, userId);
     let route: Row | null = null;
     if (routeId) {
-      const routeRows = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
+      const routeRows = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true', routeId);
       route = routeRows[0] ?? null;
     }
-    const rideRows = await this.query<{ completedRides: number }>('SELECT COUNT(*)::int AS "completedRides" FROM "PracticeSession" WHERE "userId" = $1 AND "completedAt" IS NOT NULL', userId);
+    const rideRows = await this.query<{ completedRides: number }>('SELECT COUNT(*)::int AS "completedRides" FROM "PracticeSession" WHERE "userId" = $1 AND "completionKind" = \'COMPLETED\'', userId);
     const completedRides = rideRows[0]?.completedRides ?? 0;
     const practicePlan = { completedRides, ready: completedRides >= 5, message: completedRides >= 5 ? "Your recent rides are enough to keep a focused practice plan." : `${5 - completedRides} more completed ride${5 - completedRides === 1 ? "" : "s"} will make the plan more reliable.`, priorities: weaknessRows.slice(0, 3).map((weakness) => ({ code: weakness.code, label: weakness.label, occurrences: weakness.occurrenceCount, skill: weakness.skillName })) };
     for (const recommendation of recommendations) {
@@ -86,6 +90,11 @@ export class LearningService {
   }
 
   async triggerVoiceTip(userId: string, routePointId: string, distanceM: number, sessionId?: string, mode = "COACH") {
+    const point = await this.prisma.routePoint.findUnique({ where: { id: routePointId }, select: { routeId: true } });
+    if (!point) throw new NotFoundException("Route point not found");
+    const access = await this.routeAccess.requireAccess(userId, point.routeId);
+    if (!access.premium) throw new BadRequestException("Paid route access required for voice guidance");
+    if (sessionId && !await this.prisma.practiceSession.findFirst({ where: { id: sessionId, userId, routeId: point.routeId, completedAt: null } })) throw new NotFoundException("Active practice session not found");
     const coachingMode = this.coachingMode(mode);
     if (!Number.isFinite(distanceM) || distanceM < 0 || distanceM > 1000) return { speak: false, reason: "Distance is outside the safe trigger range." };
     const rows = await this.query('SELECT vt."id", vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."voiceTextFr", vt."priority", vt."cooldownSeconds", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(MAX(uwh."occurrenceCount"), 0)::int AS "occurrenceCount" FROM "RoutePoint" rp JOIN "Route" r ON r."id" = rp."routeId" AND r."status" = \'PUBLISHED\' JOIN "ExamCentre" c ON c."id" = r."centreId" AND c."isPublished" = true JOIN "DrivingSkill" ds ON ds."code" = CASE LOWER(rp."category") WHEN \'roundabout\' THEN \'ROUNDABOUT\' WHEN \'lane-change\' THEN \'LANE_CHANGE\' WHEN \'speed-zone\' THEN \'SPEED\' WHEN \'traffic-light\' THEN \'SIGNS\' ELSE \'OBSERVATION\' END JOIN "VerifiedTip" vt ON vt."skillId" = ds."id" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = wt."weaknessId" AND uwh."userId" = $1 WHERE rp."id" = $2 AND vt."verified" = true AND vt."adminApproved" = true AND $3 <= COALESCE(vt."maxTriggerDistanceM", 180) AND $3 >= COALESCE(vt."minTriggerDistanceM", 0) AND NOT EXISTS (SELECT 1 FROM "TipDeliveryHistory" td WHERE td."userId" = $1 AND td."tipId" = vt."id" AND td."deliveredAt" > NOW() - make_interval(secs => vt."cooldownSeconds")) GROUP BY vt."id", vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."voiceTextFr", vt."priority", vt."cooldownSeconds", ds."code", ds."name" ORDER BY "occurrenceCount" DESC, vt."priority" DESC LIMIT 1', userId, routePointId, distanceM);
@@ -96,12 +105,12 @@ export class LearningService {
   }
 
   async routeRecommendation(userId: string, routeId: string) {
-    const selected = await this.query('SELECT r."id", r."centreId", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', routeId);
+    const selected = await this.query('SELECT r."id", r."centreId", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true', routeId);
     if (!selected[0]) throw new NotFoundException("Published route not found");
     const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."difficultyCategories", sr."difficultyDetails", sr."instructorCategories" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
     const reflection = reflections[0];
     const focus = this.focus(reflection);
-    const candidates = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", rp."category", rp."warning", rp."description" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."centreId" = $1 AND r."id" <> $2 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true ORDER BY r."name", rp."sequence"', selected[0].centreId, routeId);
+    const candidates = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", rp."category", rp."warning", rp."description" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE r."centreId" = $1 AND r."id" <> $2 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true ORDER BY r."name", rp."sequence"', selected[0].centreId, routeId);
     const grouped = new Map<string, any>();
     for (const row of candidates) { const entry = grouped.get(row.id) ?? { id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, points: [] as any[] }; entry.points.push(row); grouped.set(row.id, entry); }
     const ranked = [...grouped.values()].map((candidate) => { const text = candidate.points.map((point: Row) => `${point.category} ${point.warning ?? ""} ${point.description ?? ""}`.toLowerCase()).join(" "); const score = focus.keywords.reduce((total, keyword) => total + (text.includes(keyword) ? 1 : 0), 0); return { candidate, score }; }).sort((a, b) => b.score - a.score || a.candidate.name.localeCompare(b.candidate.name));
@@ -110,22 +119,38 @@ export class LearningService {
   }
 
   async startSession(userId: string, dto: CreatePracticeSessionDto) {
-    const route = await this.query('SELECT r."id", r."slug", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND c."isPublished" = true', dto.routeId);
-    if (!route[0]) throw new NotFoundException("Published route not found");
+    const access = await this.routeAccess.requireAccess(userId, dto.routeId);
     const points = await this.prisma.routePoint.findMany({ where: { routeId: dto.routeId }, orderBy: { sequence: "asc" } });
-    await this.driving.requireValid(points);
-    const id = randomUUID();
-    const rows = await this.query('INSERT INTO "PracticeSession" ("id", "userId", "routeId", "updatedAt") VALUES ($1, $2, $3, NOW()) RETURNING "id", "routeId", "startedAt", "completionPct"', id, userId, dto.routeId);
-    await this.audit(userId, "PRACTICE_STARTED", "PracticeSession", id);
-    return { ...rows[0], route: route[0] };
+    const driving = await this.driving.requireValid(points);
+    const snapshot: PracticeSnapshot = { geometry: driving.coordinates, points: points.map(p => [p.longitude, p.latitude]), distanceM: snapshotDistance(driving.coordinates) };
+    if (snapshot.distanceM <= 0) throw new BadRequestException("Driving geometry unavailable");
+    const session = await this.prisma.$transaction(async tx => {
+      await tx.$executeRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", `practice:${userId}:${dto.routeId}`);
+      const existing = await tx.practiceSession.findFirst({ where: { userId, routeId: dto.routeId, completedAt: null,  }, orderBy: { startedAt: "desc" } });
+      if (existing?.routeSnapshot) return existing;
+      return tx.practiceSession.create({ data: { userId, routeId: dto.routeId, routeSnapshot: snapshot as unknown as Prisma.InputJsonValue } });
+    });
+    await this.audit(userId, "PRACTICE_STARTED", "PracticeSession", session.id);
+    return { ...session, route: access.route };
   }
 
   async updateSession(userId: string, id: string, dto: UpdatePracticeSessionDto) {
-    const existing = await this.query('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2', id, userId);
-    if (!existing[0]) throw new NotFoundException("Practice session not found");
-    await this.prisma.$executeRawUnsafe('UPDATE "PracticeSession" SET "completionPct" = COALESCE($1, "completionPct"), "durationSec" = COALESCE($2, "durationSec"), "notes" = COALESCE($3, "notes"), "completedAt" = CASE WHEN $4 = true THEN NOW() ELSE "completedAt" END, "updatedAt" = NOW() WHERE "id" = $5 AND "userId" = $6', dto.completionPct ?? null, dto.durationSec ?? null, dto.notes ?? null, dto.complete ?? false, id, userId);
-    await this.audit(userId, dto.complete ? "PRACTICE_COMPLETED" : "PRACTICE_UPDATED", "PracticeSession", id);
-    return { success: true, id };
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRawUnsafe('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2 FOR UPDATE', id, userId);
+      const session = await tx.practiceSession.findFirst({ where: { id, userId } });
+      if (!session) throw new NotFoundException("Practice session not found");
+      if (session.completedAt) return { success: true, ...session };
+      const snapshot = session.routeSnapshot as PracticeSnapshot | null;
+      const finished = Boolean(snapshot && session.visitedPoints >= snapshot.points.length && session.progressM >= snapshot.distanceM * 0.95);
+      const completionPct = finished ? 100 : session.completionPct;
+      const updated = await tx.practiceSession.update({ where: { id }, data: { notes: dto.notes ?? session.notes, ...(dto.complete ? { completedAt: new Date(), durationSec: Math.max(0, Math.floor((Date.now() - session.startedAt.getTime()) / 1000)), completionPct, completionKind: finished ? "COMPLETED" : "ENDED" } : {}) } });
+      if (dto.complete) {
+        await tx.auditLog.create({ data: { userId, action: "PRACTICE_ENDED", entity: "PracticeSession", entityId: id, metadata: { completionPct, routeFollowingOnly: true } } });
+        await tx.notification.createMany({ data: [{ userId, type: "PRACTICE_ENDED", title: "Practice saved", body: `Your route-following progress was ${completionPct}%. Add a self-reflection when ready.`, dedupeKey: `practice-ended:${id}` }], skipDuplicates: true });
+        if (finished) await tx.routeAssignment.updateMany({ where: { routeId: session.routeId, completedAt: null, enrollment: { studentId: userId, status: "ACTIVE" } }, data: { completedAt: new Date() } });
+      }
+      return { success: true, ...updated };
+    });
   }
 
   async saveReflection(userId: string, sessionId: string, dto: CreateReflectionDto) {
@@ -139,11 +164,23 @@ export class LearningService {
   }
 
   async recordTrackPoint(userId: string, sessionId: string, dto: CreateTrackPointDto) {
-    const session = await this.query('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2', sessionId, userId);
-    if (!session[0]) throw new NotFoundException("Practice session not found");
-    const id = randomUUID();
-    await this.prisma.$executeRawUnsafe('INSERT INTO "PracticeTrackPoint" ("id", "sessionId", "latitude", "longitude", "speedKph", "accuracyM", "recordedAt") VALUES ($1,$2,$3,$4,$5,$6,$7)', id, sessionId, dto.latitude, dto.longitude, dto.speedKph ?? null, dto.accuracyM ?? null, dto.recordedAt ? new Date(dto.recordedAt) : new Date());
-    return { success: true, id, sessionId };
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRawUnsafe('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2 FOR UPDATE', sessionId, userId);
+      const session = await tx.practiceSession.findFirst({ where: { id: sessionId, userId } });
+      if (!session) throw new NotFoundException("Practice session not found");
+      if (session.completedAt) throw new BadRequestException("Practice session has ended");
+      const snapshot = session.routeSnapshot as PracticeSnapshot | null;
+      if (!snapshot) throw new BadRequestException("Restart this legacy session to capture reviewed route geometry");
+      const last = await tx.practiceTrackPoint.findFirst({ where: { sessionId }, orderBy: { recordedAt: "desc" } });
+      const now = new Date();
+      if (last && now.getTime() - last.recordedAt.getTime() < 1000) return { accepted: false, reason: "GPS_THROTTLED", completionPct: session.completionPct };
+      const result = trackProgress(snapshot, session.progressM, session.visitedPoints, [dto.longitude, dto.latitude], dto.accuracyM, last ? (now.getTime() - last.recordedAt.getTime()) / 1000 : 1);
+      if (!result.accepted) return { ...result, completionPct: session.completionPct };
+      await tx.practiceTrackPoint.create({ data: { sessionId, latitude: dto.latitude, longitude: dto.longitude, accuracyM: dto.accuracyM, speedKph: dto.speedKph, recordedAt: now } });
+      const completionPct = Math.min(99, Math.floor(result.progressM / snapshot.distanceM * 100));
+      await tx.practiceSession.update({ where: { id: sessionId }, data: { progressM: result.progressM, visitedPoints: result.visited, completionPct: Math.max(session.completionPct, completionPct) } });
+      return { accepted: true, completionPct: Math.max(session.completionPct, completionPct), visitedPoints: result.visited, pointCount: snapshot.points.length };
+    });
   }
 
   private async recordWeaknesses(userId: string, sessionId: string, dto: CreateReflectionDto, speedingObserved: boolean) {
@@ -180,7 +217,7 @@ export class LearningService {
   }
 
   private sessionShape(row: Row) {
-    return { id: row.id, routeId: row.routeId, startedAt: row.startedAt, completedAt: row.completedAt, durationSec: row.durationSec, completionPct: row.completionPct, notes: row.notes, route: { slug: row.slug, name: row.name, centreName: row.centreName }, reflection: { overallFeeling: row.overallFeeling, difficultyCategories: row.difficultyCategories ?? [], difficultyDetails: row.difficultyDetails ?? {}, instructorFeedback: row.instructorFeedback, instructorCategories: row.instructorCategories ?? [], instructorNotes: row.instructorNotes, speedCompliance: row.speedCompliance, rightOfWayConfidence: row.rightOfWayConfidence, roundaboutConfidence: row.roundaboutConfidence, laneChangeConfidence: row.laneChangeConfidence, observedSpeedKph: row.observedSpeedKph, speedLimitKph: row.speedLimitKph, flaggedSpeeding: row.flaggedSpeeding, missedRightOfWay: row.missedRightOfWay } };
+    return { id: row.id, routeId: row.routeId, startedAt: row.startedAt, completedAt: row.completedAt, completionKind: row.completionKind, durationSec: row.durationSec, completionPct: row.completionPct, notes: row.notes, route: { slug: row.slug, name: row.name, centreName: row.centreName }, reflection: { overallFeeling: row.overallFeeling, difficultyCategories: row.difficultyCategories ?? [], difficultyDetails: row.difficultyDetails ?? {}, instructorFeedback: row.instructorFeedback, instructorCategories: row.instructorCategories ?? [], instructorNotes: row.instructorNotes, speedCompliance: row.speedCompliance, rightOfWayConfidence: row.rightOfWayConfidence, roundaboutConfidence: row.roundaboutConfidence, laneChangeConfidence: row.laneChangeConfidence, observedSpeedKph: row.observedSpeedKph, speedLimitKph: row.speedLimitKph, flaggedSpeeding: row.flaggedSpeeding, missedRightOfWay: row.missedRightOfWay } };
   }
 
   private recommendations(reflection?: Row | null) {

@@ -17,7 +17,7 @@ export const officialCentres: OfficialCentre[] = [
   { slug: "antwerp-north", name: "Deurne", city: "Antwerp", area: "Deurne", region: "Antwerp", latitude: 51.2238, longitude: 4.4567, description: "Official driving-test centre in Deurne." },
   { slug: "antwerp-geel", name: "Geel", city: "Geel", area: "Geel", region: "Antwerp", latitude: 51.1604, longitude: 4.9893, description: "Official driving-test centre in Geel." },
   { slug: "antwerp-kontich", name: "Kontich", city: "Kontich", area: "Kontich", region: "Antwerp", latitude: 51.1320, longitude: 4.4520, description: "Official driving-test centre in Kontich." },
-  { slug: "alken", name: "Alken", city: "Alken", area: "Alken", region: "Limburg", latitude: 50.8750, longitude: 5.3070, description: "Official driving-test centre in Alken." },
+  { slug: "alken", name: "Alken", city: "Alken", area: "Alken", region: "Limburg", latitude: 50.88597, longitude: 5.29830, description: "Official driving-test centre in Alken." },
   { slug: "bree", name: "Bree", city: "Bree", area: "Bree", region: "Limburg", latitude: 51.1410, longitude: 5.5980, description: "Official driving-test centre in Bree." },
   { slug: "haasrode", name: "Haasrode", city: "Haasrode", area: "Haasrode", region: "Flemish Brabant", latitude: 50.8460, longitude: 4.7330, description: "Official driving-test centre in Haasrode." },
   { slug: "asse-mollem", name: "Asse–Mollem", city: "Asse", area: "Mollem", region: "Flemish Brabant", latitude: 50.9080, longitude: 4.2120, description: "Official driving-test centre in Asse–Mollem." },

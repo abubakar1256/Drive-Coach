@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test:chatbot": "node --test tests/ai-chat.test.cjs && pnpm --dir api test:chatbot",
     "test:routes": "node tests/route-utils.test.cjs && pnpm --dir api build && node api/test/route-quality.test.cjs",
+    "test:platform": "pnpm --dir api build && node api/test/platform-workflows.test.cjs && node api/test/route-quality.test.cjs && node tests/route-utils.test.cjs",
     "api:dev": "pnpm --dir api dev",
     "api:build": "pnpm --dir api build",
     "api:prisma:validate": "pnpm --dir api prisma:validate"

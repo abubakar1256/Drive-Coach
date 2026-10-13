@@ -5,6 +5,8 @@ export type ApiRoute = {
   slug: string;
   name: string;
   durationMin: number | null;
+  sourceLabel?: string | null;
+  verificationStatus?: string;
   driving?: { valid: boolean; issues: string[]; durationSec: number | null; distanceM: number | null; coordinates: [number, number][] };
   centre: {
     slug: string;
@@ -159,6 +161,8 @@ export function routeToCentre(route: ApiRoute, fallback: Centre): Centre {
       latitude: point.latitude,
       longitude: point.longitude,
       category: point.category,
+      imageUrl: point.imageUrl,
+      videoUrl: point.videoUrl,
     })),
   };
 }

@@ -1,6 +1,8 @@
 import { IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class CheckoutDto {
+  @IsOptional() @IsString() @MaxLength(120) centreId?: string;
+  @IsOptional() @IsString() @MaxLength(120) schoolId?: string;
   @IsString()
   @MinLength(10)
   planId!: string;
@@ -20,6 +22,11 @@ export class CouponValidationDto {
   @IsString()
   @MinLength(10)
   planId!: string;
+
+}
+
+export class SelectCentreDto {
+  @IsString() @MinLength(2) @MaxLength(120) centreId!: string;
 }
 
 export class CreateCouponDto {

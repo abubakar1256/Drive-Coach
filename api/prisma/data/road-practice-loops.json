@@ -1,0 +1,4968 @@
+{
+  "description": "Real road-network practice loops. Not official examiner routes or instructor-approved content. Fresh provider validation required before import.",
+  "routes": [
+    {
+      "centreSlug": "alken",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:25.120Z",
+      "durationSec": 3015.129,
+      "distanceM": 28518.547,
+      "points": [
+        {
+          "latitude": 50.88599,
+          "longitude": 5.298273,
+          "name": "Road-network waypoint",
+          "bearing": 49.43757044483789
+        },
+        {
+          "latitude": 50.898716,
+          "longitude": 5.322113,
+          "name": "Road-network waypoint",
+          "bearing": 27.62044303846534
+        },
+        {
+          "latitude": 50.912953,
+          "longitude": 5.322861,
+          "name": "Road-network waypoint",
+          "bearing": 8.052655896337399
+        },
+        {
+          "latitude": 50.91684,
+          "longitude": 5.326037,
+          "name": "Road-network waypoint",
+          "bearing": 62.522989239785375
+        },
+        {
+          "latitude": 50.91371,
+          "longitude": 5.340184,
+          "name": "Road-network waypoint",
+          "bearing": 27.053263599258344
+        },
+        {
+          "latitude": 50.91583,
+          "longitude": 5.347722,
+          "name": "Road-network waypoint",
+          "bearing": 102.45413299072902
+        },
+        {
+          "latitude": 50.906356,
+          "longitude": 5.357056,
+          "name": "Road-network waypoint",
+          "bearing": 99.0110262145231
+        },
+        {
+          "latitude": 50.901032,
+          "longitude": 5.369324,
+          "name": "Road-network waypoint",
+          "bearing": 151.06386090310332
+        },
+        {
+          "latitude": 50.893748,
+          "longitude": 5.373967,
+          "name": "Road-network waypoint",
+          "bearing": 131.0803713353166
+        },
+        {
+          "latitude": 50.888905,
+          "longitude": 5.381961,
+          "name": "Road-network waypoint",
+          "bearing": 96.23912441310733
+        },
+        {
+          "latitude": 50.887828,
+          "longitude": 5.391309,
+          "name": "Road-network waypoint",
+          "bearing": 171.03769166407892
+        },
+        {
+          "latitude": 50.881784,
+          "longitude": 5.396897,
+          "name": "Road-network waypoint",
+          "bearing": 131.469962448817
+        },
+        {
+          "latitude": 50.877461,
+          "longitude": 5.408732,
+          "name": "Road-network waypoint",
+          "bearing": 194.69160383339755
+        },
+        {
+          "latitude": 50.866256,
+          "longitude": 5.403272,
+          "name": "Road-network waypoint",
+          "bearing": 219.00088457567395
+        },
+        {
+          "latitude": 50.84931,
+          "longitude": 5.374245,
+          "name": "Road-network waypoint",
+          "bearing": 263.1833290374506
+        },
+        {
+          "latitude": 50.852484,
+          "longitude": 5.366772,
+          "name": "Road-network waypoint",
+          "bearing": 256.5625146045147
+        },
+        {
+          "latitude": 50.844631,
+          "longitude": 5.340284,
+          "name": "Road-network waypoint",
+          "bearing": 277.75786398392927
+        },
+        {
+          "latitude": 50.859107,
+          "longitude": 5.338362,
+          "name": "Road-network waypoint",
+          "bearing": 77.95801228519275
+        },
+        {
+          "latitude": 50.86273,
+          "longitude": 5.351829,
+          "name": "Road-network waypoint",
+          "bearing": 307.0196427510889
+        },
+        {
+          "latitude": 50.864251,
+          "longitude": 5.343845,
+          "name": "Road-network waypoint",
+          "bearing": 326.5267195500305
+        },
+        {
+          "latitude": 50.866802,
+          "longitude": 5.341755,
+          "name": "Road-network waypoint",
+          "bearing": 263.5682465381391
+        },
+        {
+          "latitude": 50.866751,
+          "longitude": 5.334121,
+          "name": "Road-network waypoint",
+          "bearing": 327.74290946344377
+        },
+        {
+          "latitude": 50.878958,
+          "longitude": 5.321011,
+          "name": "Road-network waypoint",
+          "bearing": 264.9681323374689
+        },
+        {
+          "latitude": 50.876798,
+          "longitude": 5.307092,
+          "name": "Road-network waypoint",
+          "bearing": 324.9657020467064
+        },
+        {
+          "latitude": 50.88599,
+          "longitude": 5.298273,
+          "name": "Road-network waypoint",
+          "bearing": 49.43757044483789
+        }
+      ]
+    },
+    {
+      "centreSlug": "antwerp-geel",
+      "variant": 2,
+      "checkedAt": "2026-10-13T20:00:56.008Z",
+      "durationSec": 3086.758,
+      "distanceM": 35079.09,
+      "points": [
+        {
+          "latitude": 51.160739,
+          "longitude": 4.988134,
+          "name": "Road-network waypoint",
+          "bearing": 209.5192223050521
+        },
+        {
+          "latitude": 51.15831,
+          "longitude": 4.984496,
+          "name": "Road-network waypoint",
+          "bearing": 263.97667311716566
+        },
+        {
+          "latitude": 51.158305,
+          "longitude": 4.979033,
+          "name": "Road-network waypoint",
+          "bearing": 330.60938362983404
+        },
+        {
+          "latitude": 51.160646,
+          "longitude": 4.977235,
+          "name": "Road-network waypoint",
+          "bearing": 265.39576563848055
+        },
+        {
+          "latitude": 51.159116,
+          "longitude": 4.968819,
+          "name": "Road-network waypoint",
+          "bearing": 330.5218704140569
+        },
+        {
+          "latitude": 51.164404,
+          "longitude": 4.965155,
+          "name": "Road-network waypoint",
+          "bearing": 262.5030008113866
+        },
+        {
+          "latitude": 51.164771,
+          "longitude": 4.949075,
+          "name": "Road-network waypoint",
+          "bearing": 284.5743813663123
+        },
+        {
+          "latitude": 51.16747,
+          "longitude": 4.941088,
+          "name": "Road-network waypoint",
+          "bearing": 267.22560942805217
+        },
+        {
+          "latitude": 51.163532,
+          "longitude": 4.923075,
+          "name": "Road-network waypoint",
+          "bearing": 276.85781700662744
+        },
+        {
+          "latitude": 51.168735,
+          "longitude": 4.903925,
+          "name": "Road-network waypoint",
+          "bearing": 17.993381552733922
+        },
+        {
+          "latitude": 51.20903,
+          "longitude": 4.901116,
+          "name": "Road-network waypoint",
+          "bearing": 47.51459725788345
+        },
+        {
+          "latitude": 51.212589,
+          "longitude": 4.906865,
+          "name": "Road-network waypoint",
+          "bearing": 20.496508996286877
+        },
+        {
+          "latitude": 51.223909,
+          "longitude": 4.912963,
+          "name": "Road-network waypoint",
+          "bearing": 111.2259041423871
+        },
+        {
+          "latitude": 51.226688,
+          "longitude": 4.928447,
+          "name": "Road-network waypoint",
+          "bearing": 61.068427158085115
+        },
+        {
+          "latitude": 51.24083,
+          "longitude": 4.966392,
+          "name": "Road-network waypoint",
+          "bearing": 84.00098235121584
+        },
+        {
+          "latitude": 51.234896,
+          "longitude": 4.97127,
+          "name": "Road-network waypoint",
+          "bearing": 168.6763790871596
+        },
+        {
+          "latitude": 51.203985,
+          "longitude": 4.980804,
+          "name": "Road-network waypoint",
+          "bearing": 75.96993158827019
+        },
+        {
+          "latitude": 51.21581,
+          "longitude": 5.013149,
+          "name": "Road-network waypoint",
+          "bearing": 116.02749268380961
+        },
+        {
+          "latitude": 51.210395,
+          "longitude": 5.030999,
+          "name": "Road-network waypoint",
+          "bearing": 91.27005924172727
+        },
+        {
+          "latitude": 51.214502,
+          "longitude": 5.044207,
+          "name": "Road-network waypoint",
+          "bearing": 196.48678980199097
+        },
+        {
+          "latitude": 51.210281,
+          "longitude": 5.044214,
+          "name": "Road-network waypoint",
+          "bearing": 208.92510105457896
+        },
+        {
+          "latitude": 51.20739,
+          "longitude": 5.03744,
+          "name": "Road-network waypoint",
+          "bearing": 207.74757723590267
+        },
+        {
+          "latitude": 51.162848,
+          "longitude": 5.001296,
+          "name": "Road-network waypoint",
+          "bearing": 219.08203939750763
+        },
+        {
+          "latitude": 51.163146,
+          "longitude": 4.993386,
+          "name": "Road-network waypoint",
+          "bearing": 253.03914550760408
+        },
+        {
+          "latitude": 51.160739,
+          "longitude": 4.988134,
+          "name": "Road-network waypoint",
+          "bearing": 209.5192223050521
+        }
+      ]
+    },
+    {
+      "centreSlug": "antwerp-kontich",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:24.862Z",
+      "durationSec": 2475.601,
+      "distanceM": 20613.273,
+      "points": [
+        {
+          "latitude": 51.132559,
+          "longitude": 4.451164,
+          "name": "Road-network waypoint",
+          "bearing": 53.58878224960273
+        },
+        {
+          "latitude": 51.13435,
+          "longitude": 4.451863,
+          "name": "Road-network waypoint",
+          "bearing": 78.18607419930021
+        },
+        {
+          "latitude": 51.134903,
+          "longitude": 4.457233,
+          "name": "Road-network waypoint",
+          "bearing": 12.945807392769325
+        },
+        {
+          "latitude": 51.14203,
+          "longitude": 4.457497,
+          "name": "Road-network waypoint",
+          "bearing": 20.101547839118155
+        },
+        {
+          "latitude": 51.148245,
+          "longitude": 4.463727,
+          "name": "Road-network waypoint",
+          "bearing": 9.89677322545566
+        },
+        {
+          "latitude": 51.155873,
+          "longitude": 4.46086,
+          "name": "Road-network waypoint",
+          "bearing": 99.05886646006786
+        },
+        {
+          "latitude": 51.153896,
+          "longitude": 4.471199,
+          "name": "Road-network waypoint",
+          "bearing": 80.47327926281508
+        },
+        {
+          "latitude": 51.15933,
+          "longitude": 4.496274,
+          "name": "Road-network waypoint",
+          "bearing": 91.84497770353636
+        },
+        {
+          "latitude": 51.149901,
+          "longitude": 4.505048,
+          "name": "Road-network waypoint",
+          "bearing": 141.5965410897942
+        },
+        {
+          "latitude": 51.14772,
+          "longitude": 4.51024,
+          "name": "Road-network waypoint",
+          "bearing": 158.0086489966485
+        },
+        {
+          "latitude": 51.138901,
+          "longitude": 4.513575,
+          "name": "Road-network waypoint",
+          "bearing": 160.03636826283298
+        },
+        {
+          "latitude": 51.135916,
+          "longitude": 4.516644,
+          "name": "Road-network waypoint",
+          "bearing": 130.0795265730368
+        },
+        {
+          "latitude": 51.131056,
+          "longitude": 4.530527,
+          "name": "Road-network waypoint",
+          "bearing": 233.05688201209978
+        },
+        {
+          "latitude": 51.125773,
+          "longitude": 4.513996,
+          "name": "Road-network waypoint",
+          "bearing": 256.1764237430758
+        },
+        {
+          "latitude": 51.126857,
+          "longitude": 4.501223,
+          "name": "Road-network waypoint",
+          "bearing": 194.52100662421978
+        },
+        {
+          "latitude": 51.125975,
+          "longitude": 4.496898,
+          "name": "Road-network waypoint",
+          "bearing": 213.21638401812638
+        },
+        {
+          "latitude": 51.123408,
+          "longitude": 4.493372,
+          "name": "Road-network waypoint",
+          "bearing": 206.25019639206164
+        },
+        {
+          "latitude": 51.105393,
+          "longitude": 4.495901,
+          "name": "Road-network waypoint",
+          "bearing": 227.93394311013773
+        },
+        {
+          "latitude": 51.103209,
+          "longitude": 4.492651,
+          "name": "Road-network waypoint",
+          "bearing": 319.73669704450907
+        },
+        {
+          "latitude": 51.103488,
+          "longitude": 4.488658,
+          "name": "Road-network waypoint",
+          "bearing": 306.2898001123642
+        },
+        {
+          "latitude": 51.110544,
+          "longitude": 4.476272,
+          "name": "Road-network waypoint",
+          "bearing": 29.57132793426007
+        },
+        {
+          "latitude": 51.113538,
+          "longitude": 4.478679,
+          "name": "Road-network waypoint",
+          "bearing": 330.0351802866226
+        },
+        {
+          "latitude": 51.117502,
+          "longitude": 4.475253,
+          "name": "Road-network waypoint",
+          "bearing": 315.0048561096935
+        },
+        {
+          "latitude": 51.131315,
+          "longitude": 4.447825,
+          "name": "Road-network waypoint",
+          "bearing": 51.012874475540116
+        },
+        {
+          "latitude": 51.132559,
+          "longitude": 4.451164,
+          "name": "Road-network waypoint",
+          "bearing": 53.58878224960273
+        }
+      ]
+    },
+    {
+      "centreSlug": "antwerp-north",
+      "variant": 3,
+      "checkedAt": "2026-10-13T20:00:54.832Z",
+      "durationSec": 3508.678,
+      "distanceM": 22626.912,
+      "points": [
+        {
+          "latitude": 51.224053,
+          "longitude": 4.457314,
+          "name": "Road-network waypoint",
+          "bearing": 146.6714635149781
+        },
+        {
+          "latitude": 51.220355,
+          "longitude": 4.4596,
+          "name": "Road-network waypoint",
+          "bearing": 278.5956640318818
+        },
+        {
+          "latitude": 51.21778,
+          "longitude": 4.447101,
+          "name": "Road-network waypoint",
+          "bearing": 209.6124042739422
+        },
+        {
+          "latitude": 51.212759,
+          "longitude": 4.445406,
+          "name": "Road-network waypoint",
+          "bearing": 205.2716380719968
+        },
+        {
+          "latitude": 51.208423,
+          "longitude": 4.440248,
+          "name": "Road-network waypoint",
+          "bearing": 278.6588918101944
+        },
+        {
+          "latitude": 51.212122,
+          "longitude": 4.408805,
+          "name": "Road-network waypoint",
+          "bearing": 221.92053329069734
+        },
+        {
+          "latitude": 51.209017,
+          "longitude": 4.402584,
+          "name": "Road-network waypoint",
+          "bearing": 338.08671195867544
+        },
+        {
+          "latitude": 51.211704,
+          "longitude": 4.400671,
+          "name": "Road-network waypoint",
+          "bearing": 274.15008358637186
+        },
+        {
+          "latitude": 51.213419,
+          "longitude": 4.391212,
+          "name": "Road-network waypoint",
+          "bearing": 31.797394633342833
+        },
+        {
+          "latitude": 51.227897,
+          "longitude": 4.401907,
+          "name": "Road-network waypoint",
+          "bearing": 16.685117947619062
+        },
+        {
+          "latitude": 51.237477,
+          "longitude": 4.403534,
+          "name": "Road-network waypoint",
+          "bearing": 358.10358740097996
+        },
+        {
+          "latitude": 51.242295,
+          "longitude": 4.398492,
+          "name": "Road-network waypoint",
+          "bearing": 296.73328875505916
+        },
+        {
+          "latitude": 51.243874,
+          "longitude": 4.386121,
+          "name": "Road-network waypoint",
+          "bearing": 9.918587327586067
+        },
+        {
+          "latitude": 51.263963,
+          "longitude": 4.388792,
+          "name": "Road-network waypoint",
+          "bearing": 92.38729061163917
+        },
+        {
+          "latitude": 51.26094,
+          "longitude": 4.40487,
+          "name": "Road-network waypoint",
+          "bearing": 94.43041074421092
+        },
+        {
+          "latitude": 51.260547,
+          "longitude": 4.42624,
+          "name": "Road-network waypoint",
+          "bearing": 103.97527956109161
+        },
+        {
+          "latitude": 51.257113,
+          "longitude": 4.433204,
+          "name": "Road-network waypoint",
+          "bearing": 97.86219282699585
+        },
+        {
+          "latitude": 51.259376,
+          "longitude": 4.434653,
+          "name": "Road-network waypoint",
+          "bearing": 53.538981087055845
+        },
+        {
+          "latitude": 51.259563,
+          "longitude": 4.438302,
+          "name": "Road-network waypoint",
+          "bearing": 181.17367051871963
+        },
+        {
+          "latitude": 51.255072,
+          "longitude": 4.438064,
+          "name": "Road-network waypoint",
+          "bearing": 275.5126766804762
+        },
+        {
+          "latitude": 51.254979,
+          "longitude": 4.435491,
+          "name": "Road-network waypoint",
+          "bearing": 180
+        },
+        {
+          "latitude": 51.243688,
+          "longitude": 4.429096,
+          "name": "Road-network waypoint",
+          "bearing": 123.37409323682198
+        },
+        {
+          "latitude": 51.238029,
+          "longitude": 4.440622,
+          "name": "Road-network waypoint",
+          "bearing": 151.2493998266661
+        },
+        {
+          "latitude": 51.229533,
+          "longitude": 4.442937,
+          "name": "Road-network waypoint",
+          "bearing": 86.0034883013837
+        },
+        {
+          "latitude": 51.224053,
+          "longitude": 4.457314,
+          "name": "Road-network waypoint",
+          "bearing": 146.6714635149781
+        }
+      ]
+    },
+    {
+      "centreSlug": "arlon-weyler",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:57:01.145Z",
+      "durationSec": 1788.287,
+      "distanceM": 21732.299,
+      "points": [
+        {
+          "latitude": 49.673331,
+          "longitude": 5.824154,
+          "name": "Road-network waypoint",
+          "bearing": 0.4298894423458819
+        },
+        {
+          "latitude": 49.685,
+          "longitude": 5.824268,
+          "name": "Road-network waypoint",
+          "bearing": 57.3166521830878
+        },
+        {
+          "latitude": 49.694453,
+          "longitude": 5.846634,
+          "name": "Road-network waypoint",
+          "bearing": 64.74970584576874
+        },
+        {
+          "latitude": 49.696544,
+          "longitude": 5.860459,
+          "name": "Road-network waypoint",
+          "bearing": 98.24681392532506
+        },
+        {
+          "latitude": 49.691426,
+          "longitude": 5.878293,
+          "name": "Road-network waypoint",
+          "bearing": 146.50890134426436
+        },
+        {
+          "latitude": 49.685765,
+          "longitude": 5.879976,
+          "name": "Road-network waypoint",
+          "bearing": 184.7416047017142
+        },
+        {
+          "latitude": 49.684332,
+          "longitude": 5.878198,
+          "name": "Road-network waypoint",
+          "bearing": 161.2523277476971
+        },
+        {
+          "latitude": 49.677106,
+          "longitude": 5.882476,
+          "name": "Road-network waypoint",
+          "bearing": 120.64646192986498
+        },
+        {
+          "latitude": 49.678915,
+          "longitude": 5.888467,
+          "name": "Road-network waypoint",
+          "bearing": 94.99933647478025
+        },
+        {
+          "latitude": 49.675655,
+          "longitude": 5.908822,
+          "name": "Road-network waypoint",
+          "bearing": 113.70517790445183
+        },
+        {
+          "latitude": 49.672676,
+          "longitude": 5.917798,
+          "name": "Road-network waypoint",
+          "bearing": 178.32676376955465
+        },
+        {
+          "latitude": 49.667713,
+          "longitude": 5.920388,
+          "name": "Road-network waypoint",
+          "bearing": 185.454714210262
+        },
+        {
+          "latitude": 49.66333,
+          "longitude": 5.918546,
+          "name": "Road-network waypoint",
+          "bearing": 219.34781829644527
+        },
+        {
+          "latitude": 49.661997,
+          "longitude": 5.91546,
+          "name": "Road-network waypoint",
+          "bearing": 205.60435776539768
+        },
+        {
+          "latitude": 49.659671,
+          "longitude": 5.914912,
+          "name": "Road-network waypoint",
+          "bearing": 263.88175305033
+        },
+        {
+          "latitude": 49.658976,
+          "longitude": 5.912301,
+          "name": "Road-network waypoint",
+          "bearing": 257.4262736256173
+        },
+        {
+          "latitude": 49.65809,
+          "longitude": 5.865739,
+          "name": "Road-network waypoint",
+          "bearing": 177.6463864517475
+        },
+        {
+          "latitude": 49.653552,
+          "longitude": 5.863872,
+          "name": "Road-network waypoint",
+          "bearing": 173.434447038018
+        },
+        {
+          "latitude": 49.648694,
+          "longitude": 5.865261,
+          "name": "Road-network waypoint",
+          "bearing": 231.8906771985017
+        },
+        {
+          "latitude": 49.647012,
+          "longitude": 5.855519,
+          "name": "Road-network waypoint",
+          "bearing": 275.15742512990596
+        },
+        {
+          "latitude": 49.6474,
+          "longitude": 5.852141,
+          "name": "Road-network waypoint",
+          "bearing": 305.67199093495793
+        },
+        {
+          "latitude": 49.652227,
+          "longitude": 5.841607,
+          "name": "Road-network waypoint",
+          "bearing": 354.4987409741463
+        },
+        {
+          "latitude": 49.668353,
+          "longitude": 5.830044,
+          "name": "Road-network waypoint",
+          "bearing": 263.7206535038108
+        },
+        {
+          "latitude": 49.667641,
+          "longitude": 5.824135,
+          "name": "Road-network waypoint",
+          "bearing": 0.3014850051229132
+        },
+        {
+          "latitude": 49.673331,
+          "longitude": 5.824154,
+          "name": "Road-network waypoint",
+          "bearing": 0.4298894423458819
+        }
+      ]
+    },
+    {
+      "centreSlug": "asse-mollem",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:27.405Z",
+      "durationSec": 2272.059,
+      "distanceM": 27617.012,
+      "points": [
+        {
+          "latitude": 50.907569,
+          "longitude": 4.20833,
+          "name": "Road-network waypoint",
+          "bearing": 346.1488521381826
+        },
+        {
+          "latitude": 50.910676,
+          "longitude": 4.207569,
+          "name": "Road-network waypoint",
+          "bearing": 20.39526454501697
+        },
+        {
+          "latitude": 50.915359,
+          "longitude": 4.212156,
+          "name": "Road-network waypoint",
+          "bearing": 60.85501407429729
+        },
+        {
+          "latitude": 50.918338,
+          "longitude": 4.235985,
+          "name": "Road-network waypoint",
+          "bearing": 65.96859223254228
+        },
+        {
+          "latitude": 50.922906,
+          "longitude": 4.244066,
+          "name": "Road-network waypoint",
+          "bearing": 64.94085538064473
+        },
+        {
+          "latitude": 50.927437,
+          "longitude": 4.262893,
+          "name": "Road-network waypoint",
+          "bearing": 136.60595385561362
+        },
+        {
+          "latitude": 50.917165,
+          "longitude": 4.291963,
+          "name": "Road-network waypoint",
+          "bearing": 127.00604033348344
+        },
+        {
+          "latitude": 50.909954,
+          "longitude": 4.299371,
+          "name": "Road-network waypoint",
+          "bearing": 65.96095148410359
+        },
+        {
+          "latitude": 50.910689,
+          "longitude": 4.303202,
+          "name": "Road-network waypoint",
+          "bearing": 166.36825996946618
+        },
+        {
+          "latitude": 50.90585,
+          "longitude": 4.308165,
+          "name": "Road-network waypoint",
+          "bearing": 131.07135731957936
+        },
+        {
+          "latitude": 50.899667,
+          "longitude": 4.322668,
+          "name": "Road-network waypoint",
+          "bearing": 215.09187745614582
+        },
+        {
+          "latitude": 50.895802,
+          "longitude": 4.316426,
+          "name": "Road-network waypoint",
+          "bearing": 242.18417541242857
+        },
+        {
+          "latitude": 50.889779,
+          "longitude": 4.29482,
+          "name": "Road-network waypoint",
+          "bearing": 231.19982743638764
+        },
+        {
+          "latitude": 50.877013,
+          "longitude": 4.274187,
+          "name": "Road-network waypoint",
+          "bearing": 264.4353855501427
+        },
+        {
+          "latitude": 50.881132,
+          "longitude": 4.254274,
+          "name": "Road-network waypoint",
+          "bearing": 253.567332657032
+        },
+        {
+          "latitude": 50.883829,
+          "longitude": 4.22356,
+          "name": "Road-network waypoint",
+          "bearing": 272.9503249893636
+        },
+        {
+          "latitude": 50.880468,
+          "longitude": 4.187501,
+          "name": "Road-network waypoint",
+          "bearing": 270.55991017350567
+        },
+        {
+          "latitude": 50.881858,
+          "longitude": 4.172149,
+          "name": "Road-network waypoint",
+          "bearing": 307.8168832345135
+        },
+        {
+          "latitude": 50.883739,
+          "longitude": 4.167771,
+          "name": "Road-network waypoint",
+          "bearing": 332.47260151703335
+        },
+        {
+          "latitude": 50.896143,
+          "longitude": 4.17299,
+          "name": "Road-network waypoint",
+          "bearing": 36.70106244635167
+        },
+        {
+          "latitude": 50.898228,
+          "longitude": 4.179588,
+          "name": "Road-network waypoint",
+          "bearing": 43.9676940671946
+        },
+        {
+          "latitude": 50.90824,
+          "longitude": 4.192487,
+          "name": "Road-network waypoint",
+          "bearing": 119.07127006170589
+        },
+        {
+          "latitude": 50.908764,
+          "longitude": 4.203256,
+          "name": "Road-network waypoint",
+          "bearing": 139.02790844973686
+        },
+        {
+          "latitude": 50.905776,
+          "longitude": 4.208496,
+          "name": "Road-network waypoint",
+          "bearing": 76.28944852495385
+        },
+        {
+          "latitude": 50.907569,
+          "longitude": 4.20833,
+          "name": "Road-network waypoint",
+          "bearing": 346.1488521381826
+        }
+      ]
+    },
+    {
+      "centreSlug": "bastogne",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:47.562Z",
+      "durationSec": 2312.133,
+      "distanceM": 28714.334,
+      "points": [
+        {
+          "latitude": 50.005415,
+          "longitude": 5.721834,
+          "name": "Road-network waypoint",
+          "bearing": 290.62770236144746
+        },
+        {
+          "latitude": 50.01417,
+          "longitude": 5.709567,
+          "name": "Road-network waypoint",
+          "bearing": 335.60569624901837
+        },
+        {
+          "latitude": 50.027768,
+          "longitude": 5.703501,
+          "name": "Road-network waypoint",
+          "bearing": 328.4011677591324
+        },
+        {
+          "latitude": 50.030449,
+          "longitude": 5.698172,
+          "name": "Road-network waypoint",
+          "bearing": 331.3380201603031
+        },
+        {
+          "latitude": 50.045828,
+          "longitude": 5.685965,
+          "name": "Road-network waypoint",
+          "bearing": 343.61002923361104
+        },
+        {
+          "latitude": 50.051272,
+          "longitude": 5.68762,
+          "name": "Road-network waypoint",
+          "bearing": 307.907630488578
+        },
+        {
+          "latitude": 50.053995,
+          "longitude": 5.679136,
+          "name": "Road-network waypoint",
+          "bearing": 66.1373470952467
+        },
+        {
+          "latitude": 50.052846,
+          "longitude": 5.690063,
+          "name": "Road-network waypoint",
+          "bearing": 76.55583208396496
+        },
+        {
+          "latitude": 50.055542,
+          "longitude": 5.704905,
+          "name": "Road-network waypoint",
+          "bearing": 96.79503172782893
+        },
+        {
+          "latitude": 50.052653,
+          "longitude": 5.716306,
+          "name": "Road-network waypoint",
+          "bearing": 98.52181208033454
+        },
+        {
+          "latitude": 50.051912,
+          "longitude": 5.736487,
+          "name": "Road-network waypoint",
+          "bearing": 38.40614915557819
+        },
+        {
+          "latitude": 50.064852,
+          "longitude": 5.758437,
+          "name": "Road-network waypoint",
+          "bearing": 87.34413110466483
+        },
+        {
+          "latitude": 50.063574,
+          "longitude": 5.761649,
+          "name": "Road-network waypoint",
+          "bearing": 82.20196024711572
+        },
+        {
+          "latitude": 50.064994,
+          "longitude": 5.766363,
+          "name": "Road-network waypoint",
+          "bearing": 86.23678632239847
+        },
+        {
+          "latitude": 50.064821,
+          "longitude": 5.780936,
+          "name": "Road-network waypoint",
+          "bearing": 101.66732379426844
+        },
+        {
+          "latitude": 50.058793,
+          "longitude": 5.808429,
+          "name": "Road-network waypoint",
+          "bearing": 190.7403905339071
+        },
+        {
+          "latitude": 50.044277,
+          "longitude": 5.805017,
+          "name": "Road-network waypoint",
+          "bearing": 195.55273747022034
+        },
+        {
+          "latitude": 50.039951,
+          "longitude": 5.80122,
+          "name": "Road-network waypoint",
+          "bearing": 173.60832057400194
+        },
+        {
+          "latitude": 50.033402,
+          "longitude": 5.806207,
+          "name": "Road-network waypoint",
+          "bearing": 168.16184457038798
+        },
+        {
+          "latitude": 50.023028,
+          "longitude": 5.807525,
+          "name": "Road-network waypoint",
+          "bearing": 251.9337095037468
+        },
+        {
+          "latitude": 50.019835,
+          "longitude": 5.79317,
+          "name": "Road-network waypoint",
+          "bearing": 225.70124233848668
+        },
+        {
+          "latitude": 50.006999,
+          "longitude": 5.77969,
+          "name": "Road-network waypoint",
+          "bearing": 253.05603413816388
+        },
+        {
+          "latitude": 50.005783,
+          "longitude": 5.762617,
+          "name": "Road-network waypoint",
+          "bearing": 275.46930434457755
+        },
+        {
+          "latitude": 50.008812,
+          "longitude": 5.730949,
+          "name": "Road-network waypoint",
+          "bearing": 263.78743830865346
+        },
+        {
+          "latitude": 50.005415,
+          "longitude": 5.721834,
+          "name": "Road-network waypoint",
+          "bearing": 290.62770236144746
+        }
+      ]
+    },
+    {
+      "centreSlug": "braine-le-comte",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:42.811Z",
+      "durationSec": 2139.558,
+      "distanceM": 23297.168,
+      "points": [
+        {
+          "latitude": 50.606428,
+          "longitude": 4.14382,
+          "name": "Road-network waypoint",
+          "bearing": 118.44185364771187
+        },
+        {
+          "latitude": 50.609632,
+          "longitude": 4.16403,
+          "name": "Road-network waypoint",
+          "bearing": 84.45471259274433
+        },
+        {
+          "latitude": 50.608711,
+          "longitude": 4.173574,
+          "name": "Road-network waypoint",
+          "bearing": 49.32069955291945
+        },
+        {
+          "latitude": 50.615717,
+          "longitude": 4.184932,
+          "name": "Road-network waypoint",
+          "bearing": 28.057417406168042
+        },
+        {
+          "latitude": 50.621139,
+          "longitude": 4.187868,
+          "name": "Road-network waypoint",
+          "bearing": 0
+        },
+        {
+          "latitude": 50.626378,
+          "longitude": 4.184899,
+          "name": "Road-network waypoint",
+          "bearing": 358.0877107695151
+        },
+        {
+          "latitude": 50.628755,
+          "longitude": 4.186337,
+          "name": "Road-network waypoint",
+          "bearing": 340.7432349390035
+        },
+        {
+          "latitude": 50.631405,
+          "longitude": 4.179393,
+          "name": "Road-network waypoint",
+          "bearing": 342.67446978715714
+        },
+        {
+          "latitude": 50.636607,
+          "longitude": 4.178137,
+          "name": "Road-network waypoint",
+          "bearing": 82.61853567153224
+        },
+        {
+          "latitude": 50.636781,
+          "longitude": 4.186179,
+          "name": "Road-network waypoint",
+          "bearing": 150.16183122670157
+        },
+        {
+          "latitude": 50.633363,
+          "longitude": 4.191301,
+          "name": "Road-network waypoint",
+          "bearing": 90
+        },
+        {
+          "latitude": 50.63484,
+          "longitude": 4.196905,
+          "name": "Road-network waypoint",
+          "bearing": 126.32237580050219
+        },
+        {
+          "latitude": 50.624172,
+          "longitude": 4.221179,
+          "name": "Road-network waypoint",
+          "bearing": 90.99236534079591
+        },
+        {
+          "latitude": 50.624471,
+          "longitude": 4.232343,
+          "name": "Road-network waypoint",
+          "bearing": 163.99796880694248
+        },
+        {
+          "latitude": 50.607098,
+          "longitude": 4.224942,
+          "name": "Road-network waypoint",
+          "bearing": 279.32120907551655
+        },
+        {
+          "latitude": 50.608673,
+          "longitude": 4.2116,
+          "name": "Road-network waypoint",
+          "bearing": 236.28158211773945
+        },
+        {
+          "latitude": 50.597306,
+          "longitude": 4.184148,
+          "name": "Road-network waypoint",
+          "bearing": 193.1627165007739
+        },
+        {
+          "latitude": 50.593197,
+          "longitude": 4.184774,
+          "name": "Road-network waypoint",
+          "bearing": 197.0250273333266
+        },
+        {
+          "latitude": 50.577154,
+          "longitude": 4.17583,
+          "name": "Road-network waypoint",
+          "bearing": 291.3670110237253
+        },
+        {
+          "latitude": 50.582209,
+          "longitude": 4.165136,
+          "name": "Road-network waypoint",
+          "bearing": 334.2962296585659
+        },
+        {
+          "latitude": 50.590074,
+          "longitude": 4.159349,
+          "name": "Road-network waypoint",
+          "bearing": 21.71968055763557
+        },
+        {
+          "latitude": 50.594619,
+          "longitude": 4.159119,
+          "name": "Road-network waypoint",
+          "bearing": 328.3730061425839
+        },
+        {
+          "latitude": 50.598691,
+          "longitude": 4.152651,
+          "name": "Road-network waypoint",
+          "bearing": 281.2780448550286
+        },
+        {
+          "latitude": 50.597995,
+          "longitude": 4.150094,
+          "name": "Road-network waypoint",
+          "bearing": 322.2217248292216
+        },
+        {
+          "latitude": 50.606428,
+          "longitude": 4.14382,
+          "name": "Road-network waypoint",
+          "bearing": 118.44185364771187
+        }
+      ]
+    },
+    {
+      "centreSlug": "brakel",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:39.758Z",
+      "durationSec": 1860.952,
+      "distanceM": 21322.168,
+      "points": [
+        {
+          "latitude": 50.801626,
+          "longitude": 3.762381,
+          "name": "Road-network waypoint",
+          "bearing": 31.848705916448694
+        },
+        {
+          "latitude": 50.805578,
+          "longitude": 3.76853,
+          "name": "Road-network waypoint",
+          "bearing": 72.59791140658479
+        },
+        {
+          "latitude": 50.810775,
+          "longitude": 3.79785,
+          "name": "Road-network waypoint",
+          "bearing": 339.8279723561615
+        },
+        {
+          "latitude": 50.825362,
+          "longitude": 3.802378,
+          "name": "Road-network waypoint",
+          "bearing": 21.236472872543914
+        },
+        {
+          "latitude": 50.829882,
+          "longitude": 3.807924,
+          "name": "Road-network waypoint",
+          "bearing": 94.2224184857273
+        },
+        {
+          "latitude": 50.828258,
+          "longitude": 3.820072,
+          "name": "Road-network waypoint",
+          "bearing": 113.02598290827206
+        },
+        {
+          "latitude": 50.824622,
+          "longitude": 3.829154,
+          "name": "Road-network waypoint",
+          "bearing": 104.33405982677283
+        },
+        {
+          "latitude": 50.824265,
+          "longitude": 3.841938,
+          "name": "Road-network waypoint",
+          "bearing": 128.79575383209692
+        },
+        {
+          "latitude": 50.82076,
+          "longitude": 3.849124,
+          "name": "Road-network waypoint",
+          "bearing": 184.37317206894483
+        },
+        {
+          "latitude": 50.815261,
+          "longitude": 3.846007,
+          "name": "Road-network waypoint",
+          "bearing": 184.86924812859792
+        },
+        {
+          "latitude": 50.812617,
+          "longitude": 3.848354,
+          "name": "Road-network waypoint",
+          "bearing": 182.38039483906945
+        },
+        {
+          "latitude": 50.808077,
+          "longitude": 3.846583,
+          "name": "Road-network waypoint",
+          "bearing": 85.95447496622069
+        },
+        {
+          "latitude": 50.806919,
+          "longitude": 3.856975,
+          "name": "Road-network waypoint",
+          "bearing": 191.19169126176192
+        },
+        {
+          "latitude": 50.802587,
+          "longitude": 3.852578,
+          "name": "Road-network waypoint",
+          "bearing": 237.0373727245478
+        },
+        {
+          "latitude": 50.801618,
+          "longitude": 3.842749,
+          "name": "Road-network waypoint",
+          "bearing": 184.21702716417903
+        },
+        {
+          "latitude": 50.799806,
+          "longitude": 3.840638,
+          "name": "Road-network waypoint",
+          "bearing": 206.40883457454893
+        },
+        {
+          "latitude": 50.790123,
+          "longitude": 3.838261,
+          "name": "Road-network waypoint",
+          "bearing": 145.93079749228934
+        },
+        {
+          "latitude": 50.787381,
+          "longitude": 3.839669,
+          "name": "Road-network waypoint",
+          "bearing": 254.53881860299242
+        },
+        {
+          "latitude": 50.780127,
+          "longitude": 3.822905,
+          "name": "Road-network waypoint",
+          "bearing": 251.2784880971002
+        },
+        {
+          "latitude": 50.777736,
+          "longitude": 3.805387,
+          "name": "Road-network waypoint",
+          "bearing": 274.41128799433085
+        },
+        {
+          "latitude": 50.783588,
+          "longitude": 3.800096,
+          "name": "Road-network waypoint",
+          "bearing": 312.66003679857977
+        },
+        {
+          "latitude": 50.78839,
+          "longitude": 3.788919,
+          "name": "Road-network waypoint",
+          "bearing": 300.9636601410155
+        },
+        {
+          "latitude": 50.795048,
+          "longitude": 3.764254,
+          "name": "Road-network waypoint",
+          "bearing": 316.58880167068776
+        },
+        {
+          "latitude": 50.798306,
+          "longitude": 3.759397,
+          "name": "Road-network waypoint",
+          "bearing": 9.478517246569425
+        },
+        {
+          "latitude": 50.801626,
+          "longitude": 3.762381,
+          "name": "Road-network waypoint",
+          "bearing": 31.848705916448694
+        }
+      ]
+    },
+    {
+      "centreSlug": "bree",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:26.249Z",
+      "durationSec": 3055.254,
+      "distanceM": 35724.145,
+      "points": [
+        {
+          "latitude": 51.141024,
+          "longitude": 5.597974,
+          "name": "Road-network waypoint",
+          "bearing": 236.36555028537606
+        },
+        {
+          "latitude": 51.14003,
+          "longitude": 5.588046,
+          "name": "Road-network waypoint",
+          "bearing": 335.34075019075857
+        },
+        {
+          "latitude": 51.147661,
+          "longitude": 5.584978,
+          "name": "Road-network waypoint",
+          "bearing": 0.7448809040316178
+        },
+        {
+          "latitude": 51.161938,
+          "longitude": 5.59238,
+          "name": "Road-network waypoint",
+          "bearing": 354.2701525622018
+        },
+        {
+          "latitude": 51.181367,
+          "longitude": 5.588425,
+          "name": "Road-network waypoint",
+          "bearing": 39.88920253023798
+        },
+        {
+          "latitude": 51.184716,
+          "longitude": 5.598557,
+          "name": "Road-network waypoint",
+          "bearing": 130.0192160554567
+        },
+        {
+          "latitude": 51.181825,
+          "longitude": 5.616709,
+          "name": "Road-network waypoint",
+          "bearing": 73.57256509804455
+        },
+        {
+          "latitude": 51.191236,
+          "longitude": 5.644992,
+          "name": "Road-network waypoint",
+          "bearing": 163.1798444529029
+        },
+        {
+          "latitude": 51.185278,
+          "longitude": 5.646039,
+          "name": "Road-network waypoint",
+          "bearing": 79.1620140732374
+        },
+        {
+          "latitude": 51.18758,
+          "longitude": 5.664167,
+          "name": "Road-network waypoint",
+          "bearing": 89.29530234030733
+        },
+        {
+          "latitude": 51.186152,
+          "longitude": 5.683358,
+          "name": "Road-network waypoint",
+          "bearing": 68.81001226725988
+        },
+        {
+          "latitude": 51.190682,
+          "longitude": 5.698726,
+          "name": "Road-network waypoint",
+          "bearing": 87.22421436106134
+        },
+        {
+          "latitude": 51.18987,
+          "longitude": 5.713528,
+          "name": "Road-network waypoint",
+          "bearing": 158.40451814545247
+        },
+        {
+          "latitude": 51.171832,
+          "longitude": 5.723562,
+          "name": "Road-network waypoint",
+          "bearing": 137.88554865014282
+        },
+        {
+          "latitude": 51.168425,
+          "longitude": 5.72851,
+          "name": "Road-network waypoint",
+          "bearing": 107.25170748651499
+        },
+        {
+          "latitude": 51.168344,
+          "longitude": 5.73815,
+          "name": "Road-network waypoint",
+          "bearing": 159.38266729241434
+        },
+        {
+          "latitude": 51.161526,
+          "longitude": 5.741997,
+          "name": "Road-network waypoint",
+          "bearing": 167.9277066324844
+        },
+        {
+          "latitude": 51.144016,
+          "longitude": 5.743988,
+          "name": "Road-network waypoint",
+          "bearing": 235.54942094855195
+        },
+        {
+          "latitude": 51.129568,
+          "longitude": 5.732768,
+          "name": "Road-network waypoint",
+          "bearing": 210.88402436158654
+        },
+        {
+          "latitude": 51.118178,
+          "longitude": 5.719877,
+          "name": "Road-network waypoint",
+          "bearing": 230.80263177489618
+        },
+        {
+          "latitude": 51.110753,
+          "longitude": 5.702311,
+          "name": "Road-network waypoint",
+          "bearing": 283.1987991811558
+        },
+        {
+          "latitude": 51.108738,
+          "longitude": 5.682427,
+          "name": "Road-network waypoint",
+          "bearing": 306.5488204933125
+        },
+        {
+          "latitude": 51.114305,
+          "longitude": 5.670677,
+          "name": "Road-network waypoint",
+          "bearing": 285.85941343604657
+        },
+        {
+          "latitude": 51.116846,
+          "longitude": 5.647555,
+          "name": "Road-network waypoint",
+          "bearing": 301.4959762915882
+        },
+        {
+          "latitude": 51.141024,
+          "longitude": 5.597974,
+          "name": "Road-network waypoint",
+          "bearing": 236.36555028537606
+        }
+      ]
+    },
+    {
+      "centreSlug": "brugge",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:27.928Z",
+      "durationSec": 1952.419,
+      "distanceM": 18678.322,
+      "points": [
+        {
+          "latitude": 51.229606,
+          "longitude": 3.227911,
+          "name": "Road-network waypoint",
+          "bearing": 8.94426453556332
+        },
+        {
+          "latitude": 51.235606,
+          "longitude": 3.231823,
+          "name": "Road-network waypoint",
+          "bearing": 14.748752056042974
+        },
+        {
+          "latitude": 51.239411,
+          "longitude": 3.23243,
+          "name": "Road-network waypoint",
+          "bearing": 64.19262733815162
+        },
+        {
+          "latitude": 51.245957,
+          "longitude": 3.241266,
+          "name": "Road-network waypoint",
+          "bearing": 32.210566155510776
+        },
+        {
+          "latitude": 51.25438,
+          "longitude": 3.248938,
+          "name": "Road-network waypoint",
+          "bearing": 79.46094282220514
+        },
+        {
+          "latitude": 51.257206,
+          "longitude": 3.255746,
+          "name": "Road-network waypoint",
+          "bearing": 71.05282610272286
+        },
+        {
+          "latitude": 51.257135,
+          "longitude": 3.259658,
+          "name": "Road-network waypoint",
+          "bearing": 35.50054620769674
+        },
+        {
+          "latitude": 51.262119,
+          "longitude": 3.272389,
+          "name": "Road-network waypoint",
+          "bearing": 152.06644288492544
+        },
+        {
+          "latitude": 51.253355,
+          "longitude": 3.278745,
+          "name": "Road-network waypoint",
+          "bearing": 143.63478730233737
+        },
+        {
+          "latitude": 51.248351,
+          "longitude": 3.28425,
+          "name": "Road-network waypoint",
+          "bearing": 177.31825493259566
+        },
+        {
+          "latitude": 51.24408,
+          "longitude": 3.286008,
+          "name": "Road-network waypoint",
+          "bearing": 148.3176509508611
+        },
+        {
+          "latitude": 51.239112,
+          "longitude": 3.290761,
+          "name": "Road-network waypoint",
+          "bearing": 143.23119287172875
+        },
+        {
+          "latitude": 51.236823,
+          "longitude": 3.300084,
+          "name": "Road-network waypoint",
+          "bearing": 133.82679025239872
+        },
+        {
+          "latitude": 51.231249,
+          "longitude": 3.305306,
+          "name": "Road-network waypoint",
+          "bearing": 224.37459657256395
+        },
+        {
+          "latitude": 51.228336,
+          "longitude": 3.298296,
+          "name": "Road-network waypoint",
+          "bearing": 243.6849182507359
+        },
+        {
+          "latitude": 51.227023,
+          "longitude": 3.292258,
+          "name": "Road-network waypoint",
+          "bearing": 244.27496929224532
+        },
+        {
+          "latitude": 51.223319,
+          "longitude": 3.281395,
+          "name": "Road-network waypoint",
+          "bearing": 235.57397859992292
+        },
+        {
+          "latitude": 51.214101,
+          "longitude": 3.26445,
+          "name": "Road-network waypoint",
+          "bearing": 209.31903477474913
+        },
+        {
+          "latitude": 51.207516,
+          "longitude": 3.267705,
+          "name": "Road-network waypoint",
+          "bearing": 292.302835381346
+        },
+        {
+          "latitude": 51.211083,
+          "longitude": 3.242208,
+          "name": "Road-network waypoint",
+          "bearing": 313.02144240198635
+        },
+        {
+          "latitude": 51.222275,
+          "longitude": 3.233928,
+          "name": "Road-network waypoint",
+          "bearing": 316.68475000129865
+        },
+        {
+          "latitude": 51.223037,
+          "longitude": 3.232101,
+          "name": "Road-network waypoint",
+          "bearing": 267.9527143600743
+        },
+        {
+          "latitude": 51.222737,
+          "longitude": 3.227245,
+          "name": "Road-network waypoint",
+          "bearing": 8.745074392770618
+        },
+        {
+          "latitude": 51.225056,
+          "longitude": 3.228318,
+          "name": "Road-network waypoint",
+          "bearing": 1.20594703997358
+        },
+        {
+          "latitude": 51.229606,
+          "longitude": 3.227911,
+          "name": "Road-network waypoint",
+          "bearing": 8.94426453556332
+        }
+      ]
+    },
+    {
+      "centreSlug": "brussels-schaerbeek",
+      "variant": 2,
+      "checkedAt": "2026-10-13T20:00:49.974Z",
+      "durationSec": 2505.656,
+      "distanceM": 26377.725,
+      "points": [
+        {
+          "latitude": 50.876527,
+          "longitude": 4.38997,
+          "name": "Road-network waypoint",
+          "bearing": 235.18746147130403
+        },
+        {
+          "latitude": 50.872478,
+          "longitude": 4.379765,
+          "name": "Road-network waypoint",
+          "bearing": 309.00089960812807
+        },
+        {
+          "latitude": 50.874021,
+          "longitude": 4.376221,
+          "name": "Road-network waypoint",
+          "bearing": 310.66275369680034
+        },
+        {
+          "latitude": 50.881615,
+          "longitude": 4.373784,
+          "name": "Road-network waypoint",
+          "bearing": 357.69384228449894
+        },
+        {
+          "latitude": 50.884795,
+          "longitude": 4.376346,
+          "name": "Road-network waypoint",
+          "bearing": 7.980620826765573
+        },
+        {
+          "latitude": 50.88759,
+          "longitude": 4.375323,
+          "name": "Road-network waypoint",
+          "bearing": 323.90888072157804
+        },
+        {
+          "latitude": 50.895286,
+          "longitude": 4.353253,
+          "name": "Road-network waypoint",
+          "bearing": 303.2887603003617
+        },
+        {
+          "latitude": 50.898226,
+          "longitude": 4.349158,
+          "name": "Road-network waypoint",
+          "bearing": 329.6037577926134
+        },
+        {
+          "latitude": 50.911487,
+          "longitude": 4.344064,
+          "name": "Road-network waypoint",
+          "bearing": 3.7734206130690495
+        },
+        {
+          "latitude": 50.916038,
+          "longitude": 4.34967,
+          "name": "Road-network waypoint",
+          "bearing": 339.78186974138555
+        },
+        {
+          "latitude": 50.916925,
+          "longitude": 4.341695,
+          "name": "Road-network waypoint",
+          "bearing": 333.0712621302555
+        },
+        {
+          "latitude": 50.938018,
+          "longitude": 4.33074,
+          "name": "Road-network waypoint",
+          "bearing": 336.43617603868734
+        },
+        {
+          "latitude": 50.944909,
+          "longitude": 4.325046,
+          "name": "Road-network waypoint",
+          "bearing": 118.62015143545818
+        },
+        {
+          "latitude": 50.934732,
+          "longitude": 4.370692,
+          "name": "Road-network waypoint",
+          "bearing": 114.38797246518925
+        },
+        {
+          "latitude": 50.93197,
+          "longitude": 4.374733,
+          "name": "Road-network waypoint",
+          "bearing": 118.3756959259942
+        },
+        {
+          "latitude": 50.925662,
+          "longitude": 4.39487,
+          "name": "Road-network waypoint",
+          "bearing": 104.61662944944874
+        },
+        {
+          "latitude": 50.922785,
+          "longitude": 4.4144,
+          "name": "Road-network waypoint",
+          "bearing": 87.68060278512866
+        },
+        {
+          "latitude": 50.926219,
+          "longitude": 4.425802,
+          "name": "Road-network waypoint",
+          "bearing": 225.51696339603785
+        },
+        {
+          "latitude": 50.920471,
+          "longitude": 4.426544,
+          "name": "Road-network waypoint",
+          "bearing": 208.3841962081568
+        },
+        {
+          "latitude": 50.903202,
+          "longitude": 4.411703,
+          "name": "Road-network waypoint",
+          "bearing": 214.0105599139851
+        },
+        {
+          "latitude": 50.899721,
+          "longitude": 4.405739,
+          "name": "Road-network waypoint",
+          "bearing": 208.53821092263752
+        },
+        {
+          "latitude": 50.892491,
+          "longitude": 4.401147,
+          "name": "Road-network waypoint",
+          "bearing": 213.39421430707893
+        },
+        {
+          "latitude": 50.88261,
+          "longitude": 4.384846,
+          "name": "Road-network waypoint",
+          "bearing": 313.36817006793717
+        },
+        {
+          "latitude": 50.882756,
+          "longitude": 4.382334,
+          "name": "Road-network waypoint",
+          "bearing": 194.38445654497377
+        },
+        {
+          "latitude": 50.876527,
+          "longitude": 4.38997,
+          "name": "Road-network waypoint",
+          "bearing": 235.18746147130403
+        }
+      ]
+    },
+    {
+      "centreSlug": "brussels-south",
+      "variant": 3,
+      "checkedAt": "2026-10-13T20:00:48.450Z",
+      "durationSec": 2860.604,
+      "distanceM": 30620.812,
+      "points": [
+        {
+          "latitude": 50.840084,
+          "longitude": 4.282582,
+          "name": "Road-network waypoint",
+          "bearing": 188.58239043919778
+        },
+        {
+          "latitude": 50.822228,
+          "longitude": 4.278506,
+          "name": "Road-network waypoint",
+          "bearing": 225.7750423320742
+        },
+        {
+          "latitude": 50.81366,
+          "longitude": 4.258651,
+          "name": "Road-network waypoint",
+          "bearing": 244.46215825705855
+        },
+        {
+          "latitude": 50.807877,
+          "longitude": 4.232076,
+          "name": "Road-network waypoint",
+          "bearing": 328.80121085280285
+        },
+        {
+          "latitude": 50.817307,
+          "longitude": 4.222956,
+          "name": "Road-network waypoint",
+          "bearing": 343.67789128903615
+        },
+        {
+          "latitude": 50.843896,
+          "longitude": 4.213602,
+          "name": "Road-network waypoint",
+          "bearing": 309.67752612047184
+        },
+        {
+          "latitude": 50.85082,
+          "longitude": 4.195372,
+          "name": "Road-network waypoint",
+          "bearing": 285.5469688124448
+        },
+        {
+          "latitude": 50.851084,
+          "longitude": 4.177798,
+          "name": "Road-network waypoint",
+          "bearing": 6.979587336259328
+        },
+        {
+          "latitude": 50.857514,
+          "longitude": 4.177371,
+          "name": "Road-network waypoint",
+          "bearing": 290.2899085318217
+        },
+        {
+          "latitude": 50.861572,
+          "longitude": 4.169855,
+          "name": "Road-network waypoint",
+          "bearing": 30.7967560076944
+        },
+        {
+          "latitude": 50.870386,
+          "longitude": 4.175539,
+          "name": "Road-network waypoint",
+          "bearing": 79.14440326546395
+        },
+        {
+          "latitude": 50.875499,
+          "longitude": 4.18861,
+          "name": "Road-network waypoint",
+          "bearing": 69.48510145968345
+        },
+        {
+          "latitude": 50.87589,
+          "longitude": 4.207648,
+          "name": "Road-network waypoint",
+          "bearing": 77.09793360742663
+        },
+        {
+          "latitude": 50.880139,
+          "longitude": 4.224672,
+          "name": "Road-network waypoint",
+          "bearing": 90.91029432264122
+        },
+        {
+          "latitude": 50.875922,
+          "longitude": 4.239888,
+          "name": "Road-network waypoint",
+          "bearing": 10.913064358853546
+        },
+        {
+          "latitude": 50.88185,
+          "longitude": 4.246623,
+          "name": "Road-network waypoint",
+          "bearing": 111.95378639605582
+        },
+        {
+          "latitude": 50.88411,
+          "longitude": 4.25454,
+          "name": "Road-network waypoint",
+          "bearing": 4.071301184624929
+        },
+        {
+          "latitude": 50.886299,
+          "longitude": 4.254033,
+          "name": "Road-network waypoint",
+          "bearing": 103.70503469640812
+        },
+        {
+          "latitude": 50.885761,
+          "longitude": 4.260981,
+          "name": "Road-network waypoint",
+          "bearing": 59.325200683642834
+        },
+        {
+          "latitude": 50.889588,
+          "longitude": 4.272803,
+          "name": "Road-network waypoint",
+          "bearing": 117.312100580709
+        },
+        {
+          "latitude": 50.882221,
+          "longitude": 4.283057,
+          "name": "Road-network waypoint",
+          "bearing": 179.0963534931393
+        },
+        {
+          "latitude": 50.876925,
+          "longitude": 4.272455,
+          "name": "Road-network waypoint",
+          "bearing": 210.9474576696348
+        },
+        {
+          "latitude": 50.869685,
+          "longitude": 4.269711,
+          "name": "Road-network waypoint",
+          "bearing": 178.38509589393277
+        },
+        {
+          "latitude": 50.85798,
+          "longitude": 4.271931,
+          "name": "Road-network waypoint",
+          "bearing": 164.53390706688128
+        },
+        {
+          "latitude": 50.840084,
+          "longitude": 4.282582,
+          "name": "Road-network waypoint",
+          "bearing": 188.58239043919778
+        }
+      ]
+    },
+    {
+      "centreSlug": "charleroi-couillet",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:43.356Z",
+      "durationSec": 1680.355,
+      "distanceM": 18843.156,
+      "points": [
+        {
+          "latitude": 50.392328,
+          "longitude": 4.443825,
+          "name": "Road-network waypoint",
+          "bearing": 19.241920074889208
+        },
+        {
+          "latitude": 50.396348,
+          "longitude": 4.436351,
+          "name": "Road-network waypoint",
+          "bearing": 52.35791851016734
+        },
+        {
+          "latitude": 50.402991,
+          "longitude": 4.439679,
+          "name": "Road-network waypoint",
+          "bearing": 29.14887980193754
+        },
+        {
+          "latitude": 50.405178,
+          "longitude": 4.448097,
+          "name": "Road-network waypoint",
+          "bearing": 38.76678023074851
+        },
+        {
+          "latitude": 50.41584,
+          "longitude": 4.456577,
+          "name": "Road-network waypoint",
+          "bearing": 36.693950812253945
+        },
+        {
+          "latitude": 50.420572,
+          "longitude": 4.464549,
+          "name": "Road-network waypoint",
+          "bearing": 85.77588232904554
+        },
+        {
+          "latitude": 50.420181,
+          "longitude": 4.476799,
+          "name": "Road-network waypoint",
+          "bearing": 76.72242647750761
+        },
+        {
+          "latitude": 50.421549,
+          "longitude": 4.481768,
+          "name": "Road-network waypoint",
+          "bearing": 139.46621126100598
+        },
+        {
+          "latitude": 50.415031,
+          "longitude": 4.489673,
+          "name": "Road-network waypoint",
+          "bearing": 120.67966299220916
+        },
+        {
+          "latitude": 50.412713,
+          "longitude": 4.497411,
+          "name": "Road-network waypoint",
+          "bearing": 146.4011230288147
+        },
+        {
+          "latitude": 50.407808,
+          "longitude": 4.498196,
+          "name": "Road-network waypoint",
+          "bearing": 150.68076504120086
+        },
+        {
+          "latitude": 50.39633,
+          "longitude": 4.508883,
+          "name": "Road-network waypoint",
+          "bearing": 176.63635950763148
+        },
+        {
+          "latitude": 50.38929,
+          "longitude": 4.50483,
+          "name": "Road-network waypoint",
+          "bearing": 226.9716072507195
+        },
+        {
+          "latitude": 50.387131,
+          "longitude": 4.499077,
+          "name": "Road-network waypoint",
+          "bearing": 255.55045180566378
+        },
+        {
+          "latitude": 50.387052,
+          "longitude": 4.491484,
+          "name": "Road-network waypoint",
+          "bearing": 233.07446631900467
+        },
+        {
+          "latitude": 50.380667,
+          "longitude": 4.483102,
+          "name": "Road-network waypoint",
+          "bearing": 200.26341190671673
+        },
+        {
+          "latitude": 50.368713,
+          "longitude": 4.480651,
+          "name": "Road-network waypoint",
+          "bearing": 336.8313946964975
+        },
+        {
+          "latitude": 50.374681,
+          "longitude": 4.473735,
+          "name": "Road-network waypoint",
+          "bearing": 29.805905770867525
+        },
+        {
+          "latitude": 50.378124,
+          "longitude": 4.473915,
+          "name": "Road-network waypoint",
+          "bearing": 295.9687930741053
+        },
+        {
+          "latitude": 50.382674,
+          "longitude": 4.468835,
+          "name": "Road-network waypoint",
+          "bearing": 284.18085460817883
+        },
+        {
+          "latitude": 50.38417,
+          "longitude": 4.461764,
+          "name": "Road-network waypoint",
+          "bearing": 266.6509669383059
+        },
+        {
+          "latitude": 50.38308,
+          "longitude": 4.449014,
+          "name": "Road-network waypoint",
+          "bearing": 284.0902144792101
+        },
+        {
+          "latitude": 50.386234,
+          "longitude": 4.437789,
+          "name": "Road-network waypoint",
+          "bearing": 326.34097154772394
+        },
+        {
+          "latitude": 50.388214,
+          "longitude": 4.435527,
+          "name": "Road-network waypoint",
+          "bearing": 49.70882020507605
+        },
+        {
+          "latitude": 50.392328,
+          "longitude": 4.443825,
+          "name": "Road-network waypoint",
+          "bearing": 19.241920074889208
+        }
+      ]
+    },
+    {
+      "centreSlug": "couvin-mariembourg",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:44.490Z",
+      "durationSec": 2596.561,
+      "distanceM": 27276.943,
+      "points": [
+        {
+          "latitude": 50.091843,
+          "longitude": 4.539192,
+          "name": "Road-network waypoint",
+          "bearing": 282.43863380572714
+        },
+        {
+          "latitude": 50.092148,
+          "longitude": 4.532699,
+          "name": "Road-network waypoint",
+          "bearing": 307.2638987322681
+        },
+        {
+          "latitude": 50.098041,
+          "longitude": 4.523321,
+          "name": "Road-network waypoint",
+          "bearing": 17.031017730704775
+        },
+        {
+          "latitude": 50.127041,
+          "longitude": 4.53804,
+          "name": "Road-network waypoint",
+          "bearing": 12.21720095556725
+        },
+        {
+          "latitude": 50.13322,
+          "longitude": 4.540119,
+          "name": "Road-network waypoint",
+          "bearing": 349.1427098067475
+        },
+        {
+          "latitude": 50.134971,
+          "longitude": 4.537044,
+          "name": "Road-network waypoint",
+          "bearing": 30.08579128308844
+        },
+        {
+          "latitude": 50.13861,
+          "longitude": 4.542776,
+          "name": "Road-network waypoint",
+          "bearing": 62.11161273241589
+        },
+        {
+          "latitude": 50.146292,
+          "longitude": 4.565905,
+          "name": "Road-network waypoint",
+          "bearing": 79.47013892679695
+        },
+        {
+          "latitude": 50.146513,
+          "longitude": 4.583861,
+          "name": "Road-network waypoint",
+          "bearing": 151.32520470864262
+        },
+        {
+          "latitude": 50.140349,
+          "longitude": 4.580986,
+          "name": "Road-network waypoint",
+          "bearing": 126.90429720850005
+        },
+        {
+          "latitude": 50.137441,
+          "longitude": 4.589775,
+          "name": "Road-network waypoint",
+          "bearing": 89.68487197206332
+        },
+        {
+          "latitude": 50.137056,
+          "longitude": 4.601206,
+          "name": "Road-network waypoint",
+          "bearing": 115.17668607340772
+        },
+        {
+          "latitude": 50.130544,
+          "longitude": 4.614242,
+          "name": "Road-network waypoint",
+          "bearing": 143.27449154096746
+        },
+        {
+          "latitude": 50.111135,
+          "longitude": 4.623967,
+          "name": "Road-network waypoint",
+          "bearing": 257.1614400517996
+        },
+        {
+          "latitude": 50.103591,
+          "longitude": 4.607421,
+          "name": "Road-network waypoint",
+          "bearing": 215.7118403242591
+        },
+        {
+          "latitude": 50.093307,
+          "longitude": 4.597103,
+          "name": "Road-network waypoint",
+          "bearing": 240.8401413165417
+        },
+        {
+          "latitude": 50.08429,
+          "longitude": 4.56912,
+          "name": "Road-network waypoint",
+          "bearing": 268.95575239159785
+        },
+        {
+          "latitude": 50.086252,
+          "longitude": 4.564194,
+          "name": "Road-network waypoint",
+          "bearing": 261.8381701685098
+        },
+        {
+          "latitude": 50.084869,
+          "longitude": 4.557557,
+          "name": "Road-network waypoint",
+          "bearing": 238.06097143492684
+        },
+        {
+          "latitude": 50.079057,
+          "longitude": 4.549231,
+          "name": "Road-network waypoint",
+          "bearing": 321.81010790964314
+        },
+        {
+          "latitude": 50.083407,
+          "longitude": 4.543004,
+          "name": "Road-network waypoint",
+          "bearing": 299.13821136250465
+        },
+        {
+          "latitude": 50.085036,
+          "longitude": 4.535309,
+          "name": "Road-network waypoint",
+          "bearing": 277.3882968921007
+        },
+        {
+          "latitude": 50.082737,
+          "longitude": 4.524343,
+          "name": "Road-network waypoint",
+          "bearing": 318.29183194596646
+        },
+        {
+          "latitude": 50.091203,
+          "longitude": 4.521066,
+          "name": "Road-network waypoint",
+          "bearing": 53.34205462258262
+        },
+        {
+          "latitude": 50.091843,
+          "longitude": 4.539192,
+          "name": "Road-network waypoint",
+          "bearing": 282.43863380572714
+        }
+      ]
+    },
+    {
+      "centreSlug": "eeklo",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:35.556Z",
+      "durationSec": 2829.404,
+      "distanceM": 30853.514,
+      "points": [
+        {
+          "latitude": 51.183687,
+          "longitude": 3.567759,
+          "name": "Road-network waypoint",
+          "bearing": 294.50403912149386
+        },
+        {
+          "latitude": 51.190348,
+          "longitude": 3.555265,
+          "name": "Road-network waypoint",
+          "bearing": 301.80357026510444
+        },
+        {
+          "latitude": 51.203959,
+          "longitude": 3.516959,
+          "name": "Road-network waypoint",
+          "bearing": 333.25353622605434
+        },
+        {
+          "latitude": 51.225547,
+          "longitude": 3.521668,
+          "name": "Road-network waypoint",
+          "bearing": 355.98297826383146
+        },
+        {
+          "latitude": 51.234728,
+          "longitude": 3.521374,
+          "name": "Road-network waypoint",
+          "bearing": 94.69938399040882
+        },
+        {
+          "latitude": 51.233791,
+          "longitude": 3.533232,
+          "name": "Road-network waypoint",
+          "bearing": 7.628486847845181
+        },
+        {
+          "latitude": 51.239401,
+          "longitude": 3.534387,
+          "name": "Road-network waypoint",
+          "bearing": 57.333705058993644
+        },
+        {
+          "latitude": 51.240642,
+          "longitude": 3.536725,
+          "name": "Road-network waypoint",
+          "bearing": 99.96965841844872
+        },
+        {
+          "latitude": 51.236883,
+          "longitude": 3.592653,
+          "name": "Road-network waypoint",
+          "bearing": 31.15457810366462
+        },
+        {
+          "latitude": 51.246013,
+          "longitude": 3.602273,
+          "name": "Road-network waypoint",
+          "bearing": 46.72938611594566
+        },
+        {
+          "latitude": 51.249372,
+          "longitude": 3.61263,
+          "name": "Road-network waypoint",
+          "bearing": 186.67947599100606
+        },
+        {
+          "latitude": 51.229598,
+          "longitude": 3.619779,
+          "name": "Road-network waypoint",
+          "bearing": 180
+        },
+        {
+          "latitude": 51.216639,
+          "longitude": 3.618445,
+          "name": "Road-network waypoint",
+          "bearing": 145.16304983097643
+        },
+        {
+          "latitude": 51.216793,
+          "longitude": 3.621339,
+          "name": "Road-network waypoint",
+          "bearing": 153.25023150940842
+        },
+        {
+          "latitude": 51.21007,
+          "longitude": 3.625037,
+          "name": "Road-network waypoint",
+          "bearing": 77.42151541876194
+        },
+        {
+          "latitude": 51.212485,
+          "longitude": 3.653689,
+          "name": "Road-network waypoint",
+          "bearing": 162.1195985383465
+        },
+        {
+          "latitude": 51.206701,
+          "longitude": 3.654347,
+          "name": "Road-network waypoint",
+          "bearing": 289.37024714123686
+        },
+        {
+          "latitude": 51.205833,
+          "longitude": 3.647645,
+          "name": "Road-network waypoint",
+          "bearing": 230.40674914720339
+        },
+        {
+          "latitude": 51.198067,
+          "longitude": 3.635988,
+          "name": "Road-network waypoint",
+          "bearing": 211.41795009981513
+        },
+        {
+          "latitude": 51.196081,
+          "longitude": 3.635949,
+          "name": "Road-network waypoint",
+          "bearing": 233.13673387718282
+        },
+        {
+          "latitude": 51.192678,
+          "longitude": 3.627258,
+          "name": "Road-network waypoint",
+          "bearing": 205.91378078027492
+        },
+        {
+          "latitude": 51.186403,
+          "longitude": 3.628782,
+          "name": "Road-network waypoint",
+          "bearing": 250.15690863247983
+        },
+        {
+          "latitude": 51.184195,
+          "longitude": 3.601063,
+          "name": "Road-network waypoint",
+          "bearing": 254.85024307637138
+        },
+        {
+          "latitude": 51.18105,
+          "longitude": 3.587808,
+          "name": "Road-network waypoint",
+          "bearing": 268.2257903470276
+        },
+        {
+          "latitude": 51.183687,
+          "longitude": 3.567759,
+          "name": "Road-network waypoint",
+          "bearing": 294.50403912149386
+        }
+      ]
+    },
+    {
+      "centreSlug": "erembodegem",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:34.664Z",
+      "durationSec": 2566.729,
+      "distanceM": 23298.721,
+      "points": [
+        {
+          "latitude": 50.917978,
+          "longitude": 4.04219,
+          "name": "Road-network waypoint",
+          "bearing": 292.8559681604577
+        },
+        {
+          "latitude": 50.921659,
+          "longitude": 4.036434,
+          "name": "Road-network waypoint",
+          "bearing": 345.0667865927109
+        },
+        {
+          "latitude": 50.927874,
+          "longitude": 4.03503,
+          "name": "Road-network waypoint",
+          "bearing": 76.92876379190864
+        },
+        {
+          "latitude": 50.934754,
+          "longitude": 4.046546,
+          "name": "Road-network waypoint",
+          "bearing": 67.98767268146094
+        },
+        {
+          "latitude": 50.933052,
+          "longitude": 4.055192,
+          "name": "Road-network waypoint",
+          "bearing": 350.16758333809673
+        },
+        {
+          "latitude": 50.942545,
+          "longitude": 4.053617,
+          "name": "Road-network waypoint",
+          "bearing": 83.34397655604579
+        },
+        {
+          "latitude": 50.946092,
+          "longitude": 4.078043,
+          "name": "Road-network waypoint",
+          "bearing": 93.89136035400026
+        },
+        {
+          "latitude": 50.940017,
+          "longitude": 4.098891,
+          "name": "Road-network waypoint",
+          "bearing": 165.60189464513496
+        },
+        {
+          "latitude": 50.930604,
+          "longitude": 4.100936,
+          "name": "Road-network waypoint",
+          "bearing": 121.26754846376832
+        },
+        {
+          "latitude": 50.925597,
+          "longitude": 4.113468,
+          "name": "Road-network waypoint",
+          "bearing": 91.1382670689776
+        },
+        {
+          "latitude": 50.926231,
+          "longitude": 4.119638,
+          "name": "Road-network waypoint",
+          "bearing": 165.7477346366178
+        },
+        {
+          "latitude": 50.923522,
+          "longitude": 4.120516,
+          "name": "Road-network waypoint",
+          "bearing": 126.84285762591048
+        },
+        {
+          "latitude": 50.921154,
+          "longitude": 4.129334,
+          "name": "Road-network waypoint",
+          "bearing": 205.6419914708073
+        },
+        {
+          "latitude": 50.915785,
+          "longitude": 4.132401,
+          "name": "Road-network waypoint",
+          "bearing": 194.21463046302327
+        },
+        {
+          "latitude": 50.911857,
+          "longitude": 4.131774,
+          "name": "Road-network waypoint",
+          "bearing": 261.64569791890324
+        },
+        {
+          "latitude": 50.912525,
+          "longitude": 4.111733,
+          "name": "Road-network waypoint",
+          "bearing": 205.67642968992925
+        },
+        {
+          "latitude": 50.905987,
+          "longitude": 4.107566,
+          "name": "Road-network waypoint",
+          "bearing": 184.25370382053228
+        },
+        {
+          "latitude": 50.893877,
+          "longitude": 4.108879,
+          "name": "Road-network waypoint",
+          "bearing": 246.15071173601189
+        },
+        {
+          "latitude": 50.892267,
+          "longitude": 4.098745,
+          "name": "Road-network waypoint",
+          "bearing": 276.366614958808
+        },
+        {
+          "latitude": 50.894539,
+          "longitude": 4.090023,
+          "name": "Road-network waypoint",
+          "bearing": 254.36949198316302
+        },
+        {
+          "latitude": 50.890102,
+          "longitude": 4.075669,
+          "name": "Road-network waypoint",
+          "bearing": 304.00282725069275
+        },
+        {
+          "latitude": 50.894605,
+          "longitude": 4.071176,
+          "name": "Road-network waypoint",
+          "bearing": 305.4544429865711
+        },
+        {
+          "latitude": 50.897917,
+          "longitude": 4.059706,
+          "name": "Road-network waypoint",
+          "bearing": 324.54304114955164
+        },
+        {
+          "latitude": 50.914197,
+          "longitude": 4.048916,
+          "name": "Road-network waypoint",
+          "bearing": 328.87460060295615
+        },
+        {
+          "latitude": 50.917978,
+          "longitude": 4.04219,
+          "name": "Road-network waypoint",
+          "bearing": 292.8559681604577
+        }
+      ]
+    },
+    {
+      "centreSlug": "eupen-lontzen",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:52.963Z",
+      "durationSec": 2351.841,
+      "distanceM": 23655.742,
+      "points": [
+        {
+          "latitude": 50.681023,
+          "longitude": 6.007228,
+          "name": "Bergstraße"
+        },
+        {
+          "latitude": 50.709639,
+          "longitude": 6.048742,
+          "name": "Hauseter Straße"
+        },
+        {
+          "latitude": 50.680914,
+          "longitude": 6.091881,
+          "name": "Gewerbestraße"
+        },
+        {
+          "latitude": 50.653972,
+          "longitude": 6.048258,
+          "name": "Libermégasse"
+        },
+        {
+          "latitude": 50.681023,
+          "longitude": 6.007228,
+          "name": "Bergstraße"
+        }
+      ]
+    },
+    {
+      "centreSlug": "haasrode",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:26.818Z",
+      "durationSec": 2498.541,
+      "distanceM": 26271.309,
+      "points": [
+        {
+          "latitude": 50.844814,
+          "longitude": 4.728056,
+          "name": "Road-network waypoint",
+          "bearing": 339.0249768717563
+        },
+        {
+          "latitude": 50.847452,
+          "longitude": 4.72459,
+          "name": "Road-network waypoint",
+          "bearing": 64.71556241221037
+        },
+        {
+          "latitude": 50.848334,
+          "longitude": 4.727588,
+          "name": "Road-network waypoint",
+          "bearing": 334.95718359929646
+        },
+        {
+          "latitude": 50.850772,
+          "longitude": 4.726183,
+          "name": "Road-network waypoint",
+          "bearing": 4.555929653080227
+        },
+        {
+          "latitude": 50.85341,
+          "longitude": 4.728126,
+          "name": "Road-network waypoint",
+          "bearing": 285.08926912148127
+        },
+        {
+          "latitude": 50.853944,
+          "longitude": 4.725252,
+          "name": "Road-network waypoint",
+          "bearing": 22.245095913552973
+        },
+        {
+          "latitude": 50.859092,
+          "longitude": 4.728905,
+          "name": "Road-network waypoint",
+          "bearing": 40.940605206720534
+        },
+        {
+          "latitude": 50.867635,
+          "longitude": 4.7404,
+          "name": "Road-network waypoint",
+          "bearing": 110.3887282688163
+        },
+        {
+          "latitude": 50.864691,
+          "longitude": 4.753091,
+          "name": "Road-network waypoint",
+          "bearing": 16.702229226792383
+        },
+        {
+          "latitude": 50.865809,
+          "longitude": 4.762792,
+          "name": "Road-network waypoint",
+          "bearing": 358.51424040214704
+        },
+        {
+          "latitude": 50.870073,
+          "longitude": 4.762872,
+          "name": "Road-network waypoint",
+          "bearing": 341.70785613823864
+        },
+        {
+          "latitude": 50.872926,
+          "longitude": 4.760068,
+          "name": "Road-network waypoint",
+          "bearing": 90
+        },
+        {
+          "latitude": 50.87585,
+          "longitude": 4.76468,
+          "name": "Road-network waypoint",
+          "bearing": 95.25598554167885
+        },
+        {
+          "latitude": 50.871966,
+          "longitude": 4.795289,
+          "name": "Road-network waypoint",
+          "bearing": 148.92738898766197
+        },
+        {
+          "latitude": 50.867319,
+          "longitude": 4.794857,
+          "name": "Road-network waypoint",
+          "bearing": 214.58840829142912
+        },
+        {
+          "latitude": 50.858096,
+          "longitude": 4.781464,
+          "name": "Road-network waypoint",
+          "bearing": 109.70907951358481
+        },
+        {
+          "latitude": 50.847709,
+          "longitude": 4.819465,
+          "name": "Road-network waypoint",
+          "bearing": 119.37281437656162
+        },
+        {
+          "latitude": 50.838297,
+          "longitude": 4.84149,
+          "name": "Road-network waypoint",
+          "bearing": 209.74223304168066
+        },
+        {
+          "latitude": 50.812006,
+          "longitude": 4.790633,
+          "name": "Road-network waypoint",
+          "bearing": 303.2336761570376
+        },
+        {
+          "latitude": 50.819394,
+          "longitude": 4.772701,
+          "name": "Road-network waypoint",
+          "bearing": 313.7436519354006
+        },
+        {
+          "latitude": 50.827139,
+          "longitude": 4.763175,
+          "name": "Road-network waypoint",
+          "bearing": 284.1646326671792
+        },
+        {
+          "latitude": 50.827689,
+          "longitude": 4.75605,
+          "name": "Road-network waypoint",
+          "bearing": 301.75192084711193
+        },
+        {
+          "latitude": 50.833773,
+          "longitude": 4.746371,
+          "name": "Road-network waypoint",
+          "bearing": 300.69998322101367
+        },
+        {
+          "latitude": 50.835179,
+          "longitude": 4.738354,
+          "name": "Road-network waypoint",
+          "bearing": 309.9720685212953
+        },
+        {
+          "latitude": 50.844814,
+          "longitude": 4.728056,
+          "name": "Road-network waypoint",
+          "bearing": 339.0249768717563
+        }
+      ]
+    },
+    {
+      "centreSlug": "huy-tihange",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:44.007Z",
+      "durationSec": 1634.859,
+      "distanceM": 23869.83,
+      "points": [
+        {
+          "latitude": 50.530788,
+          "longitude": 5.237083,
+          "name": "Road-network waypoint",
+          "bearing": 54.91166471604612
+        },
+        {
+          "latitude": 50.531997,
+          "longitude": 5.239681,
+          "name": "Road-network waypoint",
+          "bearing": 21.452124052335137
+        },
+        {
+          "latitude": 50.533507,
+          "longitude": 5.239957,
+          "name": "Road-network waypoint",
+          "bearing": 51.810523722889116
+        },
+        {
+          "latitude": 50.539855,
+          "longitude": 5.253371,
+          "name": "Road-network waypoint",
+          "bearing": 280.22748193534187
+        },
+        {
+          "latitude": 50.541076,
+          "longitude": 5.248449,
+          "name": "Road-network waypoint",
+          "bearing": 326.3889123056107
+        },
+        {
+          "latitude": 50.544858,
+          "longitude": 5.244937,
+          "name": "Road-network waypoint",
+          "bearing": 294.4780494510339
+        },
+        {
+          "latitude": 50.546141,
+          "longitude": 5.23655,
+          "name": "Road-network waypoint",
+          "bearing": 333.79725391314
+        },
+        {
+          "latitude": 50.549764,
+          "longitude": 5.235854,
+          "name": "Road-network waypoint",
+          "bearing": 306.89998275235376
+        },
+        {
+          "latitude": 50.549804,
+          "longitude": 5.233583,
+          "name": "Road-network waypoint",
+          "bearing": 353.45528073631573
+        },
+        {
+          "latitude": 50.554314,
+          "longitude": 5.232055,
+          "name": "Road-network waypoint",
+          "bearing": 353.47966563370386
+        },
+        {
+          "latitude": 50.561937,
+          "longitude": 5.231375,
+          "name": "Road-network waypoint",
+          "bearing": 45.548855539442684
+        },
+        {
+          "latitude": 50.56523,
+          "longitude": 5.232827,
+          "name": "Road-network waypoint",
+          "bearing": 329.62476101680846
+        },
+        {
+          "latitude": 50.580739,
+          "longitude": 5.211954,
+          "name": "Road-network waypoint",
+          "bearing": 33.23333263725448
+        },
+        {
+          "latitude": 50.584866,
+          "longitude": 5.220186,
+          "name": "Road-network waypoint",
+          "bearing": 60.085467163520775
+        },
+        {
+          "latitude": 50.587823,
+          "longitude": 5.231017,
+          "name": "Road-network waypoint",
+          "bearing": 74.65884299087679
+        },
+        {
+          "latitude": 50.589894,
+          "longitude": 5.260151,
+          "name": "Road-network waypoint",
+          "bearing": 111.03564817987433
+        },
+        {
+          "latitude": 50.582805,
+          "longitude": 5.265147,
+          "name": "Road-network waypoint",
+          "bearing": 131.05144468438283
+        },
+        {
+          "latitude": 50.577671,
+          "longitude": 5.280474,
+          "name": "Road-network waypoint",
+          "bearing": 124.84077250187363
+        },
+        {
+          "latitude": 50.570595,
+          "longitude": 5.293408,
+          "name": "Road-network waypoint",
+          "bearing": 168.6335300781401
+        },
+        {
+          "latitude": 50.558565,
+          "longitude": 5.280743,
+          "name": "Road-network waypoint",
+          "bearing": 187.3836042768947
+        },
+        {
+          "latitude": 50.554087,
+          "longitude": 5.283661,
+          "name": "Road-network waypoint",
+          "bearing": 178.05172148409474
+        },
+        {
+          "latitude": 50.53799,
+          "longitude": 5.283458,
+          "name": "Road-network waypoint",
+          "bearing": 213.54441706430887
+        },
+        {
+          "latitude": 50.536921,
+          "longitude": 5.25715,
+          "name": "Road-network waypoint",
+          "bearing": 251.86889463675413
+        },
+        {
+          "latitude": 50.527063,
+          "longitude": 5.229322,
+          "name": "Road-network waypoint",
+          "bearing": 1.5495672327315901
+        },
+        {
+          "latitude": 50.530788,
+          "longitude": 5.237083,
+          "name": "Road-network waypoint",
+          "bearing": 54.91166471604612
+        }
+      ]
+    },
+    {
+      "centreSlug": "liege-wandre",
+      "variant": 3,
+      "checkedAt": "2026-10-13T20:01:13.096Z",
+      "durationSec": 2374.764,
+      "distanceM": 21677.971,
+      "points": [
+        {
+          "latitude": 50.66216,
+          "longitude": 5.62766,
+          "name": "Road-network waypoint",
+          "bearing": 216.6911845934161
+        },
+        {
+          "latitude": 50.658061,
+          "longitude": 5.621723,
+          "name": "Road-network waypoint",
+          "bearing": 238.29787146202563
+        },
+        {
+          "latitude": 50.654504,
+          "longitude": 5.609262,
+          "name": "Road-network waypoint",
+          "bearing": 270
+        },
+        {
+          "latitude": 50.654843,
+          "longitude": 5.598832,
+          "name": "Road-network waypoint",
+          "bearing": 287.0376258514205
+        },
+        {
+          "latitude": 50.656933,
+          "longitude": 5.595787,
+          "name": "Road-network waypoint",
+          "bearing": 275.6303845786919
+        },
+        {
+          "latitude": 50.656847,
+          "longitude": 5.582917,
+          "name": "Road-network waypoint",
+          "bearing": 283.8723657872457
+        },
+        {
+          "latitude": 50.659444,
+          "longitude": 5.574392,
+          "name": "Road-network waypoint",
+          "bearing": 265.4902317878405
+        },
+        {
+          "latitude": 50.655128,
+          "longitude": 5.572695,
+          "name": "Road-network waypoint",
+          "bearing": 315.2660802184889
+        },
+        {
+          "latitude": 50.666179,
+          "longitude": 5.558815,
+          "name": "Road-network waypoint",
+          "bearing": 43.263574004131556
+        },
+        {
+          "latitude": 50.684089,
+          "longitude": 5.557983,
+          "name": "Road-network waypoint",
+          "bearing": 347.00317207547084
+        },
+        {
+          "latitude": 50.686897,
+          "longitude": 5.554252,
+          "name": "Road-network waypoint",
+          "bearing": 48.75305432357425
+        },
+        {
+          "latitude": 50.697623,
+          "longitude": 5.568428,
+          "name": "Road-network waypoint",
+          "bearing": 98.0078521146562
+        },
+        {
+          "latitude": 50.697853,
+          "longitude": 5.589116,
+          "name": "Road-network waypoint",
+          "bearing": 99.29415863089093
+        },
+        {
+          "latitude": 50.695412,
+          "longitude": 5.594161,
+          "name": "Road-network waypoint",
+          "bearing": 79.88997933087512
+        },
+        {
+          "latitude": 50.697879,
+          "longitude": 5.597336,
+          "name": "Road-network waypoint",
+          "bearing": 123.5745033817941
+        },
+        {
+          "latitude": 50.694638,
+          "longitude": 5.603864,
+          "name": "Road-network waypoint",
+          "bearing": 42.492286891565755
+        },
+        {
+          "latitude": 50.699116,
+          "longitude": 5.610413,
+          "name": "Road-network waypoint",
+          "bearing": 137.37935998043724
+        },
+        {
+          "latitude": 50.694198,
+          "longitude": 5.604349,
+          "name": "Road-network waypoint",
+          "bearing": 179.1359097910689
+        },
+        {
+          "latitude": 50.691092,
+          "longitude": 5.60942,
+          "name": "Road-network waypoint",
+          "bearing": 122.31022190526869
+        },
+        {
+          "latitude": 50.69054,
+          "longitude": 5.624576,
+          "name": "Road-network waypoint",
+          "bearing": 119.1231125985949
+        },
+        {
+          "latitude": 50.687888,
+          "longitude": 5.625051,
+          "name": "Road-network waypoint",
+          "bearing": 107.72805145066104
+        },
+        {
+          "latitude": 50.688333,
+          "longitude": 5.63211,
+          "name": "Road-network waypoint",
+          "bearing": 108.2319927879281
+        },
+        {
+          "latitude": 50.684348,
+          "longitude": 5.64517,
+          "name": "Road-network waypoint",
+          "bearing": 170.99923866692438
+        },
+        {
+          "latitude": 50.66727,
+          "longitude": 5.639298,
+          "name": "Road-network waypoint",
+          "bearing": 207.25524225760003
+        },
+        {
+          "latitude": 50.66216,
+          "longitude": 5.62766,
+          "name": "Road-network waypoint",
+          "bearing": 216.6911845934161
+        }
+      ]
+    },
+    {
+      "centreSlug": "lobbes",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:41.063Z",
+      "durationSec": 3006.683,
+      "distanceM": 28619.271,
+      "points": [
+        {
+          "latitude": 50.346003,
+          "longitude": 4.26382,
+          "name": "Road-network waypoint",
+          "bearing": 295.8653589335049
+        },
+        {
+          "latitude": 50.368835,
+          "longitude": 4.241649,
+          "name": "Road-network waypoint",
+          "bearing": 336.00550988073996
+        },
+        {
+          "latitude": 50.37732,
+          "longitude": 4.238629,
+          "name": "Road-network waypoint",
+          "bearing": 9.526795079829583
+        },
+        {
+          "latitude": 50.388464,
+          "longitude": 4.259975,
+          "name": "Road-network waypoint",
+          "bearing": 151.96365142778984
+        },
+        {
+          "latitude": 50.386486,
+          "longitude": 4.265436,
+          "name": "Road-network waypoint",
+          "bearing": 83.23138470332566
+        },
+        {
+          "latitude": 50.389229,
+          "longitude": 4.293148,
+          "name": "Road-network waypoint",
+          "bearing": 68.61629620927681
+        },
+        {
+          "latitude": 50.400083,
+          "longitude": 4.319977,
+          "name": "Road-network waypoint",
+          "bearing": 120.17864562194904
+        },
+        {
+          "latitude": 50.39754,
+          "longitude": 4.324588,
+          "name": "Road-network waypoint",
+          "bearing": 255.6632439768646
+        },
+        {
+          "latitude": 50.392391,
+          "longitude": 4.317196,
+          "name": "Road-network waypoint",
+          "bearing": 116.372676498006
+        },
+        {
+          "latitude": 50.390476,
+          "longitude": 4.326377,
+          "name": "Road-network waypoint",
+          "bearing": 71.19194771183027
+        },
+        {
+          "latitude": 50.392112,
+          "longitude": 4.333619,
+          "name": "Road-network waypoint",
+          "bearing": 165.29103259959788
+        },
+        {
+          "latitude": 50.387112,
+          "longitude": 4.335492,
+          "name": "Road-network waypoint",
+          "bearing": 132.27289850173963
+        },
+        {
+          "latitude": 50.379923,
+          "longitude": 4.350668,
+          "name": "Road-network waypoint",
+          "bearing": 154.12274505528467
+        },
+        {
+          "latitude": 50.376927,
+          "longitude": 4.349555,
+          "name": "Road-network waypoint",
+          "bearing": 239.89753140234836
+        },
+        {
+          "latitude": 50.374855,
+          "longitude": 4.33764,
+          "name": "Road-network waypoint",
+          "bearing": 215.16063409563702
+        },
+        {
+          "latitude": 50.364214,
+          "longitude": 4.332293,
+          "name": "Road-network waypoint",
+          "bearing": 307.44726342727677
+        },
+        {
+          "latitude": 50.369354,
+          "longitude": 4.324933,
+          "name": "Road-network waypoint",
+          "bearing": 293.93415432544805
+        },
+        {
+          "latitude": 50.369715,
+          "longitude": 4.316697,
+          "name": "Road-network waypoint",
+          "bearing": 206.14811689169426
+        },
+        {
+          "latitude": 50.356844,
+          "longitude": 4.327515,
+          "name": "Road-network waypoint",
+          "bearing": 228.39662784632895
+        },
+        {
+          "latitude": 50.33922,
+          "longitude": 4.312506,
+          "name": "Road-network waypoint",
+          "bearing": 267.69284072652215
+        },
+        {
+          "latitude": 50.339264,
+          "longitude": 4.285059,
+          "name": "Road-network waypoint",
+          "bearing": 294.79728671780794
+        },
+        {
+          "latitude": 50.343355,
+          "longitude": 4.276587,
+          "name": "Road-network waypoint",
+          "bearing": 267.9770143423957
+        },
+        {
+          "latitude": 50.339788,
+          "longitude": 4.267209,
+          "name": "Road-network waypoint",
+          "bearing": 321.68443185072505
+        },
+        {
+          "latitude": 50.34201,
+          "longitude": 4.26317,
+          "name": "Road-network waypoint",
+          "bearing": 345.10863092975
+        },
+        {
+          "latitude": 50.346003,
+          "longitude": 4.26382,
+          "name": "Road-network waypoint",
+          "bearing": 295.8653589335049
+        }
+      ]
+    },
+    {
+      "centreSlug": "louvain-la-neuve",
+      "variant": 2,
+      "checkedAt": "2026-10-13T20:01:01.306Z",
+      "durationSec": 2664.493,
+      "distanceM": 21238.645,
+      "points": [
+        {
+          "latitude": 50.667912,
+          "longitude": 4.568511,
+          "name": "Road-network waypoint",
+          "bearing": 195.1198114962092
+        },
+        {
+          "latitude": 50.665837,
+          "longitude": 4.567029,
+          "name": "Road-network waypoint",
+          "bearing": 289.75109019691376
+        },
+        {
+          "latitude": 50.665506,
+          "longitude": 4.558767,
+          "name": "Road-network waypoint",
+          "bearing": 294.56823789904956
+        },
+        {
+          "latitude": 50.66907,
+          "longitude": 4.557431,
+          "name": "Road-network waypoint",
+          "bearing": 296.4643476941958
+        },
+        {
+          "latitude": 50.675595,
+          "longitude": 4.539912,
+          "name": "Road-network waypoint",
+          "bearing": 316.9579218154682
+        },
+        {
+          "latitude": 50.683848,
+          "longitude": 4.532661,
+          "name": "Road-network waypoint",
+          "bearing": 347.8411727323904
+        },
+        {
+          "latitude": 50.693514,
+          "longitude": 4.531811,
+          "name": "Road-network waypoint",
+          "bearing": 331.4389019360016
+        },
+        {
+          "latitude": 50.699911,
+          "longitude": 4.521345,
+          "name": "Road-network waypoint",
+          "bearing": 355.3804324278429
+        },
+        {
+          "latitude": 50.704708,
+          "longitude": 4.523558,
+          "name": "Road-network waypoint",
+          "bearing": 351.92996963668764
+        },
+        {
+          "latitude": 50.711419,
+          "longitude": 4.520804,
+          "name": "Road-network waypoint",
+          "bearing": 68.79987334262808
+        },
+        {
+          "latitude": 50.712527,
+          "longitude": 4.530095,
+          "name": "Road-network waypoint",
+          "bearing": 359.72515092591436
+        },
+        {
+          "latitude": 50.722175,
+          "longitude": 4.527415,
+          "name": "Road-network waypoint",
+          "bearing": 1.493251332248235
+        },
+        {
+          "latitude": 50.726795,
+          "longitude": 4.530612,
+          "name": "Road-network waypoint",
+          "bearing": 39.72106738344763
+        },
+        {
+          "latitude": 50.728277,
+          "longitude": 4.540837,
+          "name": "Road-network waypoint",
+          "bearing": 62.22898405644901
+        },
+        {
+          "latitude": 50.734119,
+          "longitude": 4.553744,
+          "name": "Road-network waypoint",
+          "bearing": 125.58228123427153
+        },
+        {
+          "latitude": 50.731864,
+          "longitude": 4.556841,
+          "name": "Road-network waypoint",
+          "bearing": 194.8652890779079
+        },
+        {
+          "latitude": 50.724942,
+          "longitude": 4.550612,
+          "name": "Road-network waypoint",
+          "bearing": 190.9656813967371
+        },
+        {
+          "latitude": 50.712869,
+          "longitude": 4.552009,
+          "name": "Road-network waypoint",
+          "bearing": 268.8511373240721
+        },
+        {
+          "latitude": 50.712552,
+          "longitude": 4.549658,
+          "name": "Road-network waypoint",
+          "bearing": 159.72711746044888
+        },
+        {
+          "latitude": 50.706238,
+          "longitude": 4.556105,
+          "name": "Road-network waypoint",
+          "bearing": 159.05757054670596
+        },
+        {
+          "latitude": 50.698104,
+          "longitude": 4.558631,
+          "name": "Road-network waypoint",
+          "bearing": 139.0148470292146
+        },
+        {
+          "latitude": 50.691702,
+          "longitude": 4.577798,
+          "name": "Road-network waypoint",
+          "bearing": 182.45926637850707
+        },
+        {
+          "latitude": 50.686668,
+          "longitude": 4.576079,
+          "name": "Road-network waypoint",
+          "bearing": 175.90286281915667
+        },
+        {
+          "latitude": 50.678071,
+          "longitude": 4.578522,
+          "name": "Road-network waypoint",
+          "bearing": 195.71156923632083
+        },
+        {
+          "latitude": 50.667912,
+          "longitude": 4.568511,
+          "name": "Road-network waypoint",
+          "bearing": 195.1198114962092
+        }
+      ]
+    },
+    {
+      "centreSlug": "marche-en-famenne",
+      "variant": 2,
+      "checkedAt": "2026-10-13T20:01:15.869Z",
+      "durationSec": 1852.819,
+      "distanceM": 29729.279,
+      "points": [
+        {
+          "latitude": 50.225962,
+          "longitude": 5.343993,
+          "name": "Road-network waypoint",
+          "bearing": 276.44673068613133
+        },
+        {
+          "latitude": 50.225994,
+          "longitude": 5.33616,
+          "name": "Road-network waypoint",
+          "bearing": 297.78394282884244
+        },
+        {
+          "latitude": 50.23004,
+          "longitude": 5.32907,
+          "name": "Road-network waypoint",
+          "bearing": 290.79499315345583
+        },
+        {
+          "latitude": 50.234951,
+          "longitude": 5.303335,
+          "name": "Road-network waypoint",
+          "bearing": 292.83652840357666
+        },
+        {
+          "latitude": 50.238734,
+          "longitude": 5.29459,
+          "name": "Road-network waypoint",
+          "bearing": 306.4210946548051
+        },
+        {
+          "latitude": 50.251121,
+          "longitude": 5.280571,
+          "name": "Road-network waypoint",
+          "bearing": 313.3468369559488
+        },
+        {
+          "latitude": 50.26661,
+          "longitude": 5.247987,
+          "name": "Road-network waypoint",
+          "bearing": 312.1715353412715
+        },
+        {
+          "latitude": 50.27589,
+          "longitude": 5.236102,
+          "name": "Road-network waypoint",
+          "bearing": 56.39255010933539
+        },
+        {
+          "latitude": 50.286687,
+          "longitude": 5.258239,
+          "name": "Road-network waypoint",
+          "bearing": 63.28285506003863
+        },
+        {
+          "latitude": 50.286435,
+          "longitude": 5.260256,
+          "name": "Road-network waypoint",
+          "bearing": 167.65716840555388
+        },
+        {
+          "latitude": 50.284411,
+          "longitude": 5.259534,
+          "name": "Road-network waypoint",
+          "bearing": 70.2127703707173
+        },
+        {
+          "latitude": 50.28651,
+          "longitude": 5.268009,
+          "name": "Road-network waypoint",
+          "bearing": 61.41300655347601
+        },
+        {
+          "latitude": 50.297125,
+          "longitude": 5.296965,
+          "name": "Road-network waypoint",
+          "bearing": 24.842023639989065
+        },
+        {
+          "latitude": 50.303526,
+          "longitude": 5.291794,
+          "name": "Road-network waypoint",
+          "bearing": 43.237517710807595
+        },
+        {
+          "latitude": 50.308668,
+          "longitude": 5.301925,
+          "name": "Road-network waypoint",
+          "bearing": 72.75250977588996
+        },
+        {
+          "latitude": 50.308204,
+          "longitude": 5.309243,
+          "name": "Road-network waypoint",
+          "bearing": 161.3726173700967
+        },
+        {
+          "latitude": 50.306008,
+          "longitude": 5.307941,
+          "name": "Road-network waypoint",
+          "bearing": 122.9986287576462
+        },
+        {
+          "latitude": 50.305542,
+          "longitude": 5.311043,
+          "name": "Road-network waypoint",
+          "bearing": 144.4534343619158
+        },
+        {
+          "latitude": 50.302366,
+          "longitude": 5.313299,
+          "name": "Road-network waypoint",
+          "bearing": 169.40618387069958
+        },
+        {
+          "latitude": 50.295945,
+          "longitude": 5.314096,
+          "name": "Road-network waypoint",
+          "bearing": 107.06764684077802
+        },
+        {
+          "latitude": 50.295581,
+          "longitude": 5.319623,
+          "name": "Road-network waypoint",
+          "bearing": 115.28750606124709
+        },
+        {
+          "latitude": 50.293535,
+          "longitude": 5.321386,
+          "name": "Road-network waypoint",
+          "bearing": 113.47365730829375
+        },
+        {
+          "latitude": 50.289705,
+          "longitude": 5.335806,
+          "name": "Road-network waypoint",
+          "bearing": 103.36408310352988
+        },
+        {
+          "latitude": 50.290192,
+          "longitude": 5.34899,
+          "name": "Road-network waypoint",
+          "bearing": 182.97917149142927
+        },
+        {
+          "latitude": 50.225962,
+          "longitude": 5.343993,
+          "name": "Road-network waypoint",
+          "bearing": 276.44673068613133
+        }
+      ]
+    },
+    {
+      "centreSlug": "mons-cuesmes",
+      "variant": 3,
+      "checkedAt": "2026-10-13T20:01:08.760Z",
+      "durationSec": 2017.281,
+      "distanceM": 24061.057,
+      "points": [
+        {
+          "latitude": 50.430912,
+          "longitude": 3.946845,
+          "name": "Road-network waypoint",
+          "bearing": 187.47162702600326
+        },
+        {
+          "latitude": 50.42644,
+          "longitude": 3.948688,
+          "name": "Road-network waypoint",
+          "bearing": 218.71123596984933
+        },
+        {
+          "latitude": 50.426413,
+          "longitude": 3.945895,
+          "name": "Road-network waypoint",
+          "bearing": 217.24835444439458
+        },
+        {
+          "latitude": 50.414221,
+          "longitude": 3.928885,
+          "name": "Road-network waypoint",
+          "bearing": 265.56868734578563
+        },
+        {
+          "latitude": 50.417333,
+          "longitude": 3.920584,
+          "name": "Road-network waypoint",
+          "bearing": 322.75536179744034
+        },
+        {
+          "latitude": 50.428148,
+          "longitude": 3.911523,
+          "name": "Road-network waypoint",
+          "bearing": 231.7343902519083
+        },
+        {
+          "latitude": 50.426016,
+          "longitude": 3.905605,
+          "name": "Road-network waypoint",
+          "bearing": 259.04740983268215
+        },
+        {
+          "latitude": 50.423878,
+          "longitude": 3.877116,
+          "name": "Road-network waypoint",
+          "bearing": 338.02600037158516
+        },
+        {
+          "latitude": 50.430097,
+          "longitude": 3.875842,
+          "name": "Road-network waypoint",
+          "bearing": 338.29066989551393
+        },
+        {
+          "latitude": 50.434301,
+          "longitude": 3.871011,
+          "name": "Road-network waypoint",
+          "bearing": 349.80127277863494
+        },
+        {
+          "latitude": 50.449311,
+          "longitude": 3.868812,
+          "name": "Road-network waypoint",
+          "bearing": 24.722615238079413
+        },
+        {
+          "latitude": 50.455666,
+          "longitude": 3.870383,
+          "name": "Road-network waypoint",
+          "bearing": 140.1386678814132
+        },
+        {
+          "latitude": 50.453593,
+          "longitude": 3.870944,
+          "name": "Road-network waypoint",
+          "bearing": 89.60818504891085
+        },
+        {
+          "latitude": 50.453775,
+          "longitude": 3.879294,
+          "name": "Road-network waypoint",
+          "bearing": 349.0708291926236
+        },
+        {
+          "latitude": 50.458089,
+          "longitude": 3.871303,
+          "name": "Road-network waypoint",
+          "bearing": 12.176304835795293
+        },
+        {
+          "latitude": 50.468147,
+          "longitude": 3.868659,
+          "name": "Road-network waypoint",
+          "bearing": 357.65924632486804
+        },
+        {
+          "latitude": 50.471279,
+          "longitude": 3.87021,
+          "name": "Road-network waypoint",
+          "bearing": 40.176258782395166
+        },
+        {
+          "latitude": 50.474171,
+          "longitude": 3.880618,
+          "name": "Road-network waypoint",
+          "bearing": 86.4676912068677
+        },
+        {
+          "latitude": 50.4742,
+          "longitude": 3.902505,
+          "name": "Road-network waypoint",
+          "bearing": 106.54191446472942
+        },
+        {
+          "latitude": 50.464082,
+          "longitude": 3.938397,
+          "name": "Road-network waypoint",
+          "bearing": 118.01259380305714
+        },
+        {
+          "latitude": 50.459717,
+          "longitude": 3.947595,
+          "name": "Road-network waypoint",
+          "bearing": 149.05797151509046
+        },
+        {
+          "latitude": 50.44984,
+          "longitude": 3.939298,
+          "name": "Road-network waypoint",
+          "bearing": 177.89614097051935
+        },
+        {
+          "latitude": 50.445641,
+          "longitude": 3.947669,
+          "name": "Road-network waypoint",
+          "bearing": 188.67466857391062
+        },
+        {
+          "latitude": 50.440312,
+          "longitude": 3.945347,
+          "name": "Road-network waypoint",
+          "bearing": 174.25762529613007
+        },
+        {
+          "latitude": 50.430912,
+          "longitude": 3.946845,
+          "name": "Road-network waypoint",
+          "bearing": 187.47162702600326
+        }
+      ]
+    },
+    {
+      "centreSlug": "namur-suarlee",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:54.395Z",
+      "durationSec": 3030.007,
+      "distanceM": 42681.766,
+      "points": [
+        {
+          "latitude": 50.498188,
+          "longitude": 4.806843,
+          "name": "Road-network waypoint",
+          "bearing": 236.5279114688451
+        },
+        {
+          "latitude": 50.494779,
+          "longitude": 4.793409,
+          "name": "Road-network waypoint",
+          "bearing": 281.4260818083736
+        },
+        {
+          "latitude": 50.495895,
+          "longitude": 4.786174,
+          "name": "Road-network waypoint",
+          "bearing": 333.1516087741993
+        },
+        {
+          "latitude": 50.517996,
+          "longitude": 4.766401,
+          "name": "Road-network waypoint",
+          "bearing": 34.47749120233232
+        },
+        {
+          "latitude": 50.53526,
+          "longitude": 4.781831,
+          "name": "Road-network waypoint",
+          "bearing": 49.74454154130245
+        },
+        {
+          "latitude": 50.555471,
+          "longitude": 4.821242,
+          "name": "Road-network waypoint",
+          "bearing": 136.97383015024047
+        },
+        {
+          "latitude": 50.543346,
+          "longitude": 4.840346,
+          "name": "Road-network waypoint",
+          "bearing": 53.75488548915439
+        },
+        {
+          "latitude": 50.548689,
+          "longitude": 4.850428,
+          "name": "Road-network waypoint",
+          "bearing": 116.16875949521426
+        },
+        {
+          "latitude": 50.549972,
+          "longitude": 4.860558,
+          "name": "Road-network waypoint",
+          "bearing": 174.24771804438
+        },
+        {
+          "latitude": 50.532443,
+          "longitude": 4.871274,
+          "name": "Road-network waypoint",
+          "bearing": 135.36694631243302
+        },
+        {
+          "latitude": 50.524768,
+          "longitude": 4.901713,
+          "name": "Road-network waypoint",
+          "bearing": 189.17357511505733
+        },
+        {
+          "latitude": 50.517513,
+          "longitude": 4.900013,
+          "name": "Road-network waypoint",
+          "bearing": 62.15718769816772
+        },
+        {
+          "latitude": 50.522617,
+          "longitude": 4.940254,
+          "name": "Road-network waypoint",
+          "bearing": 175.3036677776172
+        },
+        {
+          "latitude": 50.515794,
+          "longitude": 4.937175,
+          "name": "Road-network waypoint",
+          "bearing": 226.88567152730292
+        },
+        {
+          "latitude": 50.505238,
+          "longitude": 4.916286,
+          "name": "Road-network waypoint",
+          "bearing": 218.33705997405946
+        },
+        {
+          "latitude": 50.487621,
+          "longitude": 4.893591,
+          "name": "Road-network waypoint",
+          "bearing": 193.6727607976349
+        },
+        {
+          "latitude": 50.482604,
+          "longitude": 4.899954,
+          "name": "Road-network waypoint",
+          "bearing": 211.07890638737888
+        },
+        {
+          "latitude": 50.474094,
+          "longitude": 4.885055,
+          "name": "Road-network waypoint",
+          "bearing": 352.9111307505054
+        },
+        {
+          "latitude": 50.479032,
+          "longitude": 4.879981,
+          "name": "Road-network waypoint",
+          "bearing": 44.69500430507867
+        },
+        {
+          "latitude": 50.487744,
+          "longitude": 4.893142,
+          "name": "Road-network waypoint",
+          "bearing": 25.7213743927598
+        },
+        {
+          "latitude": 50.494466,
+          "longitude": 4.894835,
+          "name": "Road-network waypoint",
+          "bearing": 349.19526657143774
+        },
+        {
+          "latitude": 50.507031,
+          "longitude": 4.885065,
+          "name": "Road-network waypoint",
+          "bearing": 345.99293090940176
+        },
+        {
+          "latitude": 50.52303,
+          "longitude": 4.882692,
+          "name": "Road-network waypoint",
+          "bearing": 292.2069420467899
+        },
+        {
+          "latitude": 50.509828,
+          "longitude": 4.84972,
+          "name": "Road-network waypoint",
+          "bearing": 244.00828766186277
+        },
+        {
+          "latitude": 50.498188,
+          "longitude": 4.806843,
+          "name": "Road-network waypoint",
+          "bearing": 236.5279114688451
+        }
+      ]
+    },
+    {
+      "centreSlug": "oostende",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:28.503Z",
+      "durationSec": 2567.513,
+      "distanceM": 36145.109,
+      "points": [
+        {
+          "latitude": 51.201395,
+          "longitude": 2.929007,
+          "name": "Road-network waypoint",
+          "bearing": 319.09810466637276
+        },
+        {
+          "latitude": 51.206164,
+          "longitude": 2.922016,
+          "name": "Road-network waypoint",
+          "bearing": 41.550460024223355
+        },
+        {
+          "latitude": 51.209962,
+          "longitude": 2.930258,
+          "name": "Road-network waypoint",
+          "bearing": 338.91740345471044
+        },
+        {
+          "latitude": 51.214632,
+          "longitude": 2.926941,
+          "name": "Road-network waypoint",
+          "bearing": 86.6162482564277
+        },
+        {
+          "latitude": 51.217911,
+          "longitude": 2.937038,
+          "name": "Road-network waypoint",
+          "bearing": 46.49032719317535
+        },
+        {
+          "latitude": 51.223098,
+          "longitude": 2.941486,
+          "name": "Road-network waypoint",
+          "bearing": 50.92740234683265
+        },
+        {
+          "latitude": 51.220743,
+          "longitude": 2.958052,
+          "name": "Road-network waypoint",
+          "bearing": 18.03976883424525
+        },
+        {
+          "latitude": 51.225749,
+          "longitude": 2.964084,
+          "name": "Road-network waypoint",
+          "bearing": 126.16918931525566
+        },
+        {
+          "latitude": 51.224073,
+          "longitude": 2.971639,
+          "name": "Road-network waypoint",
+          "bearing": 83.8161165650173
+        },
+        {
+          "latitude": 51.226628,
+          "longitude": 2.978618,
+          "name": "Road-network waypoint",
+          "bearing": 111.40263036935858
+        },
+        {
+          "latitude": 51.224094,
+          "longitude": 2.991406,
+          "name": "Road-network waypoint",
+          "bearing": 145.16740026493142
+        },
+        {
+          "latitude": 51.221924,
+          "longitude": 2.98621,
+          "name": "Road-network waypoint",
+          "bearing": 147.210365673504
+        },
+        {
+          "latitude": 51.211371,
+          "longitude": 3.002382,
+          "name": "Road-network waypoint",
+          "bearing": 158.7524007625541
+        },
+        {
+          "latitude": 51.201294,
+          "longitude": 3.00678,
+          "name": "Road-network waypoint",
+          "bearing": 108.24213113979533
+        },
+        {
+          "latitude": 51.193699,
+          "longitude": 3.070863,
+          "name": "Road-network waypoint",
+          "bearing": 189.92013552289308
+        },
+        {
+          "latitude": 51.174645,
+          "longitude": 3.005656,
+          "name": "Road-network waypoint",
+          "bearing": 248.05649057729187
+        },
+        {
+          "latitude": 51.167399,
+          "longitude": 2.961078,
+          "name": "Road-network waypoint",
+          "bearing": 248.94598755760518
+        },
+        {
+          "latitude": 51.158826,
+          "longitude": 2.935354,
+          "name": "Road-network waypoint",
+          "bearing": 281.1362539433305
+        },
+        {
+          "latitude": 51.174393,
+          "longitude": 2.914101,
+          "name": "Road-network waypoint",
+          "bearing": 73.09690442264105
+        },
+        {
+          "latitude": 51.181408,
+          "longitude": 2.961947,
+          "name": "Road-network waypoint",
+          "bearing": 353.7988452969829
+        },
+        {
+          "latitude": 51.19142,
+          "longitude": 2.96158,
+          "name": "Road-network waypoint",
+          "bearing": 353.8677896733662
+        },
+        {
+          "latitude": 51.197067,
+          "longitude": 2.955815,
+          "name": "Road-network waypoint",
+          "bearing": 294.9761979588885
+        },
+        {
+          "latitude": 51.202145,
+          "longitude": 2.936113,
+          "name": "Road-network waypoint",
+          "bearing": 272.8552236727351
+        },
+        {
+          "latitude": 51.199843,
+          "longitude": 2.931616,
+          "name": "Road-network waypoint",
+          "bearing": 277.198015525174
+        },
+        {
+          "latitude": 51.201395,
+          "longitude": 2.929007,
+          "name": "Road-network waypoint",
+          "bearing": 319.09810466637276
+        }
+      ]
+    },
+    {
+      "centreSlug": "roeselare",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:31.344Z",
+      "durationSec": 3568,
+      "distanceM": 37361.484,
+      "points": [
+        {
+          "latitude": 50.944342,
+          "longitude": 3.126171,
+          "name": "Road-network waypoint",
+          "bearing": 48.36984853308951
+        },
+        {
+          "latitude": 50.997521,
+          "longitude": 3.116617,
+          "name": "Road-network waypoint",
+          "bearing": 330.38398732277017
+        },
+        {
+          "latitude": 50.997516,
+          "longitude": 3.088111,
+          "name": "Road-network waypoint",
+          "bearing": 301.2285375818024
+        },
+        {
+          "latitude": 51.007603,
+          "longitude": 3.076624,
+          "name": "Road-network waypoint",
+          "bearing": 30.835077089459958
+        },
+        {
+          "latitude": 51.015254,
+          "longitude": 3.087333,
+          "name": "Road-network waypoint",
+          "bearing": 68.16284091132059
+        },
+        {
+          "latitude": 51.019632,
+          "longitude": 3.11941,
+          "name": "Road-network waypoint",
+          "bearing": 116.13108769786675
+        },
+        {
+          "latitude": 51.017307,
+          "longitude": 3.137208,
+          "name": "Road-network waypoint",
+          "bearing": 89.64001314614097
+        },
+        {
+          "latitude": 51.019687,
+          "longitude": 3.153805,
+          "name": "Road-network waypoint",
+          "bearing": 106.8809993201807
+        },
+        {
+          "latitude": 51.012335,
+          "longitude": 3.16649,
+          "name": "Road-network waypoint",
+          "bearing": 63.58643326102515
+        },
+        {
+          "latitude": 51.020291,
+          "longitude": 3.167316,
+          "name": "Road-network waypoint",
+          "bearing": 81.65593432483854
+        },
+        {
+          "latitude": 51.020186,
+          "longitude": 3.172229,
+          "name": "Road-network waypoint",
+          "bearing": 115.24497439708693
+        },
+        {
+          "latitude": 51.009555,
+          "longitude": 3.179338,
+          "name": "Road-network waypoint",
+          "bearing": 211.56235165787248
+        },
+        {
+          "latitude": 51.00929,
+          "longitude": 3.170317,
+          "name": "Road-network waypoint",
+          "bearing": 181.15344998298664
+        },
+        {
+          "latitude": 50.972292,
+          "longitude": 3.176897,
+          "name": "Road-network waypoint",
+          "bearing": 155.61135286627677
+        },
+        {
+          "latitude": 50.969799,
+          "longitude": 3.18781,
+          "name": "Road-network waypoint",
+          "bearing": 77.12652693670435
+        },
+        {
+          "latitude": 50.974771,
+          "longitude": 3.204161,
+          "name": "Road-network waypoint",
+          "bearing": 160.99224324121644
+        },
+        {
+          "latitude": 50.962919,
+          "longitude": 3.211042,
+          "name": "Road-network waypoint",
+          "bearing": 246.399634273042
+        },
+        {
+          "latitude": 50.957535,
+          "longitude": 3.203607,
+          "name": "Road-network waypoint",
+          "bearing": 253.95465779750515
+        },
+        {
+          "latitude": 50.959389,
+          "longitude": 3.195684,
+          "name": "Road-network waypoint",
+          "bearing": 254.31971077933727
+        },
+        {
+          "latitude": 50.952324,
+          "longitude": 3.172834,
+          "name": "Road-network waypoint",
+          "bearing": 261.8166868393582
+        },
+        {
+          "latitude": 50.953602,
+          "longitude": 3.165125,
+          "name": "Road-network waypoint",
+          "bearing": 161.90937092319996
+        },
+        {
+          "latitude": 50.946007,
+          "longitude": 3.16418,
+          "name": "Road-network waypoint",
+          "bearing": 280.52179823402753
+        },
+        {
+          "latitude": 50.946959,
+          "longitude": 3.152476,
+          "name": "Road-network waypoint",
+          "bearing": 242.1181464247391
+        },
+        {
+          "latitude": 50.940166,
+          "longitude": 3.128725,
+          "name": "Road-network waypoint",
+          "bearing": 291.3448330995622
+        },
+        {
+          "latitude": 50.944342,
+          "longitude": 3.126171,
+          "name": "Road-network waypoint",
+          "bearing": 48.36984853308951
+        }
+      ]
+    },
+    {
+      "centreSlug": "sint-denijs-westrem",
+      "variant": 3,
+      "checkedAt": "2026-10-13T20:01:00.655Z",
+      "durationSec": 2880.041,
+      "distanceM": 34905.492,
+      "points": [
+        {
+          "latitude": 51.029452,
+          "longitude": 3.691408,
+          "name": "Road-network waypoint",
+          "bearing": 209.8963132688891
+        },
+        {
+          "latitude": 51.020083,
+          "longitude": 3.683051,
+          "name": "Road-network waypoint",
+          "bearing": 254.61623487177025
+        },
+        {
+          "latitude": 51.013813,
+          "longitude": 3.646692,
+          "name": "Road-network waypoint",
+          "bearing": 245.46861645548415
+        },
+        {
+          "latitude": 51.001138,
+          "longitude": 3.614885,
+          "name": "Road-network waypoint",
+          "bearing": 147.81758942504229
+        },
+        {
+          "latitude": 50.987759,
+          "longitude": 3.626257,
+          "name": "Road-network waypoint",
+          "bearing": 202.20640218332886
+        },
+        {
+          "latitude": 50.981711,
+          "longitude": 3.619351,
+          "name": "Road-network waypoint",
+          "bearing": 315.9147955131075
+        },
+        {
+          "latitude": 50.98453,
+          "longitude": 3.609777,
+          "name": "Road-network waypoint",
+          "bearing": 341.60873234828944
+        },
+        {
+          "latitude": 51.006097,
+          "longitude": 3.601731,
+          "name": "Road-network waypoint",
+          "bearing": 319.62478093908965
+        },
+        {
+          "latitude": 51.012891,
+          "longitude": 3.585051,
+          "name": "Road-network waypoint",
+          "bearing": 310.6397229793439
+        },
+        {
+          "latitude": 51.029413,
+          "longitude": 3.557529,
+          "name": "Road-network waypoint",
+          "bearing": 3.1303199062899694
+        },
+        {
+          "latitude": 51.041683,
+          "longitude": 3.565406,
+          "name": "Road-network waypoint",
+          "bearing": 108.32191422607923
+        },
+        {
+          "latitude": 51.03666,
+          "longitude": 3.578276,
+          "name": "Road-network waypoint",
+          "bearing": 82.59892544344223
+        },
+        {
+          "latitude": 51.042871,
+          "longitude": 3.603386,
+          "name": "Road-network waypoint",
+          "bearing": 105.26724414323473
+        },
+        {
+          "latitude": 51.038038,
+          "longitude": 3.621556,
+          "name": "Road-network waypoint",
+          "bearing": 40.679608803155475
+        },
+        {
+          "latitude": 51.038293,
+          "longitude": 3.631787,
+          "name": "Road-network waypoint",
+          "bearing": 72.03514074609336
+        },
+        {
+          "latitude": 51.042406,
+          "longitude": 3.643352,
+          "name": "Road-network waypoint",
+          "bearing": 53.33538406295844
+        },
+        {
+          "latitude": 51.054188,
+          "longitude": 3.661887,
+          "name": "Road-network waypoint",
+          "bearing": 5.131276427515047
+        },
+        {
+          "latitude": 51.06191,
+          "longitude": 3.658227,
+          "name": "Road-network waypoint",
+          "bearing": 325.24545304632386
+        },
+        {
+          "latitude": 51.067913,
+          "longitude": 3.648295,
+          "name": "Road-network waypoint",
+          "bearing": 45.24944583858246
+        },
+        {
+          "latitude": 51.071214,
+          "longitude": 3.656747,
+          "name": "Road-network waypoint",
+          "bearing": 90
+        },
+        {
+          "latitude": 51.061992,
+          "longitude": 3.660557,
+          "name": "Road-network waypoint",
+          "bearing": 152.37624794577073
+        },
+        {
+          "latitude": 51.05016,
+          "longitude": 3.675593,
+          "name": "Road-network waypoint",
+          "bearing": 151.10498970901904
+        },
+        {
+          "latitude": 51.037486,
+          "longitude": 3.681008,
+          "name": "Road-network waypoint",
+          "bearing": 151.1891743282947
+        },
+        {
+          "latitude": 51.032299,
+          "longitude": 3.69148,
+          "name": "Road-network waypoint",
+          "bearing": 141.29418779973383
+        },
+        {
+          "latitude": 51.029452,
+          "longitude": 3.691408,
+          "name": "Road-network waypoint",
+          "bearing": 209.8963132688891
+        }
+      ]
+    },
+    {
+      "centreSlug": "sint-niklaas",
+      "variant": 1,
+      "checkedAt": "2026-10-13T19:58:34.511Z",
+      "durationSec": 2551.984,
+      "distanceM": 23963.377,
+      "points": [
+        {
+          "latitude": 51.1637,
+          "longitude": 4.141369,
+          "name": "Road-network waypoint",
+          "bearing": 346.1642211661161
+        },
+        {
+          "latitude": 51.166165,
+          "longitude": 4.147014,
+          "name": "Road-network waypoint",
+          "bearing": 21.983061441732502
+        },
+        {
+          "latitude": 51.176063,
+          "longitude": 4.152345,
+          "name": "Road-network waypoint",
+          "bearing": 300.9896616438242
+        },
+        {
+          "latitude": 51.181519,
+          "longitude": 4.142668,
+          "name": "Road-network waypoint",
+          "bearing": 0.6704042951762403
+        },
+        {
+          "latitude": 51.203969,
+          "longitude": 4.147225,
+          "name": "Road-network waypoint",
+          "bearing": 84.18305863145827
+        },
+        {
+          "latitude": 51.204428,
+          "longitude": 4.15567,
+          "name": "Road-network waypoint",
+          "bearing": 111.39324578820504
+        },
+        {
+          "latitude": 51.20141,
+          "longitude": 4.167639,
+          "name": "Road-network waypoint",
+          "bearing": 56.91939149767404
+        },
+        {
+          "latitude": 51.207373,
+          "longitude": 4.168504,
+          "name": "Road-network waypoint",
+          "bearing": 90.5166709911295
+        },
+        {
+          "latitude": 51.20781,
+          "longitude": 4.183229,
+          "name": "Road-network waypoint",
+          "bearing": 97.09817962626227
+        },
+        {
+          "latitude": 51.203766,
+          "longitude": 4.200693,
+          "name": "Road-network waypoint",
+          "bearing": 220.43469908710657
+        },
+        {
+          "latitude": 51.196187,
+          "longitude": 4.20114,
+          "name": "Road-network waypoint",
+          "bearing": 258.4594040762756
+        },
+        {
+          "latitude": 51.193495,
+          "longitude": 4.194715,
+          "name": "Road-network waypoint",
+          "bearing": 139.77778435211928
+        },
+        {
+          "latitude": 51.190951,
+          "longitude": 4.196649,
+          "name": "Road-network waypoint",
+          "bearing": 104.58230703183193
+        },
+        {
+          "latitude": 51.189396,
+          "longitude": 4.204331,
+          "name": "Road-network waypoint",
+          "bearing": 192.56273814592748
+        },
+        {
+          "latitude": 51.178021,
+          "longitude": 4.192214,
+          "name": "Road-network waypoint",
+          "bearing": 176.73817565639183
+        },
+        {
+          "latitude": 51.172325,
+          "longitude": 4.20829,
+          "name": "Road-network waypoint",
+          "bearing": 198.06406583851822
+        },
+        {
+          "latitude": 51.170306,
+          "longitude": 4.202097,
+          "name": "Road-network waypoint",
+          "bearing": 159.3834706160809
+        },
+        {
+          "latitude": 51.164829,
+          "longitude": 4.203345,
+          "name": "Road-network waypoint",
+          "bearing": 146.24906563277034
+        },
+        {
+          "latitude": 51.161313,
+          "longitude": 4.208744,
+          "name": "Road-network waypoint",
+          "bearing": 224.14401535508063
+        },
+        {
+          "latitude": 51.154946,
+          "longitude": 4.201697,
+          "name": "Road-network waypoint",
+          "bearing": 289.5091904719437
+        },
+        {
+          "latitude": 51.147059,
+          "longitude": 4.178354,
+          "name": "Road-network waypoint",
+          "bearing": 315.84110462044293
+        },
+        {
+          "latitude": 51.150868,
+          "longitude": 4.171968,
+          "name": "Road-network waypoint",
+          "bearing": 237.28068915064938
+        },
+        {
+          "latitude": 51.146172,
+          "longitude": 4.164912,
+          "name": "Road-network waypoint",
+          "bearing": 331.10992596023283
+        },
+        {
+          "latitude": 51.157883,
+          "longitude": 4.152325,
+          "name": "Road-network waypoint",
+          "bearing": 317.93797274533466
+        },
+        {
+          "latitude": 51.1637,
+          "longitude": 4.141369,
+          "name": "Road-network waypoint",
+          "bearing": 346.1642211661161
+        }
+      ]
+    },
+    {
+      "centreSlug": "tournai-marquain",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:48.107Z",
+      "durationSec": 2748.452,
+      "distanceM": 22903.6,
+      "points": [
+        {
+          "latitude": 50.625903,
+          "longitude": 3.328011,
+          "name": "Road-network waypoint",
+          "bearing": 85.76462264097216
+        },
+        {
+          "latitude": 50.622877,
+          "longitude": 3.332327,
+          "name": "Road-network waypoint",
+          "bearing": 29.3694849571105
+        },
+        {
+          "latitude": 50.628002,
+          "longitude": 3.336484,
+          "name": "Road-network waypoint",
+          "bearing": 0.5591474349636769
+        },
+        {
+          "latitude": 50.635861,
+          "longitude": 3.335855,
+          "name": "Road-network waypoint",
+          "bearing": 24.192386417414014
+        },
+        {
+          "latitude": 50.645052,
+          "longitude": 3.345738,
+          "name": "Road-network waypoint",
+          "bearing": 85.47753318265285
+        },
+        {
+          "latitude": 50.649333,
+          "longitude": 3.365099,
+          "name": "Road-network waypoint",
+          "bearing": 132.5843877619086
+        },
+        {
+          "latitude": 50.644766,
+          "longitude": 3.371454,
+          "name": "Road-network waypoint",
+          "bearing": 158.5068614484345
+        },
+        {
+          "latitude": 50.634831,
+          "longitude": 3.376484,
+          "name": "Road-network waypoint",
+          "bearing": 143.64486705405278
+        },
+        {
+          "latitude": 50.62739,
+          "longitude": 3.389481,
+          "name": "Road-network waypoint",
+          "bearing": 161.64081105769333
+        },
+        {
+          "latitude": 50.623915,
+          "longitude": 3.390844,
+          "name": "Road-network waypoint",
+          "bearing": 49.311544243467495
+        },
+        {
+          "latitude": 50.627162,
+          "longitude": 3.394783,
+          "name": "Road-network waypoint",
+          "bearing": 106.83924215012712
+        },
+        {
+          "latitude": 50.626415,
+          "longitude": 3.41304,
+          "name": "Road-network waypoint",
+          "bearing": 177.34883067035082
+        },
+        {
+          "latitude": 50.62089,
+          "longitude": 3.413999,
+          "name": "Road-network waypoint",
+          "bearing": 188.60805592089397
+        },
+        {
+          "latitude": 50.616357,
+          "longitude": 3.412637,
+          "name": "Road-network waypoint",
+          "bearing": 264.37444274416407
+        },
+        {
+          "latitude": 50.61123,
+          "longitude": 3.400606,
+          "name": "Road-network waypoint",
+          "bearing": 131.00478192052037
+        },
+        {
+          "latitude": 50.604735,
+          "longitude": 3.404623,
+          "name": "Road-network waypoint",
+          "bearing": 180.74207524922568
+        },
+        {
+          "latitude": 50.600163,
+          "longitude": 3.400589,
+          "name": "Road-network waypoint",
+          "bearing": 241.18187609071654
+        },
+        {
+          "latitude": 50.600311,
+          "longitude": 3.388001,
+          "name": "Road-network waypoint",
+          "bearing": 282.9395849105383
+        },
+        {
+          "latitude": 50.60248,
+          "longitude": 3.384279,
+          "name": "Road-network waypoint",
+          "bearing": 220.11799356737606
+        },
+        {
+          "latitude": 50.599735,
+          "longitude": 3.378289,
+          "name": "Road-network waypoint",
+          "bearing": 338.87967569894226
+        },
+        {
+          "latitude": 50.605111,
+          "longitude": 3.374588,
+          "name": "Road-network waypoint",
+          "bearing": 258.985760489285
+        },
+        {
+          "latitude": 50.604326,
+          "longitude": 3.333747,
+          "name": "Road-network waypoint",
+          "bearing": 17.229912522633697
+        },
+        {
+          "latitude": 50.613743,
+          "longitude": 3.334154,
+          "name": "Road-network waypoint",
+          "bearing": 340.54577525076087
+        },
+        {
+          "latitude": 50.62473,
+          "longitude": 3.324677,
+          "name": "Road-network waypoint",
+          "bearing": 59.806611419989565
+        },
+        {
+          "latitude": 50.625903,
+          "longitude": 3.328011,
+          "name": "Road-network waypoint",
+          "bearing": 85.76462264097216
+        }
+      ]
+    },
+    {
+      "centreSlug": "wevelgem",
+      "variant": 0,
+      "checkedAt": "2026-10-13T19:56:31.516Z",
+      "durationSec": 2371.194,
+      "distanceM": 23090.734,
+      "points": [
+        {
+          "latitude": 50.806724,
+          "longitude": 3.165877,
+          "name": "Road-network waypoint",
+          "bearing": 348.945513795777
+        },
+        {
+          "latitude": 50.810753,
+          "longitude": 3.168046,
+          "name": "Road-network waypoint",
+          "bearing": 117.628363748666
+        },
+        {
+          "latitude": 50.811296,
+          "longitude": 3.177256,
+          "name": "Road-network waypoint",
+          "bearing": 332.53597019023135
+        },
+        {
+          "latitude": 50.813077,
+          "longitude": 3.175632,
+          "name": "Road-network waypoint",
+          "bearing": 79.56802984456675
+        },
+        {
+          "latitude": 50.815849,
+          "longitude": 3.187139,
+          "name": "Road-network waypoint",
+          "bearing": 18.587204532217243
+        },
+        {
+          "latitude": 50.823064,
+          "longitude": 3.190747,
+          "name": "Road-network waypoint",
+          "bearing": 30.26725697448336
+        },
+        {
+          "latitude": 50.826467,
+          "longitude": 3.19637,
+          "name": "Road-network waypoint",
+          "bearing": 8.596269926367484
+        },
+        {
+          "latitude": 50.835566,
+          "longitude": 3.195133,
+          "name": "Road-network waypoint",
+          "bearing": 76.19578085684833
+        },
+        {
+          "latitude": 50.832121,
+          "longitude": 3.202083,
+          "name": "Road-network waypoint",
+          "bearing": 63.59760100789936
+        },
+        {
+          "latitude": 50.835363,
+          "longitude": 3.203779,
+          "name": "Road-network waypoint",
+          "bearing": 94.26141188453926
+        },
+        {
+          "latitude": 50.835978,
+          "longitude": 3.208007,
+          "name": "Road-network waypoint",
+          "bearing": 97.3711170179397
+        },
+        {
+          "latitude": 50.83588,
+          "longitude": 3.219297,
+          "name": "Road-network waypoint",
+          "bearing": 149.56650163607037
+        },
+        {
+          "latitude": 50.827653,
+          "longitude": 3.215669,
+          "name": "Road-network waypoint",
+          "bearing": 145.8315878467904
+        },
+        {
+          "latitude": 50.807968,
+          "longitude": 3.248606,
+          "name": "Road-network waypoint",
+          "bearing": 212.28967349874094
+        },
+        {
+          "latitude": 50.801355,
+          "longitude": 3.241828,
+          "name": "Road-network waypoint",
+          "bearing": 198.8243917182628
+        },
+        {
+          "latitude": 50.779778,
+          "longitude": 3.232079,
+          "name": "Road-network waypoint",
+          "bearing": 227.4115709020727
+        },
+        {
+          "latitude": 50.778139,
+          "longitude": 3.229577,
+          "name": "Road-network waypoint",
+          "bearing": 322.5167668444627
+        },
+        {
+          "latitude": 50.780791,
+          "longitude": 3.220684,
+          "name": "Road-network waypoint",
+          "bearing": 218.03031113797613
+        },
+        {
+          "latitude": 50.777628,
+          "longitude": 3.208761,
+          "name": "Road-network waypoint",
+          "bearing": 324.52085668238755
+        },
+        {
+          "latitude": 50.794705,
+          "longitude": 3.197364,
+          "name": "Road-network waypoint",
+          "bearing": 350.00931953095846
+        },
+        {
+          "latitude": 50.800866,
+          "longitude": 3.197212,
+          "name": "Road-network waypoint",
+          "bearing": 281.76034888229617
+        },
+        {
+          "latitude": 50.800276,
+          "longitude": 3.188907,
+          "name": "Road-network waypoint",
+          "bearing": 7.01281979764309
+        },
+        {
+          "latitude": 50.809138,
+          "longitude": 3.184754,
+          "name": "Road-network waypoint",
+          "bearing": 234.00533973205273
+        },
+        {
+          "latitude": 50.80454,
+          "longitude": 3.166705,
+          "name": "Road-network waypoint",
+          "bearing": 343.67745149438707
+        },
+        {
+          "latitude": 50.806724,
+          "longitude": 3.165877,
+          "name": "Road-network waypoint",
+          "bearing": 348.945513795777
+        }
+      ]
+    }
+  ]
+}

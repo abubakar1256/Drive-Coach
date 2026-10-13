@@ -1,9 +1,10 @@
 import { BadRequestException, Body, Controller, Get, Headers, Param, Post, Req, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
 import { AdminGuard } from "../admin/admin.guard";
+import { FinanceGuard } from "../admin/finance.guard";
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { BillingService } from "./billing.service";
-import { CheckoutDto, CouponValidationDto, CreateCouponDto } from "./dto/billing.dto";
+import { CheckoutDto, CouponValidationDto, CreateCouponDto, SelectCentreDto } from "./dto/billing.dto";
 
 @Controller()
 export class BillingController {
@@ -39,15 +40,19 @@ export class BillingController {
   @UseGuards(JwtAuthGuard)
   checkout(@Req() request: AuthenticatedRequest, @Body() dto: CheckoutDto) { return this.billingService.checkout(request.user.sub, dto); }
 
+  @Post("me/subscription/centre")
+  @UseGuards(JwtAuthGuard)
+  selectCentre(@Req() req: AuthenticatedRequest, @Body() dto: SelectCentreDto) { return this.billingService.selectCentre(req.user.sub, dto.centreId); }
+
   @Post("coupons/validate")
   @UseGuards(JwtAuthGuard)
   validateCoupon(@Body() dto: CouponValidationDto) { return this.billingService.validateCoupon(dto); }
 
   @Post("admin/coupons")
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, FinanceGuard)
   createCoupon(@Body() dto: CreateCouponDto) { return this.billingService.createCoupon(dto); }
 
   @Post("admin/payments/:id/refund")
-  @UseGuards(JwtAuthGuard, AdminGuard)
+  @UseGuards(JwtAuthGuard, FinanceGuard)
   refund(@Param("id") id: string) { return this.billingService.refundPayment(id); }
 }

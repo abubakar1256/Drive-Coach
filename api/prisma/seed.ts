@@ -168,8 +168,8 @@ async function main() {
 
   const alken = await prisma.examCentre.upsert({
     where: { slug: "alken" },
-    update: { name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true },
-    create: { slug: "alken", name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.875, longitude: 5.307, isPublished: true, description: "Official passage-point reference for the Alken driving-test area." },
+    update: { name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.88597, longitude: 5.29830, isPublished: true },
+    create: { slug: "alken", name: "Alken", city: "Alken", area: null, region: "Limburg", latitude: 50.88597, longitude: 5.29830, isPublished: true, description: "Official passage-point reference for the Alken driving-test area." },
   });
   await prisma.route.upsert({
     where: { slug: "alken-route-1" },

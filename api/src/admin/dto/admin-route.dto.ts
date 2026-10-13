@@ -1,5 +1,6 @@
 import { RouteStatus } from "@prisma/client";
-import { ArrayMinSize, IsArray, IsEnum, IsIn, IsInt, IsLatitude, IsLongitude, IsOptional, IsString, MaxLength, Min, MinLength } from "class-validator";
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsLatitude, IsLongitude, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateRouteDto {
   @IsString()
@@ -185,4 +186,15 @@ export class UpdateOfficialPassagePointDto {
   @IsString()
   @MaxLength(500)
   notes?: string;
+}
+
+export class ImportRoutePointsDto {
+  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(25)
+  @ValidateNested({ each: true }) @Type(() => CreateRoutePointDto)
+  points!: CreateRoutePointDto[];
+}
+
+export class GeneratePracticeLoopDto {
+  @IsOptional() @IsInt() @Min(0) @Max(6) variant?: number;
+  @IsOptional() @IsBoolean() publish?: boolean;
 }

@@ -6,11 +6,16 @@ import { CreateRouteDto, CreateRoutePointDto, ReorderPointsDto, UpdateOfficialPa
 import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
+import { AnnouncementDto } from "../notifications/notification.dto";
+import { GeneratePracticeLoopDto, ImportRoutePointsDto } from "./dto/admin-route.dto";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+  @Post("notifications")
+  announcement(@Req() req: AuthenticatedRequest, @Body() dto: AnnouncementDto) { return this.adminService.announce(req.user.sub, req.user.role, dto.title, dto.body); }
 
   @Get("centres")
   listCentres() {
@@ -31,6 +36,9 @@ export class AdminController {
   createCentre(@Body() dto: CreateCentreDto) {
     return this.adminService.createCentre(dto);
   }
+
+  @Post("centres/:id/generate-practice-loop")
+  generateLoop(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: GeneratePracticeLoopDto) { return this.adminService.generatePracticeLoop(req.user.sub, id, dto.variant, dto.publish); }
 
   @Get("routes")
   listRoutes() {
@@ -88,8 +96,8 @@ export class AdminController {
   }
 
   @Patch("routes/:id")
-  updateRoute(@Param("id") id: string, @Body() dto: UpdateRouteDto) {
-    return this.adminService.updateRoute(id, dto);
+  updateRoute(@Param("id") id: string, @Body() dto: UpdateRouteDto, @Req() req: AuthenticatedRequest) {
+    return this.adminService.updateRoute(id, dto, req.user.sub);
   }
 
   @Delete("routes/:id")
@@ -101,6 +109,9 @@ export class AdminController {
   createPoint(@Param("id") routeId: string, @Body() dto: CreateRoutePointDto) {
     return this.adminService.createPoint(routeId, dto);
   }
+
+  @Post("routes/:id/import-points")
+  importPoints(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: ImportRoutePointsDto) { return this.adminService.importPoints(req.user.sub, id, dto.points); }
 
   @Patch("routes/:id/points/reorder")
   reorderPoints(@Param("id") routeId: string, @Body() dto: ReorderPointsDto) {

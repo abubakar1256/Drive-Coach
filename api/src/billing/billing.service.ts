@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, ServiceUnavailableException } from "@nestjs/common";
 import { UserRole } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CheckoutDto, CouponValidationDto, CreateCouponDto } from "./dto/billing.dto";
@@ -30,7 +31,7 @@ export class BillingService {
       }),
     ]);
     if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Diamond", startsAt: null, expiresAt: null, provider: "INTERNAL" };
-    return user && subscription ? { status: subscription.status, plan: subscription.plan.name, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", startsAt: null, expiresAt: null, provider: null };
+    return user && subscription ? { status: subscription.status, plan: subscription.plan.name, centreId: subscription.centreId, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", centreId: null, startsAt: null, expiresAt: null, provider: null };
   }
 
   async entitlements(userId: string) {
@@ -69,6 +70,9 @@ export class BillingService {
     if (!secret) return this.checkoutUnavailable();
     const plan = await this.prisma.plan.findUnique({ where: { id: dto.planId }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true, isActive: true } });
     if (!plan?.isActive) throw new BadRequestException("Plan not found or inactive");
+    if (!["Premium", "Diamond"].includes(plan.name)) throw new BadRequestException("Unsupported plan");
+    if (plan.name === "Premium" && (!dto.centreId || !await this.prisma.examCentre.findFirst({ where: { id: dto.centreId, isPublished: true } }))) throw new BadRequestException("Choose your exam centre before buying Premium");
+    if (dto.schoolId && !await this.prisma.drivingSchool.findFirst({ where: { id: dto.schoolId, createdByUserId: userId } })) throw new BadRequestException("School billing is limited to the school owner");
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
     if (!user) throw new BadRequestException("User not found");
     let amountCents = plan.priceCents;
@@ -78,14 +82,15 @@ export class BillingService {
       amountCents = Math.max(0, plan.priceCents - discount);
     }
     const paymentId = randomUUID();
-    await this.prisma.$executeRawUnsafe('INSERT INTO "Payment" ("id", "userId", "planId", "provider", "amountCents", "currency", "status", "metadata") VALUES ($1,$2,$3,\'STRIPE\',$4,$5,\'PENDING\',$6::jsonb)', paymentId, userId, plan.id, amountCents, plan.currency, JSON.stringify({ couponCode: dto.couponCode ?? null, originalAmountCents: plan.priceCents }));
+    await this.prisma.$executeRawUnsafe('INSERT INTO "Payment" ("id", "userId", "planId", "provider", "amountCents", "currency", "status", "metadata", "schoolId") VALUES ($1,$2,$3,\'STRIPE\',$4,$5,\'PENDING\',$6::jsonb,$7)', paymentId, userId, plan.id, amountCents, plan.currency, JSON.stringify({ couponCode: dto.couponCode ?? null, originalAmountCents: plan.priceCents, centreId: plan.name === "Premium" ? dto.centreId : null }), dto.schoolId ?? null);
     const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:3000";
     const form = new URLSearchParams();
     form.set("mode", "payment"); form.set("success_url", process.env.STRIPE_SUCCESS_URL ?? `${webOrigin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`); form.set("cancel_url", process.env.STRIPE_CANCEL_URL ?? `${webOrigin}/account?checkout=cancelled`); form.set("customer_email", user.email); form.set("client_reference_id", userId); form.set("invoice_creation[enabled]", "true");
     form.set("line_items[0][price_data][currency]", plan.currency.toLowerCase()); form.set("line_items[0][price_data][unit_amount]", String(amountCents)); form.set("line_items[0][price_data][product_data][name]", `RoutePilot ${plan.name} access`); form.set("line_items[0][quantity]", "1");
     form.set("metadata[paymentId]", paymentId); form.set("metadata[userId]", userId); form.set("metadata[planId]", plan.id); if (dto.couponCode) form.set("metadata[couponCode]", dto.couponCode.trim().toUpperCase());
+    form.set("payment_intent_data[metadata][paymentId]", paymentId);
     try {
-      const response = await fetch("https://api.stripe.com/v1/checkout/sessions", { method: "POST", headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/x-www-form-urlencoded" }, body: form });
+      const response = await fetch("https://api.stripe.com/v1/checkout/sessions", { method: "POST", headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/x-www-form-urlencoded", "Idempotency-Key": `checkout-${paymentId}` }, body: form });
       const session = await response.json() as StripeResponse & { error?: { message?: string } };
       if (!response.ok || !session.id || !session.url) throw new Error(session.error?.message ?? "Stripe did not return a checkout session");
       await this.prisma.$executeRawUnsafe('UPDATE "Payment" SET "checkoutSessionId" = $1, "updatedAt" = NOW() WHERE "id" = $2', session.id, paymentId);
@@ -108,15 +113,38 @@ export class BillingService {
 
   async handleWebhook(event: { id?: string; type?: string; data?: { object?: StripeResponse } }) {
     if (!event.id || !event.type) throw new BadRequestException("Invalid Stripe event");
-    const existing = await this.prisma.$queryRawUnsafe<Array<{ id: string }>>('SELECT "id" FROM "PaymentWebhookEvent" WHERE "provider" = \'STRIPE\' AND "eventId" = $1 LIMIT 1', event.id);
-    if (existing[0]) return { received: true, duplicate: true };
-    await this.prisma.$executeRawUnsafe('INSERT INTO "PaymentWebhookEvent" ("id", "provider", "eventId", "eventType", "payload", "processedAt") VALUES ($1,\'STRIPE\',$2,$3,$4::jsonb,NOW())', randomUUID(), event.id, event.type, JSON.stringify(event));
-    const object = event.data?.object ?? {};
-    if (event.type === "checkout.session.completed") await this.completeCheckout(object);
-    if (event.type === "payment_intent.payment_failed") await this.failPayment(typeof object.payment_intent === "string" ? object.payment_intent : object.id);
-    if (event.type === "charge.refunded") await this.markRefunded(typeof object.payment_intent === "string" ? object.payment_intent : object.id, object.id, Number(object.amount ?? object.amount_refunded ?? 0));
-    if (event.type === "invoice.paid") await this.recordInvoice(object);
-    return { received: true };
+    return this.prisma.$transaction(async tx => {
+      await tx.paymentWebhookEvent.upsert({ where: { provider_eventId: { provider: "STRIPE", eventId: event.id! } }, create: { provider: "STRIPE", eventId: event.id!, eventType: event.type!, payload: event as Prisma.InputJsonValue }, update: {} });
+      const rows = await tx.$queryRawUnsafe<Array<{ processedAt: Date | null }>>('SELECT "processedAt" FROM "PaymentWebhookEvent" WHERE "provider" = $1 AND "eventId" = $2 FOR UPDATE', "STRIPE", event.id);
+      if (rows[0]?.processedAt) return { received: true, duplicate: true };
+      const object = event.data?.object ?? {};
+      if (["checkout.session.completed", "checkout.session.async_payment_succeeded"].includes(event.type!)) await this.completeCheckout(tx, object);
+      if (["payment_intent.payment_failed", "checkout.session.async_payment_failed"].includes(event.type!)) {
+        const id = object.metadata?.paymentId;
+        if (id) {
+          const payment = await tx.payment.findUnique({ where: { id } });
+          if (payment && payment.status !== "SUCCEEDED" && payment.status !== "REFUNDED") {
+            const changed = await tx.payment.updateMany({ where: { id, status: { in: ["PENDING", "FAILED"] } }, data: { status: "FAILED" } });
+            if (changed.count) await tx.notification.createMany({ data: [{ userId: payment.userId, type: "PAYMENT_FAILED", title: "Payment failed", body: "Your payment could not be completed. No new paid access was activated.", dedupeKey: `payment-failed:${id}` }], skipDuplicates: true });
+          }
+        }
+      }
+      if (event.type === "charge.refunded") await this.refundRecords(tx, object);
+      if (event.type === "invoice.paid") await this.recordInvoice(tx, object);
+      await tx.paymentWebhookEvent.update({ where: { provider_eventId: { provider: "STRIPE", eventId: event.id! } }, data: { processedAt: new Date() } });
+      return { received: true };
+    }, { timeout: 15000 });
+  }
+
+  async selectCentre(userId: string, centreId: string) {
+    if (!await this.prisma.examCentre.findFirst({ where: { id: centreId, isPublished: true } })) throw new BadRequestException("Published centre not found");
+    const now = new Date();
+    const current = await this.prisma.subscription.findFirst({ where: { userId, status: "ACTIVE", plan: { name: "Premium" }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }, orderBy: { createdAt: "desc" } });
+    if (!current) throw new BadRequestException("Active Premium subscription required");
+    if (current.centreId && current.centreId !== centreId) throw new BadRequestException("The purchased centre cannot be changed during this access period");
+    const result = await this.prisma.subscription.updateMany({ where: { id: current.id, userId, status: "ACTIVE", centreId: null }, data: { centreId } });
+    if (!result.count && current.centreId !== centreId) throw new BadRequestException("Centre already selected; refresh your account");
+    return this.subscription(userId);
   }
 
   async refundPayment(paymentId: string) {
@@ -128,7 +156,8 @@ export class BillingService {
     const response = await fetch("https://api.stripe.com/v1/refunds", { method: "POST", headers: { Authorization: `Bearer ${secret}`, "Content-Type": "application/x-www-form-urlencoded" }, body: form });
     const refund = await response.json() as StripeResponse & { amount?: number; status?: string; error?: { message?: string } };
     if (!response.ok || !refund.id) throw new BadRequestException(refund.error?.message ?? "Stripe refund failed");
-    await this.markRefunded(payment.providerPaymentId, refund.id, Number(refund.amount ?? payment.amountCents));
+    if (refund.status === "succeeded") await this.prisma.$transaction(tx => this.refundRecords(tx, { id: refund.id, payment_intent: payment.providerPaymentId, amount_refunded: Number(refund.amount ?? payment.amountCents) }));
+    else await this.prisma.refund.upsert({ where: { providerRefundId: refund.id }, create: { paymentId: payment.id, providerRefundId: refund.id, amountCents: Number(refund.amount ?? payment.amountCents), status: "PENDING" }, update: {} });
     return { success: true, refundId: refund.id };
   }
 
@@ -140,33 +169,49 @@ export class BillingService {
     return coupon;
   }
 
-  private async completeCheckout(session: StripeResponse) {
-    const metadata = session.metadata ?? {};
-    const paymentRows = await this.prisma.$queryRawUnsafe<Array<{ id: string; userId: string; planId: string; subscriptionId: string | null }>>('SELECT "id", "userId", "planId", "subscriptionId" FROM "Payment" WHERE "id" = $1 OR "checkoutSessionId" = $2 LIMIT 1', metadata.paymentId ?? "", session.id ?? "");
-    const payment = paymentRows[0]; if (!payment) return;
-    const plans = await this.prisma.$queryRawUnsafe<Array<{ durationHours: number }>>('SELECT "durationHours" FROM "Plan" WHERE "id" = $1', payment.planId); const durationHours = plans[0]?.durationHours ?? 24;
-    const providerPaymentId = typeof session.payment_intent === "string" ? session.payment_intent : session.id ?? null;
-    const subscriptionId = payment.subscriptionId ?? randomUUID();
-    await this.prisma.$executeRawUnsafe('UPDATE "Payment" SET "status" = \'SUCCEEDED\', "providerPaymentId" = COALESCE("providerPaymentId", $1), "checkoutSessionId" = COALESCE("checkoutSessionId", $2), "updatedAt" = NOW() WHERE "id" = $3', providerPaymentId, session.id ?? null, payment.id);
-    if (payment.subscriptionId) await this.prisma.$executeRawUnsafe('UPDATE "Subscription" SET "status" = \'ACTIVE\', "provider" = \'STRIPE\', "providerRef" = $1, "startsAt" = NOW(), "expiresAt" = NOW() + ($2 * INTERVAL \'1 hour\'), "updatedAt" = NOW() WHERE "id" = $3', session.subscription ?? providerPaymentId, durationHours, subscriptionId);
-    else await this.prisma.$executeRawUnsafe('INSERT INTO "Subscription" ("id", "userId", "planId", "status", "provider", "providerRef", "startsAt", "expiresAt") VALUES ($1,$2,$3,\'ACTIVE\',\'STRIPE\',$4,NOW(),NOW() + ($5 * INTERVAL \'1 hour\'))', subscriptionId, payment.userId, payment.planId, session.subscription ?? providerPaymentId, durationHours);
-    await this.prisma.$executeRawUnsafe('UPDATE "Payment" SET "subscriptionId" = $1 WHERE "id" = $2', subscriptionId, payment.id);
-    const couponCode = metadata.couponCode; if (couponCode) await this.prisma.$executeRawUnsafe('UPDATE "Coupon" SET "redeemCount" = "redeemCount" + 1 WHERE UPPER("code") = UPPER($1) AND "active" = true', couponCode);
+  private async completeCheckout(tx: Prisma.TransactionClient, session: StripeResponse) {
+    // Signed webhooks are necessary but not sufficient: asynchronous unpaid
+    // checkout completion must not activate access.
+    if (!["paid", "no_payment_required"].includes(String(session.payment_status))) return;
+    const rows = await tx.$queryRawUnsafe<Array<{ id: string }>>('SELECT "id" FROM "Payment" WHERE "checkoutSessionId" = $1 FOR UPDATE', session.id ?? "");
+    if (!rows[0]) throw new BadRequestException("Checkout payment not found");
+    const payment = await tx.payment.findUnique({ where: { id: rows[0].id }, include: { plan: true } });
+    if (!payment || payment.status === "SUCCEEDED" || payment.status === "REFUNDED") return;
+    if (session.amount_total !== payment.amountCents || String(session.currency).toUpperCase() !== payment.currency.toUpperCase()) throw new BadRequestException("Checkout amount or currency mismatch");
+    const metadata = (payment.metadata ?? {}) as Record<string, unknown>;
+    const centreId = payment.plan.name === "Premium" && typeof metadata.centreId === "string" ? metadata.centreId : null;
+    if (payment.plan.name === "Premium" && !centreId) throw new BadRequestException("Premium payment needs its purchased centre");
+    const now = new Date();
+    const subscription = await tx.subscription.create({ data: { userId: payment.userId, planId: payment.planId, centreId, status: "ACTIVE", provider: "STRIPE", providerRef: typeof session.payment_intent === "string" ? session.payment_intent : session.id, startsAt: now, expiresAt: new Date(now.getTime() + payment.plan.durationHours * 3600000) } });
+    await tx.payment.update({ where: { id: payment.id }, data: { status: "SUCCEEDED", checkoutSessionId: session.id, subscriptionId: subscription.id, providerPaymentId: typeof session.payment_intent === "string" ? session.payment_intent : session.id } });
+    if (typeof metadata.couponCode === "string") await tx.coupon.updateMany({ where: { code: metadata.couponCode.toUpperCase(), active: true }, data: { redeemCount: { increment: 1 } } });
+    const attribution = await tx.referralAttribution.findUnique({ where: { referredUserId: payment.userId }, include: { code: true } });
+    if (attribution && attribution.code.ownerUserId !== payment.userId) {
+      const cents = Math.floor(payment.amountCents * attribution.code.commissionBps / 10000);
+      if (cents > 0) await tx.commission.upsert({ where: { paymentId: payment.id }, update: {}, create: { referralCodeId: attribution.codeId, referredUserId: payment.userId, paymentId: payment.id, amountCents: payment.amountCents, commissionCents: cents } });
+    }
+    await tx.notification.createMany({ data: [{ userId: payment.userId, type: "PAYMENT_SUCCEEDED", title: "Your preparation access is active", body: `${payment.plan.name} is active until ${subscription.expiresAt!.toISOString().slice(0, 10)}.`, dedupeKey: `payment-paid:${payment.id}` }], skipDuplicates: true });
   }
 
-  private async failPayment(providerPaymentId: string | undefined) { if (providerPaymentId) await this.prisma.$executeRawUnsafe('UPDATE "Payment" SET "status" = \'FAILED\', "updatedAt" = NOW() WHERE "providerPaymentId" = $1', providerPaymentId); }
-
-  private async markRefunded(providerPaymentId: string | undefined, refundId: string | undefined, amountCents: number) {
-    if (!providerPaymentId) return;
-    const rows = await this.prisma.$queryRawUnsafe<Array<{ id: string; subscriptionId: string | null }>>('SELECT "id", "subscriptionId" FROM "Payment" WHERE "providerPaymentId" = $1', providerPaymentId); const payment = rows[0]; if (!payment) return;
-    await this.prisma.$executeRawUnsafe('UPDATE "Payment" SET "status" = \'REFUNDED\', "updatedAt" = NOW() WHERE "id" = $1', payment.id);
-    if (payment.subscriptionId) await this.prisma.$executeRawUnsafe('UPDATE "Subscription" SET "status" = \'REFUNDED\', "updatedAt" = NOW() WHERE "id" = $1', payment.subscriptionId);
-    await this.prisma.$executeRawUnsafe('INSERT INTO "Refund" ("id", "paymentId", "providerRefundId", "amountCents", "status") VALUES ($1,$2,$3,$4,\'SUCCEEDED\') ON CONFLICT ("providerRefundId") DO NOTHING', randomUUID(), payment.id, refundId ?? null, amountCents);
+  private async refundRecords(tx: Prisma.TransactionClient, object: StripeResponse) {
+    if (typeof object.payment_intent !== "string") return;
+    const payment = await tx.payment.findFirst({ where: { providerPaymentId: object.payment_intent } });
+    if (!payment) return;
+    const amount = Number(object.amount_refunded ?? object.amount ?? 0);
+    const full = amount >= payment.amountCents;
+    if (full) {
+      await tx.payment.update({ where: { id: payment.id }, data: { status: "REFUNDED" } });
+      if (payment.subscriptionId) await tx.subscription.update({ where: { id: payment.subscriptionId }, data: { status: "REFUNDED" } });
+    }
+    await tx.commission.updateMany({ where: { paymentId: payment.id, status: "PENDING" }, data: { status: full ? "REVERSED" : "REFUND_REVIEW" } });
+    await tx.commission.updateMany({ where: { paymentId: payment.id, status: "PAID" }, data: { status: "REFUND_REVIEW" } });
+    if (object.id) await tx.refund.upsert({ where: { providerRefundId: object.id }, create: { paymentId: payment.id, providerRefundId: object.id, amountCents: amount, status: "SUCCEEDED" }, update: { amountCents: amount } });
+    await tx.notification.createMany({ data: [{ userId: payment.userId, type: "REFUND", title: "Refund update", body: full ? "Your payment was refunded and paid access was revoked." : "A partial refund was recorded.", dedupeKey: `refund:${object.id}:${amount}` }], skipDuplicates: true });
   }
 
-  private async recordInvoice(invoice: StripeResponse) {
-    const metadata = invoice.metadata ?? {}; const paymentIntent = typeof invoice.payment_intent === "string" ? invoice.payment_intent : ""; const paymentRows = await this.prisma.$queryRawUnsafe<Array<{ id: string; userId: string }>>('SELECT "id", "userId" FROM "Payment" WHERE "id" = $1 OR "providerPaymentId" = $2 LIMIT 1', metadata.paymentId ?? "", paymentIntent); const payment = paymentRows[0]; if (!payment || !invoice.id) return;
-    await this.prisma.$executeRawUnsafe('INSERT INTO "Invoice" ("id", "userId", "paymentId", "providerInvoiceId", "number", "amountCents", "currency", "status", "invoiceUrl", "issuedAt", "paidAt") VALUES ($1,$2,$3,$4,$5,$6,$7,\'PAID\',$8,NOW(),NOW()) ON CONFLICT ("providerInvoiceId") DO UPDATE SET "status" = \'PAID\', "paidAt" = NOW(), "invoiceUrl" = EXCLUDED."invoiceUrl"', randomUUID(), payment.userId, payment.id, invoice.id, typeof invoice.number === "string" ? invoice.number : null, Number(invoice.amount_paid ?? invoice.amount_paid ?? 0), typeof invoice.currency === "string" ? invoice.currency : "eur", typeof invoice.hosted_invoice_url === "string" ? invoice.hosted_invoice_url : null);
+  private async recordInvoice(tx: Prisma.TransactionClient, invoice: StripeResponse) {
+    const metadata = invoice.metadata ?? {}; const paymentIntent = typeof invoice.payment_intent === "string" ? invoice.payment_intent : ""; const paymentRows = await tx.$queryRawUnsafe<Array<{ id: string; userId: string }>>('SELECT "id", "userId" FROM "Payment" WHERE "id" = $1 OR "providerPaymentId" = $2 LIMIT 1', metadata.paymentId ?? "", paymentIntent); const payment = paymentRows[0]; if (!payment || !invoice.id) return;
+    await tx.$executeRawUnsafe('INSERT INTO "Invoice" ("id", "userId", "paymentId", "providerInvoiceId", "number", "amountCents", "currency", "status", "invoiceUrl", "issuedAt", "paidAt") VALUES ($1,$2,$3,$4,$5,$6,$7,\'PAID\',$8,NOW(),NOW()) ON CONFLICT ("providerInvoiceId") DO UPDATE SET "status" = \'PAID\', "paidAt" = NOW(), "invoiceUrl" = EXCLUDED."invoiceUrl"', randomUUID(), payment.userId, payment.id, invoice.id, typeof invoice.number === "string" ? invoice.number : null, Number(invoice.amount_paid ?? invoice.amount_paid ?? 0), typeof invoice.currency === "string" ? invoice.currency : "eur", typeof invoice.hosted_invoice_url === "string" ? invoice.hosted_invoice_url : null);
   }
 
   private checkoutUnavailable(): never { throw new ServiceUnavailableException("Payment checkout is not configured. Add STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET before enabling live billing."); }

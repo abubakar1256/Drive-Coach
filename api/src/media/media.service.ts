@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { PrismaService } from "../prisma.service";
 import { UploadMediaDto } from "./dto/media.dto";
+import { validMediaSignature } from "./media-signature";
 
 const MIME_EXTENSIONS: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm" };
 const MAX_BYTES = 15 * 1024 * 1024;
@@ -29,12 +30,16 @@ export class MediaService {
     const extension = MIME_EXTENSIONS[mimeType];
     if (!extension) throw new BadRequestException("Unsupported media type");
     if (!buffer.length || buffer.length > MAX_BYTES) throw new BadRequestException("Media must be between 1 byte and 15 MB");
+    if (!validMediaSignature(buffer, mimeType)) throw new BadRequestException("File content does not match the allowed media type");
     const id = randomUUID();
     const cloudinaryRequested = process.env.MEDIA_PROVIDER === "cloudinary";
     const cloudinaryConfigured = Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_UPLOAD_PRESET);
     let storageKey: string; let publicUrl: string;
     if (cloudinaryRequested && !cloudinaryConfigured) throw new ServiceUnavailableException("Cloudinary storage is selected but CLOUDINARY_CLOUD_NAME or CLOUDINARY_UPLOAD_PRESET is missing");
-    if (cloudinaryRequested) {
+    const databaseStorage = process.env.MEDIA_PROVIDER === "database" || (!process.env.MEDIA_PROVIDER && process.env.NODE_ENV === "production");
+    if (databaseStorage) {
+      storageKey = `database:${id}`; publicUrl = `/api/v1/media/${id}`;
+    } else if (cloudinaryRequested) {
       const remote = await this.uploadToCloudinary(buffer, originalName, mimeType);
       storageKey = `cloudinary:${remote.publicId}`; publicUrl = remote.publicUrl;
     } else {
@@ -43,9 +48,12 @@ export class MediaService {
       await writeFile(join(directory, storageKey), buffer, { flag: "wx" });
       publicUrl = `/api/v1/media/${id}`;
     }
-    await this.prisma.$executeRawUnsafe('INSERT INTO "MediaAsset" ("id", "routePointId", "storageKey", "publicUrl", "originalName", "mimeType", "byteSize") VALUES ($1,$2,$3,$4,$5,$6,$7)', id, routePointId, storageKey, publicUrl, originalName, mimeType, buffer.length);
-    await this.prisma.$executeRawUnsafe('INSERT INTO "AuditLog" ("id", "userId", "action", "entity", "entityId", "metadata") VALUES ($1,$2,$3,$4,$5,$6::jsonb)', randomUUID(), userId, "MEDIA_UPLOADED", "RoutePoint", routePointId, JSON.stringify({ mimeType, byteSize: buffer.length, provider: cloudinaryRequested ? "cloudinary" : "local" }));
-    return { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, provider: cloudinaryRequested ? "cloudinary" : "local" };
+    const provider = databaseStorage ? "database" : cloudinaryRequested ? "cloudinary" : "local";
+    await this.prisma.$transaction(async tx => {
+      await tx.mediaAsset.create({ data: { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, ...(databaseStorage ? { dataBytes: buffer } : {}) } });
+      await tx.auditLog.create({ data: { userId, action: "MEDIA_UPLOADED", entity: "RoutePoint", entityId: routePointId, metadata: { mimeType, byteSize: buffer.length, provider } } });
+    });
+    return { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, provider };
   }
 
   private async uploadToCloudinary(buffer: Buffer, originalName: string, mimeType: string) {
@@ -65,6 +73,11 @@ export class MediaService {
   async file(id: string) {
     const rows = await this.prisma.$queryRawUnsafe<Array<{ storageKey: string; publicUrl: string; mimeType: string; originalName: string }>>('SELECT "storageKey", "publicUrl", "mimeType", "originalName" FROM "MediaAsset" WHERE "id" = $1', id);
     if (!rows[0]) throw new NotFoundException("Media asset not found");
+    if (rows[0].storageKey.startsWith("database:")) {
+      const asset = await this.prisma.mediaAsset.findUnique({ where: { id }, select: { dataBytes: true } });
+      if (!asset?.dataBytes) throw new NotFoundException("Stored media is unavailable");
+      return { ...rows[0], buffer: Buffer.from(asset.dataBytes) };
+    }
     if (rows[0].publicUrl.startsWith("http")) return { ...rows[0], remoteUrl: rows[0].publicUrl };
     const buffer = await readFile(join(process.cwd(), "uploads", "media", rows[0].storageKey)).catch(() => null);
     if (!buffer) throw new NotFoundException("Media file is unavailable");

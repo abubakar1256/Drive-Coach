@@ -36,7 +36,7 @@ test("no key does not fabricate a route", async () => { delete process.env.MAPBO
 test("invalid waypoint counts and coordinates are rejected", async () => { const service = new DrivingRouteService(); assert.equal((await service.evaluate([])).valid, false); assert.equal((await service.evaluate(Array(26).fill(points[0]))).valid, false); assert.equal((await service.evaluate([{ latitude: 91, longitude: 5 }, points[1]])).valid, false); });
 test("publication cannot bypass road validation", async () => {
   let saved = false;
-  const prisma = { route: { findUnique: async () => ({ id: "r" }), update: async () => { saved = true; } }, routePoint: { findMany: async () => points } };
+  const prisma = { route: { findUnique: async () => ({ id: "r", verificationStatus: "VERIFIED", reviewedBy: "admin", sourceLabel: "Reviewed", version: 1 }), update: async () => { saved = true; } }, routePoint: { findMany: async () => points } };
   const service = new AdminService(prisma, { requireValid: async () => { throw Error("UNDER_24_MINUTES"); } });
   await assert.rejects(service.updateRoute("r", { status: "PUBLISHED", durationMin: 24 }), /UNDER_24/); assert.equal(saved, false);
   await assert.rejects(service.createRoute({ status: "PUBLISHED" }), /draft/);
@@ -44,7 +44,7 @@ test("publication cannot bypass road validation", async () => {
 test("practice cannot start through direct API with an invalid route", async () => {
   let inserts = 0;
   const prisma = { $queryRawUnsafe: async sql => { if (sql.startsWith("INSERT")) inserts++; return [{ id: "r" }]; }, routePoint: { findMany: async () => points } };
-  const service = new LearningService(prisma, { requireValid: async () => { throw Error("SELF_CROSSING"); } });
+  const service = new LearningService(prisma, { requireValid: async () => { throw Error("SELF_CROSSING"); } }, { requireAccess: async () => ({ route: { id: "r" }, premium: true }) });
   await assert.rejects(service.startSession("u", { routeId: "r" }), /SELF_CROSSING/); assert.equal(inserts, 0);
 });
 test("public preview checks all points but never exposes full geometry or paid media", async () => {

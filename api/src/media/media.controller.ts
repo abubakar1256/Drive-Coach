@@ -17,7 +17,7 @@ export class MediaController {
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 15 * 1024 * 1024, files: 1 } }))
   @Post("admin/media/upload-file")
   uploadFile(@Req() request: AuthenticatedRequest, @UploadedFile() file: { buffer: Buffer; originalname: string; mimetype: string; size: number }, @Body("routePointId") routePointId: string) {
     if (!file || !routePointId) throw new BadRequestException("A file and routePointId are required");
