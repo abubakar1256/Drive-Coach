@@ -146,6 +146,8 @@ Verification commands: `pnpm test:platform`, `pnpm test:chatbot`, `pnpm build`, 
 
 ### Import and deployment gate
 
+Admin → **Publish checked starter routes** performs a one-time authenticated import, one centre at a time, with fresh road validation and stable slugs. It never creates a recurring deployment job or overwrites existing route edits. The live legacy `ghent-east` directory entry uses the nearby `sint-denijs-westrem` loop with an explicit shared Ghent-area practice label. Failures remain visible per centre; they do not create fake routes.
+
 The route-content bundle does not automatically publish routes or change the database. After a verified backup and staging restore/migration test, run `pnpm --dir api content:import` for drafts or `pnpm --dir api content:import -- --publish` to publish freshly passing road-network loops. Set backend `MAPBOX_DIRECTIONS_TOKEN` first. Existing slugs/points, including instructor edits, are preserved. Imports record an audit fingerprint and recheck actual roads/time; they are not proof of instructor approval.
 
 Railway Pro is not required for a local PostgreSQL backup. Install the official PostgreSQL client tools (`pg_dump`/`pg_restore`), configure the production public connection in the ignored `api/.env`, then run `pnpm --dir api db:backup`. Backups are private generated archives under ignored `output/db-backups`. The script keeps credentials out of arguments/logs and checks archive readability. A successful archive listing is not a staging restore test. Restore into a separate staging database before production migration; never restore over production for a test.

@@ -37,6 +37,9 @@ export class AdminController {
     return this.adminService.createCentre(dto);
   }
 
+  @Post("centres/:id/import-starter-route")
+  importStarter(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.adminService.importStarterRoute(req.user.sub, id); }
+
   @Post("centres/:id/generate-practice-loop")
   generateLoop(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: GeneratePracticeLoopDto) { return this.adminService.generatePracticeLoop(req.user.sub, id, dto.variant, dto.publish); }
 

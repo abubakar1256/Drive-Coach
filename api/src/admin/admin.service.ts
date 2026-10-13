@@ -9,6 +9,7 @@ import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { DrivingRouteService } from "../routes/driving-route.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PracticeLoopService } from "../routes/practice-loop.service";
+import roadBundle from "../../prisma/data/road-practice-loops.json";
 
 @Injectable()
 export class AdminService {
@@ -128,6 +129,42 @@ export class AdminService {
     const centre = await this.prisma.examCentre.findUnique({ where: { id: dto.centreId }, select: { id: true } });
     if (!centre) throw new NotFoundException("Exam centre not found");
     return this.prisma.route.create({ data: dto, include: { points: true } });
+  }
+
+  async importStarterRoute(actorId: string, centreId: string) {
+    const centre = await this.prisma.examCentre.findUnique({ where: { id: centreId } });
+    if (!centre || !centre.isPublished) throw new NotFoundException("Published centre not found");
+    // Legacy Ghent East is a second directory entry for the nearby Ghent area.
+    const sourceSlug = centre.slug === "ghent-east" ? "sint-denijs-westrem" : centre.slug;
+    const item = roadBundle.routes.find(r => r.centreSlug === sourceSlug);
+    if (!item) throw new NotFoundException("No checked starter route for this centre");
+    const slug = `${centre.slug}-road-practice-loop-01`;
+    const existing = await this.prisma.route.findUnique({ where: { slug } });
+    if (existing) return { ...existing, preserved: true };
+    const checked = await this.driving.requireValid(item.points);
+    if (checked.durationSec! > 3600) throw new BadRequestException("Starter loop exceeds 60 minutes");
+    const route = await this.prisma.$transaction(async tx => {
+      await tx.$queryRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", slug);
+      const found = await tx.route.findUnique({ where: { slug } });
+      if (found) return found;
+      const created = await tx.route.create({ data: {
+        centreId, slug, name: "Road-network practice loop 1", status: "PUBLISHED",
+        verificationStatus: "ROAD_VALIDATED", reviewedBy: "ROAD_ROUTING_ENGINE", verifiedAt: new Date(),
+        durationMin: Math.ceil(checked.durationSec! / 60),
+        sourceLabel: sourceSlug !== centre.slug ? "Shared Ghent-area road practice — not an official exam route or instructor approval" : "Road-network practice — not an official exam route or instructor approval",
+        sourceUrl: "https://docs.mapbox.com/api/navigation/directions/",
+        points: { create: item.points.map((p, i) => ({
+          sequence: i + 1, latitude: p.latitude, longitude: p.longitude, bearing: "bearing" in p ? p.bearing : null,
+          category: i === 0 ? "start" : i === item.points.length - 1 ? "finish" : "waypoint",
+          title: i === 0 ? "Mapped practice meeting point" : i === item.points.length - 1 ? "Return to meeting point" : `Road waypoint ${i + 1}`,
+          description: "Mapped road-network practice. Follow current signs and instructor guidance. Meeting point is not a confirmed exam-centre entrance.",
+        })) },
+      } });
+      await tx.auditLog.create({ data: { userId: actorId, action: "STARTER_ROUTE_IMPORTED", entity: "Route", entityId: created.id, metadata: { sourceCentre: sourceSlug, durationSec: checked.durationSec, instructorApproved: false } } });
+      return created;
+    });
+    await this.notifications.routePublished(route.id, route.version);
+    return route;
   }
 
   async generatePracticeLoop(actorId: string, centreId: string, variant = 0, publish = false) {

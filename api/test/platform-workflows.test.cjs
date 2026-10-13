@@ -104,5 +104,22 @@ test("database media upload stores bytes and audit atomically without local file
     assert.deepEqual((await reader.file(asset.id)).buffer, bytes);
   } finally { if (previous === undefined) delete process.env.MEDIA_PROVIDER; else process.env.MEDIA_PROVIDER = previous; }
 });
+test("starter import preserves existing routes without routing or overwriting", async () => {
+  const { AdminService } = require("../dist/src/admin/admin.service");
+  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "alken", isPublished: true }) }, route: { findUnique: async () => ({ id: "existing", status: "DRAFT" }) } }, { requireValid: async () => { throw Error("Must not re-route an existing edit"); } });
+  const result = await service.importStarterRoute("admin", "centre"); assert.equal(result.preserved, true); assert.equal(result.status, "DRAFT");
+});
+test("starter import fails closed before any writes when roads are invalid", async () => {
+  const { AdminService } = require("../dist/src/admin/admin.service");
+  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "alken", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: async () => { throw Error("Unexpected write"); } }, { requireValid: async () => { throw Error("Road check failed"); } });
+  await assert.rejects(service.importStarterRoute("admin", "centre"), /Road check failed/);
+});
+test("starter import publishes checked content once and sends route notice", async () => {
+  const { AdminService } = require("../dist/src/admin/admin.service");
+  let saved, notified = false;
+  const tx = { $queryRawUnsafe: async () => [], route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "new", version: 1, ...args.data }; } }, auditLog: { create: async () => ({}) } };
+  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "ghent-east", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async () => ({ valid: true, durationSec: 1800 }) }, { routePublished: async () => { notified = true; } });
+  await service.importStarterRoute("admin", "centre"); assert.equal(saved.status, "PUBLISHED"); assert.equal(saved.verificationStatus, "ROAD_VALIDATED"); assert.match(saved.sourceLabel, /Shared Ghent/); assert.equal(notified, true);
+});
 
 
