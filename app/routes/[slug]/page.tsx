@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { centres } from "../../../lib/data";
 import { getRouteBySlug, routeToCentre } from "../../../lib/api";
-import { routeSequence } from "../../../lib/route-utils";
 import RouteExperience from "../RouteExperience";
 import AccountNavLink from "../../../app/AccountNavLink";
 import PageViewTracker from "../../../app/PageViewTracker";
@@ -12,7 +11,7 @@ import LocalizedNavLinks, { LocalizedNavText } from "../../../app/LocalizedNavLi
 import SiteFooter from "../../../app/SiteFooter";
 import { getServerLocale } from "../../../lib/serverLocale";
 import { siteCopy } from "../../../lib/siteCopy";
-import { localizeCentre, localizeText } from "../../../lib/localizeContent";
+import { localizeCentre } from "../../../lib/localizeContent";
 import MobileMenu from "../../../app/MobileMenu";
 
 function getRouteContext(slug: string) {
@@ -41,15 +40,13 @@ export default async function RoutePage({ params }: { params: { slug: string } }
   const centre = localizeCentre(apiRoute ? routeToCentre(apiRoute, fallbackCentre) : fallbackCentre, locale);
   const routeName = apiRoute?.name ?? fallbackRouteName(params.slug);
 
-  const routePoints = apiRoute?.points ?? centre.routePoints;
-  const sequence = routeSequence(routePoints);
 
   const copy = siteCopy[locale].route;
   return (
     <main>
       <PageViewTracker eventType="ROUTE_VIEW" centreSlug={centre.slug} routeSlug={params.slug} />
       <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} /><div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/#pricing"><LocalizedNavText item="unlockFullAccess" /> <span>↗</span></Link></div><MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} /></nav>
-      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.routeExperience} · {centre.area}</p><h1>{routeName}</h1><p className="route-meta">{routePoints.length} {locale === "nl" ? "previewpunten · Rijduur wordt gecontroleerd" : "preview points · Driving time checked before practice"}</p></div><span className="route-access-pill">{copy.preview}</span></div>{apiRoute.sourceLabel && <p className="route-list-note">{apiRoute.sourceLabel}</p>}<div className="route-sequence-panel"><div><span className="small-label">{copy.sequence}</span><p>{localizeText(sequence || copy.mappedPreview, locale)}</p></div></div><RouteExperience centre={centre} routeId={apiRoute?.id} initialDriving={apiRoute?.driving} routeSlug={params.slug} /></section>
+      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.routeExperience} · {centre.area}</p><h1>{routeName}</h1></div></div>{apiRoute.sourceLabel && <p className="route-list-note">{apiRoute.sourceLabel}</p>}<RouteExperience centre={centre} routeId={apiRoute?.id} initialDriving={apiRoute?.driving} routeSlug={params.slug} /></section>
       <SiteFooter />
     </main>
   );

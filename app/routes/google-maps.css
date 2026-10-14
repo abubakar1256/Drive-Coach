@@ -7,4 +7,6 @@
 .google-maps-links .google-maps-button:focus-visible, .google-maps-links select:focus-visible { outline: 3px solid #ff8b24; outline-offset: 3px; }
 .google-maps-links p, .google-maps-links small { font-size: 12px; line-height: 1.6; color: #52685d; margin: 0; }
 #google-maps { scroll-margin-top: 110px; }
+.route-access-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.route-access-summary .route-meta { margin: 0; }
 .reference-route-actions { flex-wrap: wrap; gap: 10px; }
