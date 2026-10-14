@@ -1,10 +1,12 @@
-import { BadRequestException, ConflictException, Injectable, ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, Logger, ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Prisma, PrismaClient, User, UserRole } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { createHash, randomBytes } from "node:crypto";
 import { ChangePasswordDto, ForgotPasswordDto, LoginDto, RegisterDto, ResendVerificationDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
 import { PrismaService } from "../prisma.service";
+
+import { sendAuthEmail } from "./auth-email";
 
 export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET ?? "development-only-change-this-secret";
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000;
@@ -15,6 +17,7 @@ export type AuthPayload = { sub: string; email: string; role: UserRole };
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(private readonly prisma: PrismaService, private readonly jwtService: JwtService) {}
 
   async register(dto: RegisterDto) {
@@ -27,7 +30,7 @@ export class AuthService {
       await this.prisma.$executeRawUnsafe('INSERT INTO "Notification" ("id", "userId", "type", "title", "body") VALUES ($1,$2,$3,$4,$5)', randomBytes(16).toString("hex"), user.id, "WELCOME", "Welcome to RoutePilot", "Save your first approved route and start a calm practice session when you are ready.");
       const verificationToken = await this.createVerificationToken(user.id);
       const deliveryConfigured = await this.sendEmail(user.email, "Verify your Drive Coach email", this.verificationUrl(verificationToken, "verify-email"));
-      return { user: this.safeUser(user), emailVerification: process.env.NODE_ENV === "production" ? { required: true, deliveryConfigured } : { required: true, developmentToken: verificationToken, deliveryConfigured } };
+      return { user: this.safeUser(user), emailVerification: process.env.NODE_ENV === "production" ? { required: true, deliveryConfigured, deliveryStatus: deliveryConfigured ? "accepted" : "failed" } : { required: true, developmentToken: verificationToken, deliveryConfigured, deliveryStatus: deliveryConfigured ? "accepted" : "failed" } };
     } catch (error) {
       if (error instanceof ConflictException) throw error;
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") throw new ConflictException("An account with this email already exists");
@@ -113,7 +116,8 @@ export class AuthService {
     const tokenHash = createHash("sha256").update(token).digest("hex");
     await this.prisma.$executeRawUnsafe('INSERT INTO "PasswordResetToken" ("id", "userId", "tokenHash", "expiresAt") VALUES ($1,$2,$3,NOW() + INTERVAL \'1 hour\')', randomBytes(16).toString("hex"), rows[0].id, tokenHash);
     const deliveryConfigured = await this.sendEmail(email, "Reset your Drive Coach password", this.verificationUrl(token, "reset-password"));
-    return process.env.NODE_ENV === "production" ? { success: true, message, deliveryConfigured } : { success: true, message, developmentToken: token, deliveryConfigured };
+    if (!deliveryConfigured && process.env.NODE_ENV === "production") return { success: false, deliveryConfigured: false, deliveryStatus: "failed", code: "EMAIL_DELIVERY_UNAVAILABLE", message: "Email service is temporarily unavailable. Please try again later." };
+    return process.env.NODE_ENV === "production" ? { success: true, message, deliveryConfigured, deliveryStatus: "accepted" } : { success: true, message, developmentToken: token, deliveryConfigured };
   }
 
   async resetPassword(dto: ResetPasswordDto) {
@@ -142,7 +146,8 @@ export class AuthService {
     if (!user || user.emailVerifiedAt) return { success: true, message: genericMessage };
     const token = await this.createVerificationToken(user.id);
     const deliveryConfigured = await this.sendEmail(user.email, "Verify your Drive Coach email", this.verificationUrl(token, "verify-email"));
-    return process.env.NODE_ENV === "production" ? { success: true, message: genericMessage, deliveryConfigured } : { success: true, message: "Verification token created for local development.", developmentToken: token, deliveryConfigured };
+    if (!deliveryConfigured && process.env.NODE_ENV === "production") return { success: false, deliveryConfigured: false, deliveryStatus: "failed", code: "EMAIL_DELIVERY_UNAVAILABLE", message: "Email service is temporarily unavailable. Please try again later." };
+    return process.env.NODE_ENV === "production" ? { success: true, message: genericMessage, deliveryConfigured, deliveryStatus: "accepted" } : { success: true, message: "Verification token created for local development.", developmentToken: token, deliveryConfigured };
   }
 
   private async createVerificationToken(userId: string) {
@@ -157,24 +162,7 @@ export class AuthService {
   }
 
   private async sendEmail(to: string, subject: string, link: string) {
-    const brevoApiKey = process.env.BREVO_API_KEY;
-    const configuredBrevoFrom = process.env.BREVO_FROM_EMAIL?.trim();
-    if (brevoApiKey && configuredBrevoFrom) {
-      const senderMatch = configuredBrevoFrom.match(/^(.*?)\s*<([^>]+)>$/);
-      const senderEmail = senderMatch?.[2]?.trim() || configuredBrevoFrom;
-      const senderName = senderMatch?.[1]?.trim() || process.env.BREVO_FROM_NAME || "Drive Coach";
-      try {
-        const response = await fetch("https://api.brevo.com/v3/smtp/email", { method: "POST", headers: { "api-key": brevoApiKey, "Content-Type": "application/json" }, body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email: to }], subject, html: `<div style="font-family:Arial,sans-serif;max-width:560px"><h2 style="color:#106c55">Drive Coach</h2><p>Continue securely using the button below.</p><p><a href="${link}" style="display:inline-block;padding:12px 18px;border-radius:8px;background:#ff8a22;color:#fff;text-decoration:none">Continue</a></p><p style="color:#71817a;font-size:12px">This link expires automatically. If you did not request it, you can ignore this email.</p></div>` }) });
-        return response.ok;
-      } catch { return false; }
-    }
-    const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.RESEND_FROM_EMAIL;
-    if (!apiKey || !from) return false;
-    try {
-      const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" }, body: JSON.stringify({ from, to: [to], subject, html: `<div style="font-family:Arial,sans-serif;max-width:560px"><h2 style="color:#106c55">Drive Coach</h2><p>Continue securely using the button below.</p><p><a href="${link}" style="display:inline-block;padding:12px 18px;border-radius:8px;background:#ff8a22;color:#fff;text-decoration:none">Continue</a></p><p style="color:#71817a;font-size:12px">This link expires automatically. If you did not request it, you can ignore this email.</p></div>` }) });
-      return response.ok;
-    } catch { return false; }
+    return sendAuthEmail(to, subject, link, this.logger);
   }
 
   private async issueTokens(user: User) {

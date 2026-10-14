@@ -5,6 +5,8 @@ import { FormEvent, useEffect, useState } from "react";
 import SiteFooter from "../../SiteFooter";
 import { useSiteCopy } from "../../../lib/useLocale";
 
+import { emailDeliveryFailed } from "../../../lib/email-delivery";
+
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 
 export default function CheckEmailPage() {
@@ -19,16 +21,18 @@ export default function CheckEmailPage() {
     const params = new URLSearchParams(window.location.search);
     setEmail(params.get("email") ?? "");
     setToken(params.get("token") ?? "");
-  }, []);
+    if (params.get("delivery") === "failed") setError(copy.auth.emailDeliveryFailed);
+  }, [copy.auth.emailDeliveryFailed]);
 
   async function resend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setLoading(true); setError(""); setMessage("");
+    setLoading(true); setError(""); setMessage(""); setToken("");
     try {
       const response = await fetch(`${API}/auth/resend-verification`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
       const payload = await response.json().catch(() => ({}));
+      if (emailDeliveryFailed(payload)) throw new Error(copy.auth.emailDeliveryFailed);
       if (!response.ok) throw new Error(Array.isArray(payload.message) ? payload.message[0] : payload.message ?? copy.auth.genericError);
-      setMessage(payload.message ?? copy.auth.verificationSent);
+      setMessage(copy.auth.emailRequestAccepted);
       if (payload.developmentToken) setToken(payload.developmentToken);
     } catch (caught) { setError(caught instanceof Error ? caught.message : copy.auth.apiError); }
     finally { setLoading(false); }

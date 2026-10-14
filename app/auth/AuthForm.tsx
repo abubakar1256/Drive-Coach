@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useSiteCopy } from "../../lib/useLocale";
 import SiteFooter from "../SiteFooter";
 
+import { emailDeliveryFailed } from "../../lib/email-delivery";
+
 type Mode = "login" | "register";
 
 export default function AuthForm({ mode }: { mode: Mode }) {
@@ -27,7 +29,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       const response = await fetch(`${apiUrl}/auth/${isRegister ? "register" : "login"}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password, ...(isRegister ? { displayName } : {}) }) });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(Array.isArray(payload.message) ? payload.message[0] : payload.message ?? copy.auth.genericError);
-      if (isRegister) { const verificationToken = payload.emailVerification?.developmentToken; const query = new URLSearchParams({ email }); if (verificationToken) query.set("token", verificationToken); router.push(`/auth/check-email?${query.toString()}`); } else { sessionStorage.setItem("routepilot.accessToken", payload.accessToken); sessionStorage.setItem("routepilot.refreshToken", payload.refreshToken); sessionStorage.setItem("routepilot.user", JSON.stringify(payload.user)); window.dispatchEvent(new Event("routepilot-auth-change")); const nextParam = new URLSearchParams(window.location.search).get("next"); const next = nextParam?.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null; router.push(next || "/dashboard"); }
+      if (isRegister) { const verificationToken = payload.emailVerification?.developmentToken; const query = new URLSearchParams({ email }); if (emailDeliveryFailed(payload.emailVerification)) query.set("delivery", "failed"); if (verificationToken) query.set("token", verificationToken); router.push(`/auth/check-email?${query.toString()}`); } else { sessionStorage.setItem("routepilot.accessToken", payload.accessToken); sessionStorage.setItem("routepilot.refreshToken", payload.refreshToken); sessionStorage.setItem("routepilot.user", JSON.stringify(payload.user)); window.dispatchEvent(new Event("routepilot-auth-change")); const nextParam = new URLSearchParams(window.location.search).get("next"); const next = nextParam?.startsWith("/") && !nextParam.startsWith("//") ? nextParam : null; router.push(next || "/dashboard"); }
     } catch (submissionError) { const message = submissionError instanceof Error ? submissionError.message : copy.auth.apiError; setError(message); setVerificationRequired(!isRegister && /verify your email/i.test(message)); } finally { setLoading(false); }
   }
 
