@@ -1,39 +1,63 @@
 import { Injectable } from "@nestjs/common";
+import type { ExamCentre, Route, RoutePoint } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { officialCentres } from "./official-centres";
+import { RouteAccessService } from "../routes/route-access.service";
+import { publishedRoutePolicy, publishedRouteOrder } from "../routes/published-route-policy";
+import { premiumCentreInfo } from "./premium-centre-info";
 
 const fallbackCentres = officialCentres.map((centre) => ({ ...centre, routes: 0 }));
 
+type CatalogCentre = Pick<ExamCentre, "name" | "city" | "region"> & { routes: Array<Route & { points: RoutePoint[]; _count?: { points: number } }> };
+
+export function centreRouteCatalog<T extends CatalogCentre>(centre: T, entitlement = { premium: false, plan: "Free" }, signedIn = false) {
+  return { ...centre,
+    access: { ...entitlement, signedIn },
+    premiumInfo: entitlement.premium ? premiumCentreInfo(centre) : null,
+    routes: centre.routes.map((route, index) => ({
+      ...route, label: `Route ${String.fromCharCode(65 + index)}`,
+      isFree: index === 0, canAccess: index === 0 || entitlement.premium,
+      pointCount: route._count?.points ?? route.points.length,
+      points: index === 0 || entitlement.premium ? route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [],
+    })),
+  };
+}
+
 @Injectable()
 export class ExamCentresService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly routeAccess: RouteAccessService) {}
 
   async onModuleInit() {
     try {
       await Promise.all(officialCentres.map((centre) => this.prisma.examCentre.upsert({
-        where: { slug: centre.slug },
-        update: { ...centre, isPublished: true },
-        create: { ...centre, isPublished: true },
+        where: { slug: centre.slug }, update: { ...centre, isPublished: true }, create: { ...centre, isPublished: true },
       })));
     } catch {
-      // The API can still serve its static centre directory while the database is unavailable.
+      // A static directory remains available during a database outage.
     }
   }
 
   async list() {
     try {
-      return await this.prisma.examCentre.findMany({ where: { isPublished: true }, include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } }, orderBy: { name: "asc" } });
-    } catch {
-      return fallbackCentres;
-    }
+      return await this.prisma.examCentre.findMany({ where: { isPublished: true }, include: { _count: { select: { routes: { where: publishedRoutePolicy } } } }, orderBy: { name: "asc" } });
+    } catch { return fallbackCentres; }
   }
 
-  async getBySlug(slug: string) {
+  async getBySlug(slug: string, userId?: string) {
+    // Do not disguise authentication/access failures as free access.
+    let centre;
     try {
-      const centre = await this.prisma.examCentre.findFirst({ where: { slug, isPublished: true }, include: { routes: { orderBy: [{ name: "asc" }, { id: "asc" }], where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } }, include: { points: { orderBy: { sequence: "asc" }, take: 3 } } } } });
-      return centre ? { ...centre, routes: centre.routes.map((route) => ({ ...route, points: route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) })) } : null;
+      centre = await this.prisma.examCentre.findFirst({
+        where: { slug, isPublished: true },
+        include: { routes: { orderBy: publishedRouteOrder, where: publishedRoutePolicy, include: { _count: { select: { points: true } }, points: { orderBy: { sequence: "asc" }, take: 3 } } } },
+      });
     } catch {
-      return fallbackCentres.find((centre) => centre.slug === slug) ?? null;
+      if (userId) throw new Error("Centre access is temporarily unavailable");
+      const fallback = fallbackCentres.find(c => c.slug === slug);
+      return fallback ? { ...fallback, routes: [], access: { premium: false, plan: "Free", signedIn: false }, premiumInfo: null } : null;
     }
+    if (!centre) return null;
+    const entitlement = userId ? await this.routeAccess.centreAccess(userId, centre.id) : { premium: false, plan: "Free" };
+    return centreRouteCatalog(centre, entitlement, Boolean(userId));
   }
 }

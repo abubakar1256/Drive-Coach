@@ -3,15 +3,21 @@ import { RouteStatus } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { DrivingRouteService } from "./driving-route.service";
 import { RouteAccessService } from "./route-access.service";
+import { publishedRoutePolicy, publishedRouteOrder } from "./published-route-policy";
 
 @Injectable()
 export class RoutesService {
   constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService) {}
 
+  private async isFreeRoute(route: { id: string; centreId: string }) {
+    const first = await this.prisma.route.findFirst({ where: { centreId: route.centreId, ...publishedRoutePolicy }, orderBy: publishedRouteOrder, select: { id: true } });
+    return first?.id === route.id;
+  }
+
   async list(centreSlug?: string) {
     return this.prisma.route.findMany({
       where: {
-        status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null },
+        ...publishedRoutePolicy,
         centre: {
           isPublished: true,
           ...(centreSlug ? { slug: centreSlug } : {}),
@@ -27,7 +33,7 @@ export class RoutesService {
 
   async getBySlug(slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
+      where: { slug, ...publishedRoutePolicy, centre: { isPublished: true } },
       include: {
         centre: {
           include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } },
@@ -39,21 +45,23 @@ export class RoutesService {
     // Check the entire route, but do not leak paid waypoints/geometry through
     // the public preview. Free practice still gets the same quality gate.
     const driving = await this.driving.evaluate(route.points);
-    return { ...route, durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving: { ...driving, coordinates: [] }, points: route.points.slice(0, 3).map((point) => ({ ...point, imageUrl: null, videoUrl: null })), access: { premium: false, preview: true } };
+    const isFree = await this.isFreeRoute(route);
+    return { ...route, durationMin: driving.durationSec === null ? null : Math.ceil(driving.durationSec / 60), driving: { ...driving, coordinates: [] }, points: isFree ? route.points.slice(0, 3).map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [], access: { premium: false, preview: true, isFree, requiresPaid: !isFree } };
   }
 
   async points(slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
-      select: { id: true },
+      where: { slug, ...publishedRoutePolicy, centre: { isPublished: true } },
+      select: { id: true, centreId: true },
     });
     if (!route) return null;
+    if (!await this.isFreeRoute(route)) return [];
     return this.prisma.routePoint.findMany({ where: { routeId: route.id }, orderBy: { sequence: "asc" }, take: 3 }).then((points) => points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })));
   }
 
   async getAccessibleBySlug(userId: string, slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
+      where: { slug, ...publishedRoutePolicy, centre: { isPublished: true } },
       include: {
         centre: { include: { _count: { select: { routes: { where: { status: "PUBLISHED", verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null } } } } } } },
         points: { orderBy: { sequence: "asc" } },
@@ -67,7 +75,7 @@ export class RoutesService {
 
   async accessiblePoints(userId: string, slug: string) {
     const route = await this.prisma.route.findFirst({
-      where: { slug, status: RouteStatus.PUBLISHED, verificationStatus: { in: ["VERIFIED", "ROAD_VALIDATED"] }, reviewedBy: { not: null }, centre: { isPublished: true } },
+      where: { slug, ...publishedRoutePolicy, centre: { isPublished: true } },
       select: { id: true },
     });
     if (!route) return null;

@@ -1,0 +1,15 @@
+export function premiumCentreInfo(centre: { name: string; city: string; region: string }) {
+  return {
+    kind: "GENERAL_PREPARATION" as const,
+    disclaimer: {
+      en: "General preparation guidance for this centre's practice routes, not official examiner criteria, local failure statistics or guaranteed exam routes. Follow current signs and your instructor. Confirm exam procedures directly with the centre.",
+      nl: "Algemene voorbereiding voor de oefenroutes van dit centrum, geen officiële beoordelingscriteria, lokale faalstatistieken of gegarandeerde examenroutes. Volg actuele borden en je instructeur. Bevestig examenprocedures bij het centrum.",
+    },
+    sections: [
+      { key: "expect", title: { en: "What to expect", nl: "Wat te verwachten" }, text: { en: `Prepare around ${centre.name} in ${centre.city} (${centre.region}). Review the mapped meeting point, the ordered route and the return point before departure. The practice meeting point is not a confirmed exam-centre entrance.`, nl: `Bereid je voor rond ${centre.name} in ${centre.city} (${centre.region}). Bekijk het ontmoetingspunt, de routevolgorde en het eindpunt vooraf. Het oefenstartpunt is geen bevestigde ingang van het examencentrum.` } },
+      { key: "focus", title: { en: "Exam preparation focus", nl: "Focus voor examenvoorbereiding" }, text: { en: "With your instructor, practise observation, speed adaptation, priority decisions and positioning. Use the route checklist to discuss situations actually encountered; this is not a centre-specific examiner scoring guide.", nl: "Oefen met je instructeur observatie, snelheidsaanpassing, voorrangsbeslissingen en positionering. Bespreek daadwerkelijk tegengekomen situaties met de routechecklist; dit is geen beoordelingsschema van lokale examinatoren." } },
+      { key: "mistakes", title: { en: "Common mistakes to reflect on", nl: "Veelgemaakte fouten om te bespreken" }, text: { en: "After practice, reflect on missed signs, late observation, rushed lane changes or navigation distractions if you experienced them. Record your instructor's feedback instead of assuming these are local exam failure patterns.", nl: "Denk na de rit na over gemiste borden, te laat kijken, gehaaste rijstrookwissels of navigatieafleiding als die voorkwamen. Noteer feedback van je instructeur; neem niet aan dat dit lokale redenen voor zakken zijn." } },
+      { key: "tips", title: { en: "Preparation tips", nl: "Voorbereidingstips" }, text: { en: "Preview the full Mapbox route before driving. Set up voice guidance and Google Maps sections while parked. Practise calmly with an instructor or authorised supervisor and use your reflection to choose the next focus; preparation does not guarantee passing.", nl: "Bekijk de volledige Mapbox-route vooraf. Stel gesproken begeleiding en Google Maps-trajecten in wanneer je geparkeerd staat. Oefen rustig met een instructeur of bevoegde begeleider. Gebruik je reflectie voor een volgend aandachtspunt; voorbereiding garandeert niet dat je slaagt." } },
+    ],
+  };
+}

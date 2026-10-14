@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./centres.css";
+import "./centres/premium-centre.css";
 import "./route-experience.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./auth.css";

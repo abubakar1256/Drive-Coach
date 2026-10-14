@@ -7,7 +7,7 @@ import { CreateCentreDto } from "./dto/admin-centre.dto";
 import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { AnnouncementDto } from "../notifications/notification.dto";
-import { GeneratePracticeLoopDto, ImportRoutePointsDto } from "./dto/admin-route.dto";
+import { GeneratePracticeLoopDto, ImportRoutePointsDto, ImportRoadCatalogRouteDto } from "./dto/admin-route.dto";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, AdminGuard)
@@ -39,6 +39,12 @@ export class AdminController {
 
   @Post("centres/:id/import-starter-route")
   importStarter(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.adminService.importStarterRoute(req.user.sub, id); }
+
+  @Get("road-catalog")
+  roadCatalog() { return this.adminService.preparedRoadCatalog(); }
+
+  @Post("centres/:id/import-road-catalog-route")
+  importCatalogRoute(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: ImportRoadCatalogRouteDto) { return this.adminService.importStarterRoute(req.user.sub, id, dto.slot); }
 
   @Post("centres/:id/generate-practice-loop")
   generateLoop(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: GeneratePracticeLoopDto) { return this.adminService.generatePracticeLoop(req.user.sub, id, dto.variant, dto.publish); }

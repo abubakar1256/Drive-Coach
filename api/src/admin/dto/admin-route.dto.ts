@@ -198,3 +198,7 @@ export class GeneratePracticeLoopDto {
   @IsOptional() @IsInt() @Min(0) @Max(6) variant?: number;
   @IsOptional() @IsBoolean() publish?: boolean;
 }
+
+export class ImportRoadCatalogRouteDto {
+  @IsInt() @Min(2) @Max(7) slot!: number;
+}

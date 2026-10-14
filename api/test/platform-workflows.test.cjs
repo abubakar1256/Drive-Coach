@@ -11,6 +11,8 @@ const { B2bService } = require("../dist/src/b2b/b2b.service");
 const { NotificationsService } = require("../dist/src/notifications/notifications.service");
 const { FinanceGuard } = require("../dist/src/admin/finance.guard");
 const { validMediaSignature } = require("../dist/src/media/media-signature");
+const { centreRouteCatalog, ExamCentresService } = require("../dist/src/exam-centres/exam-centres.service");
+const { RoutesService } = require("../dist/src/routes/routes.service");
 const geometry = [[5, 50], [5.01, 50], [5.01, 50.01], [5, 50.01], [5, 50]];
 const snapshot = { geometry, points: geometry, distanceM: snapshotDistance(geometry) };
 function accessFixture(plan, centreId, role = "LEARNER", routeId = "paid-route") {
@@ -22,6 +24,85 @@ test("Premium is scoped to purchased centre", async () => { assert.equal((await 
 test("unbound legacy Premium cannot unlock another centre", async () => assert.rejects(accessFixture("Premium", null).requireAccess("u", "paid-route"), /Choose Premium/));
 test("Diamond and admins can access multiple centres", async () => { assert.equal((await accessFixture("Diamond", null).requireAccess("u", "paid-route")).premium, true); assert.equal((await accessFixture(null, null, "ADMIN").requireAccess("u", "paid-route")).premium, true); });
 test("free first route is allowed but other routes are denied", async () => { assert.equal((await accessFixture(null, null, "LEARNER", "free-route").requireAccess("u", "free-route")).premium, false); await assert.rejects(accessFixture(null, null).requireAccess("u", "paid-route")); });
+
+const centreCatalogFixture = { id: "centre-a", name: "Alken", city: "Alken", region: "Limburg", routes: Array.from({ length: 7 }, (_, i) => ({ id: `route-${i}`, name: `Route ${i}`, durationMin: 24 + i, points: [{ latitude: 50, longitude: 5, title: `PRIVATE-${i}`, imageUrl: "private-image", videoUrl: "private-video" }], _count: { points: 25 } })) };
+test("seven-route catalogue exposes one free route and no paid point previews", () => {
+  const result = centreRouteCatalog(centreCatalogFixture);
+  assert.equal(result.routes.filter(r => r.isFree).length, 1);
+  assert.equal(result.routes.filter(r => r.canAccess).length, 1);
+  assert.equal(result.routes[0].label, "Route A"); assert.equal(result.routes[6].label, "Route G");
+  assert.ok(result.routes.slice(1).every(r => r.points.length === 0));
+  assert.equal(result.routes[1].pointCount, 25);
+  assert.equal(result.premiumInfo, null);
+  assert.equal(result.routes[0].points[0].imageUrl, null);
+});
+test("paid centre catalogue unlocks all seven routes and bilingual preparation information", () => {
+  const result = centreRouteCatalog(centreCatalogFixture, { premium: true, plan: "Premium" }, true);
+  assert.equal(result.routes.filter(r => r.canAccess).length, 7);
+  assert.equal(result.routes.filter(r => r.isFree).length, 1);
+  assert.equal(result.premiumInfo.sections.length, 4);
+  assert.ok(result.premiumInfo.sections.every(s => s.text.en && s.text.nl));
+  assert.match(result.premiumInfo.disclaimer.en, /not official examiner criteria/);
+});
+test("centre info and paid routes use purchased-centre entitlements, not a generic paid flag", async () => {
+  const correct = await accessFixture("Premium", "centre-a").centreAccess("u", "centre-a");
+  const wrong = await accessFixture("Premium", "centre-b").centreAccess("u", "centre-a");
+  assert.equal(correct.premium, true); assert.equal(wrong.premium, false);
+  assert.equal(centreRouteCatalog(centreCatalogFixture, wrong, true).premiumInfo, null);
+  assert.equal((await accessFixture("Diamond", null).centreAccess("u", "centre-a")).premium, true);
+});
+test("public centre route query enforces 24-minute reviewed publication and stable free ordering", async () => {
+  const service = new ExamCentresService({ examCentre: { findFirst: async args => {
+    assert.equal(args.include.routes.where.durationMin.gte, 24);
+    assert.equal(args.include.routes.where.status, "PUBLISHED");
+    assert.deepEqual(args.include.routes.orderBy, [{ createdAt: "asc" }, { id: "asc" }]);
+    return centreCatalogFixture;
+  } } }, {});
+  const result = await service.getBySlug("alken");
+  assert.equal(result.routes[1].points.length, 0);
+});
+test("expired or revoked subscriptions cannot unlock centre information", async () => {
+  const service = new RouteAccessService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findMany: async args => {
+    assert.equal(args.where.status, "ACTIVE");
+    assert.ok(args.where.AND[0].OR.some(condition => condition.startsAt?.lte instanceof Date));
+    assert.ok(args.where.AND[1].OR.some(condition => condition.expiresAt?.gt instanceof Date));
+    return [];
+  } } });
+  assert.equal((await service.centreAccess("u", "centre-a")).premium, false);
+});
+
+test("paid route public URLs and point endpoints do not expose a waypoint preview", async () => {
+  const privateRoute = { id: "paid", centreId: "centre-a", points: [{ title: "private", latitude: 50, longitude: 5 }] };
+  const prisma = { route: { findFirst: async args => args.where.slug ? privateRoute : { id: "free" } } };
+  const driving = { evaluate: async () => ({ valid: true, durationSec: 1500, distanceM: 12000, coordinates: geometry, issues: [] }) };
+  const service = new RoutesService(prisma, driving, {});
+  const result = await service.getBySlug("paid");
+  assert.deepEqual(result.points, []); assert.deepEqual(result.driving.coordinates, []);
+  assert.equal(result.access.requiresPaid, true);
+  assert.deepEqual(await service.points("paid"), []);
+});
+
+test("extra road catalogue contains distinct checked 24–60 minute routes, never cloned placeholders", () => {
+  const bundle = require("../prisma/data/road-practice-catalog.json");
+  const keys = new Set(), fingerprints = new Set();
+  for (const route of bundle.routes) {
+    const key = `${route.centreSlug}:${route.slot}`;
+    assert.ok(!keys.has(key)); keys.add(key);
+    assert.ok(route.slot >= 2 && route.slot <= 7);
+    assert.ok(route.durationSec >= 1440 && route.durationSec <= 3600);
+    assert.ok(route.points.length >= 2 && route.points.length <= 25);
+    assert.ok(route.points.every(p => Number.isFinite(p.latitude) && Number.isFinite(p.longitude)));
+    const fingerprint = JSON.stringify(route.points.map(p => [p.latitude, p.longitude]));
+    assert.ok(!fingerprints.has(fingerprint)); fingerprints.add(fingerprint);
+  }
+  assert.ok(bundle.routes.length > 0);
+  assert.equal(bundle.generation.requests <= bundle.generation.maxRequests, true);
+});
+test("road-catalogue duplicate guard detects reverse and resampled copies", () => {
+  const { similarRoads } = require("../scripts/build-road-catalog.cjs");
+  assert.equal(similarRoads(geometry, [...geometry].reverse()), true);
+  assert.equal(similarRoads(geometry, geometry.map(([lng, lat]) => [lng + 1, lat])), false);
+});
 test("unreviewed unpublished route cannot bypass access checks", async () => { const service = new RouteAccessService({ route: { findFirst: async args => { assert.equal(args.where.status, "PUBLISHED"); assert.deepEqual(args.where.verificationStatus.in, ["VERIFIED", "ROAD_VALIDATED"]); return null; } } }); await assert.rejects(service.requireAccess("u", "r"), /Reviewed/); });
 test("poor GPS and out-of-route points cannot create progress", () => { assert.equal(trackProgress(snapshot, 0, 0, [5, 50], 200, 1).accepted, false); assert.equal(trackProgress(snapshot, 0, 0, [9, 54], 5, 1).accepted, false); });
 test("initial position must be near route start, not a later waypoint", () => { assert.equal(trackProgress(snapshot, 0, 0, geometry[2], 5, 500).accepted, false); const start = trackProgress(snapshot, 0, 0, geometry[0], 5, 1); assert.equal(start.visited, 1); assert.equal(start.progressM, 0); });
@@ -120,6 +201,16 @@ test("starter import publishes checked content once and sends route notice", asy
   const tx = { $queryRawUnsafe: async sql => { assert.match(sql, /SELECT 1 AS locked FROM pg_advisory_xact_lock/); return [{ locked: 1 }]; }, route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "new", version: 1, ...args.data }; } }, auditLog: { create: async () => ({}) } };
   const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "ghent-east", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async () => ({ valid: true, durationSec: 1800 }) }, { routePublished: async () => { notified = true; } });
   await service.importStarterRoute("admin", "centre"); assert.equal(saved.status, "PUBLISHED"); assert.equal(saved.verificationStatus, "ROAD_VALIDATED"); assert.match(saved.sourceLabel, /Shared Ghent/); assert.equal(notified, true);
+});
+
+test("prepared extra route import uses its stable slot and fresh road validation", async () => {
+  const { AdminService } = require("../dist/src/admin/admin.service");
+  let saved, checked = false;
+  const tx = { $queryRawUnsafe: async () => [{ locked: 1 }], route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "extra", version: 1, ...args.data }; } }, auditLog: { create: async args => { assert.equal(args.data.action, "ROAD_CATALOG_IMPORTED"); } } };
+  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "alken", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async points => { checked = true; assert.ok(points.length >= 2); return { valid: true, durationSec: 1500 }; } }, { routePublished: async () => {} });
+  await service.importStarterRoute("admin", "centre", 2);
+  assert.equal(checked, true); assert.equal(saved.slug, "alken-road-practice-loop-02"); assert.equal(saved.durationMin, 25);
+  await assert.rejects(service.importStarterRoute("admin", "centre", 8), /1–7/);
 });
 
 

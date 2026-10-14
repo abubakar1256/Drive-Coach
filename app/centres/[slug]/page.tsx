@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import CentreRouteCatalog from "../CentreRouteCatalog";
+import CentreOverviewMap from "../CentreOverviewMap";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { centres, getCentre } from "../../../lib/data";
@@ -8,9 +10,8 @@ import PageViewTracker from "../../../app/PageViewTracker";
 import LanguageSwitcher from "../../../app/LanguageSwitcher";
 import MobileMenu from "../../../app/MobileMenu";
 import LocalizedNavLinks, { LocalizedNavText } from "../../../app/LocalizedNavLinks";
-import { routeSequence } from "../../../lib/route-utils";
 import { belgianRegionLabel } from "../../../lib/belgianRegions";
-import { localizeCentre, localizeText } from "../../../lib/localizeContent";
+import { localizeCentre } from "../../../lib/localizeContent";
 import SiteFooter from "../../../app/SiteFooter";
 import { getServerLocale } from "../../../lib/serverLocale";
 import { siteCopy } from "../../../lib/siteCopy";
@@ -40,11 +41,7 @@ export default async function CentrePage({ params }: { params: { slug: string } 
   // Never manufacture seven identical routes when no real route is published.
   const availableRoutes = apiCentre?.routes ?? [];
   const featuredRoute = availableRoutes[0];
-  const routeCards = availableRoutes.map((route, index) => ({
-    ...route,
-    isLocked: index > 0,
-    sequence: routeSequence(route.points),
-  }));
+  const routeCards = availableRoutes;
   const copy = siteCopy[locale].route;
 
   return (
@@ -52,8 +49,8 @@ export default async function CentrePage({ params }: { params: { slug: string } 
       <PageViewTracker eventType="CENTRE_VIEW" centreSlug={params.slug} />
       <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} /><div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><Link className="button button-small" href="/#pricing"><LocalizedNavText item="viewPlans" /> <span>↗</span></Link></div><MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} /></nav>
       <section className="centre-detail-hero"><div className="shell"><Link className="back-link" href="/centres">← {copy.allCentres}</Link><div className="centre-detail-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {belgianRegionLabel(centre.region, locale)}</p><h1>{centre.name}</h1><p>{centre.area}, {centre.city}</p></div><div className="centre-detail-stat"><strong>{routeCards.length}</strong><span>{copy.practiceRoutes}</span></div></div></div></section>
-      <section className="shell centre-detail-body"><div className="centre-detail-copy"><p className="eyebrow">{locale === "nl" ? "Bereid je voor met context" : "Prepare with context"}</p><h2>{locale === "nl" ? <>Weet wat<br /><span>je kunt verwachten.</span></> : <>Know what<br /><span>to expect.</span></>}</h2><p>{centre.description}</p><div className="highlight-list">{centre.highlights.map((highlight) => <div key={highlight}><span>✓</span>{highlight}</div>)}</div>{featuredRoute && <Link className="button" href={`/routes/${featuredRoute.slug}`}>{locale === "nl" ? "Eerste route openen" : "Open first route"} <span>↗</span></Link>}</div><div className="centre-detail-map"><div className="map-panel-label"><span><i /> {locale === "nl" ? "CENTRUMOVERZICHT" : "CENTRE OVERVIEW"}</span><strong>{centre.routes} {copy.practiceRoutes}</strong></div><div className="route-map large-map"><div className="map-grid" /><div className="map-road road-one" /><div className="map-road road-two" /><div className="map-road road-three" /><div className="map-road road-four" /><div className="map-route" /><div className="map-point point-a"><span>A</span></div><div className="map-point point-b"><span>!</span></div><div className="map-point point-c"><span>↗</span></div><div className="map-legend"><i className="legend-route" /> {copy.practiceRoutes} <i className="legend-alert" /> {copy.keyPoints}</div><div className="map-control">+</div><div className="map-control map-control-minus">−</div></div></div></section>
-      <section className="route-list-section"><div className="shell"><div className="section-heading-row"><div><p className="eyebrow">{copy.chooseRun}</p><h2>{copy.around} {centre.name}</h2></div><span className="route-count">{routeCards.length ? 1 : 0} {copy.freeRoute} · {Math.max(routeCards.length - 1, 0)} {copy.premiumRoutes}</span></div><div className="reference-route-list">{!routeCards.length && <p role="status">{copy.routePreparing}</p>}{routeCards.map((route) => <article className={`reference-route-card ${route.isLocked ? "is-locked" : "is-free"}`} key={route.slug}><div className="reference-route-icon" aria-hidden="true"><span /><span /></div><div className="reference-route-main"><div className="reference-route-title"><h3>{route.name}</h3><span className={`reference-route-badge ${route.isLocked ? "badge-locked" : "badge-free"}`}>{route.isLocked ? "Premium" : locale === "nl" ? "Gratis" : "Free"}</span></div><p className="reference-route-sequence">{localizeText(route.sequence || copy.routePreparing, locale)}</p><div className="reference-route-meta"><span>⌁ {route.points.length} {locale === "nl" ? "punten" : "points"}</span><span>◷ {route.durationMin ? `${route.durationMin} min` : locale === "nl" ? "Rijduur te controleren" : "Driving time to be checked"}</span></div></div><div className="reference-route-actions"><Link className="route-action route-action-primary" href={`/routes/${route.slug}`}>{copy.viewRoute} <span>→</span></Link><Link className="route-action" href={`/routes/${route.slug}#google-maps`}>{copy.openGoogle} <span>↗</span></Link></div></article>)}</div><p className="route-list-note">{copy.disclaimer}</p></div></section>
+      <section className="shell centre-detail-body"><div className="centre-detail-copy"><p className="eyebrow">{locale === "nl" ? "Bereid je voor met context" : "Prepare with context"}</p><h2>{locale === "nl" ? <>Weet wat<br /><span>je kunt verwachten.</span></> : <>Know what<br /><span>to expect.</span></>}</h2><p>{centre.description}</p><div className="highlight-list">{centre.highlights.map((highlight) => <div key={highlight}><span>✓</span>{highlight}</div>)}</div>{featuredRoute && <Link className="button" href={`/routes/${featuredRoute.slug}`}>{locale === "nl" ? "Eerste route openen" : "Open first route"} <span>↗</span></Link>}</div><div className="centre-detail-map"><div className="map-panel-label"><span><i /> {locale === "nl" ? "CENTRUMOVERZICHT" : "CENTRE OVERVIEW"}</span><strong>{centre.routes} {copy.practiceRoutes}</strong></div><CentreOverviewMap centre={centre} /></div></section>
+      <CentreRouteCatalog initialCentre={apiCentre ?? { slug: centre.slug, name: centre.name, city: centre.city, area: centre.area, region: centre.region, description: centre.description, latitude: null, longitude: null, isPublished: true, routes: [] }} />
       <SiteFooter />
     </main>
   );

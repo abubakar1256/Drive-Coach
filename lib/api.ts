@@ -35,6 +35,7 @@ export type ApiRoute = {
 };
 
 export type ApiCentre = {
+  id?: string;
   slug: string;
   name: string;
   city: string;
@@ -44,11 +45,17 @@ export type ApiCentre = {
   latitude: number | null;
   longitude: number | null;
   isPublished: boolean;
+  access?: { premium: boolean; plan: string; signedIn: boolean };
+  premiumInfo?: { kind: string; disclaimer: { en: string; nl: string }; sections: Array<{ key: string; title: { en: string; nl: string }; text: { en: string; nl: string } }> } | null;
   routes: Array<{
     slug: string;
     name: string;
     durationMin: number | null;
     status: string;
+    label?: string;
+    isFree?: boolean;
+    canAccess?: boolean;
+    pointCount?: number;
     points: ApiRoute["points"];
   }>;
 };
@@ -177,6 +184,7 @@ export function apiCentreToCentre(centre: ApiCentre, fallback: Centre = centres[
     area: centre.area ?? fallback.area,
     region: centre.region,
     routes: centre.routes.length,
+    roadGeometry: [],
     description: centre.description ?? `${centre.name} practice routes and attention points.`,
     routeCoordinates: firstRoute?.points.map((point) => [point.longitude, point.latitude]) ?? (centre.longitude && centre.latitude ? [[centre.longitude, centre.latitude]] : fallback.routeCoordinates),
     routePoints: firstRoute?.points.map((point) => ({ id: undefined, number: String(point.sequence).padStart(2, "0"), title: point.title, detail: point.warning ? `${point.description ?? ""} ${point.warning}`.trim() : point.description ?? "", tone: pointTone(point.category), latitude: point.latitude, longitude: point.longitude, category: point.category })) ?? fallback.routePoints,

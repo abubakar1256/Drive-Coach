@@ -10,6 +10,9 @@ import { DrivingRouteService } from "../routes/driving-route.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PracticeLoopService } from "../routes/practice-loop.service";
 import roadBundle from "../../prisma/data/road-practice-loops.json";
+import catalogBundle from "../../prisma/data/road-practice-catalog.json";
+
+type CatalogRoute = { centreSlug: string; slot: number; points: Array<{ latitude: number; longitude: number; bearing?: number | null }> };
 
 @Injectable()
 export class AdminService {
@@ -131,14 +134,20 @@ export class AdminService {
     return this.prisma.route.create({ data: dto, include: { points: true } });
   }
 
-  async importStarterRoute(actorId: string, centreId: string) {
+  preparedRoadCatalog() {
+    const routes = catalogBundle.routes as CatalogRoute[];
+    return Array.from(new Set(routes.map(r => r.centreSlug))).map(centreSlug => ({ centreSlug, slots: routes.filter(r => r.centreSlug === centreSlug).map(r => r.slot) }));
+  }
+
+  async importStarterRoute(actorId: string, centreId: string, slot = 1) {
     const centre = await this.prisma.examCentre.findUnique({ where: { id: centreId } });
     if (!centre || !centre.isPublished) throw new NotFoundException("Published centre not found");
     // Legacy Ghent East is a second directory entry for the nearby Ghent area.
     const sourceSlug = centre.slug === "ghent-east" ? "sint-denijs-westrem" : centre.slug;
-    const item = roadBundle.routes.find(r => r.centreSlug === sourceSlug);
+    if (!Number.isInteger(slot) || slot < 1 || slot > 7) throw new BadRequestException("Route slot must be 1–7");
+    const item = slot === 1 ? roadBundle.routes.find(r => r.centreSlug === sourceSlug) : (catalogBundle.routes as CatalogRoute[]).find(r => r.centreSlug === sourceSlug && r.slot === slot);
     if (!item) throw new NotFoundException("No checked starter route for this centre");
-    const slug = `${centre.slug}-road-practice-loop-01`;
+    const slug = `${centre.slug}-road-practice-loop-${String(slot).padStart(2, "0")}`;
     const existing = await this.prisma.route.findUnique({ where: { slug } });
     if (existing) return { ...existing, preserved: true };
     const checked = await this.driving.requireValid(item.points);
@@ -148,7 +157,7 @@ export class AdminService {
       const found = await tx.route.findUnique({ where: { slug } });
       if (found) return found;
       const created = await tx.route.create({ data: {
-        centreId, slug, name: "Road-network practice loop 1", status: "PUBLISHED",
+        centreId, slug, name: `Road-network practice loop ${slot}`, status: "PUBLISHED",
         verificationStatus: "ROAD_VALIDATED", reviewedBy: "ROAD_ROUTING_ENGINE", verifiedAt: new Date(),
         durationMin: Math.ceil(checked.durationSec! / 60),
         sourceLabel: sourceSlug !== centre.slug ? "Shared Ghent-area road practice — not an official exam route or instructor approval" : "Road-network practice — not an official exam route or instructor approval",
@@ -160,7 +169,7 @@ export class AdminService {
           description: "Mapped road-network practice. Follow current signs and instructor guidance. Meeting point is not a confirmed exam-centre entrance.",
         })) },
       } });
-      await tx.auditLog.create({ data: { userId: actorId, action: "STARTER_ROUTE_IMPORTED", entity: "Route", entityId: created.id, metadata: { sourceCentre: sourceSlug, durationSec: checked.durationSec, instructorApproved: false } } });
+      await tx.auditLog.create({ data: { userId: actorId, action: slot === 1 ? "STARTER_ROUTE_IMPORTED" : "ROAD_CATALOG_IMPORTED", entity: "Route", entityId: created.id, metadata: { sourceCentre: sourceSlug, slot, durationSec: checked.durationSec, instructorApproved: false } } });
       return created;
     });
     await this.notifications.routePublished(route.id, route.version);

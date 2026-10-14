@@ -1,0 +1,20 @@
+.premium-centre-section { padding-bottom: 64px; }
+.premium-centre-panel { padding: clamp(24px, 4vw, 48px); background: #fff; border: 1px solid #dce9e3; border-radius: 24px; box-shadow: 0 16px 48px rgba(20,77,58,.05); }
+.premium-centre-title { display: flex; gap: 18px; align-items: center; }
+.premium-centre-title > span { display: grid; place-items: center; width: 48px; height: 48px; flex-shrink: 0; background: #e7f4ee; color: #15735c; border-radius: 50%; font-size: 24px; }
+.premium-centre-title h2 { font-size: clamp(23px, 3vw, 32px); line-height: 1.2; }
+.premium-centre-panel > p { color: #60766b; line-height: 1.7; }
+.premium-centre-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 25px 0; }
+.premium-centre-topics article, .premium-centre-topics.is-preview > div { border-radius: 16px; background: #f3f8f5; padding: 24px; }
+.premium-centre-topics h3 { font-size: 18px; margin: 0 0 12px; }
+.premium-centre-topics p { font-size: 14px; line-height: 1.7; color: #60766b; }
+.premium-centre-topics.is-preview { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.premium-centre-topics.is-preview > div { display: grid; text-align: center; gap: 10px; color: #83958b; font-size: 13px; }
+.premium-centre-topics.is-preview span { font-size: 24px; }
+.premium-centre-panel .button { margin-top: 20px; }
+.centre-access-badge { display: inline-block; padding: 12px 16px; background: #e1f3e9; border-radius: 12px; color: #156e58; margin-top: 20px; font-size: 13px; font-weight: 700; }
+.centre-plan-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.centre-plan-summary article { border: 1px solid #dce9e3; border-radius: 16px; padding: 22px; background: #f7faf8; }
+.centre-plan-summary p { font-size: 13px; line-height: 1.7; color: #60766b; margin-bottom: 0; }
+@media (max-width: 700px) { .premium-centre-topics, .premium-centre-topics.is-preview { grid-template-columns: repeat(2, minmax(0, 1fr)); } .centre-plan-summary { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .premium-centre-topics:not(.is-preview) { grid-template-columns: 1fr; } }
