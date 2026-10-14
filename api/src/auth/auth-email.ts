@@ -24,7 +24,7 @@ export async function sendAuthEmail(to: string, subject: string, link: string, l
   if (!provider) { logger.error("AUTH_EMAIL provider=none reason=NOT_CONFIGURED"); return false; }
   const html = `<div style="font-family:Arial,sans-serif;max-width:560px"><h2 style="color:#106c55">Drive Coach</h2><p>Continue securely using the button below.</p><p><a href="${link}" style="display:inline-block;padding:12px 18px;border-radius:8px;background:#ff8a22;color:#fff;text-decoration:none">Continue</a></p><p style="color:#71817a;font-size:12px">This link expires automatically. If you did not request it, you can ignore this email.</p></div>`;
   const senderMatch = brevoFrom?.match(/^(.*?)\s*<([^>]+)>$/);
-  const body = provider === "brevo" ? { sender: { name: senderMatch?.[1]?.trim() || process.env.BREVO_FROM_NAME || "Drive Coach", email: senderMatch?.[2]?.trim() || brevoFrom }, to: [{ email: to }], subject, html } : { from: resendFrom, to: [to], subject, html };
+  const body = provider === "brevo" ? { sender: { name: senderMatch?.[1]?.trim() || process.env.BREVO_FROM_NAME || "Drive Coach", email: senderMatch?.[2]?.trim() || brevoFrom }, to: [{ email: to }], subject, htmlContent: html } : { from: resendFrom, to: [to], subject, html };
   try {
     const response = await fetch(provider === "brevo" ? "https://api.brevo.com/v3/smtp/email" : "https://api.resend.com/emails", {
       method: "POST", headers: provider === "brevo" ? { "api-key": brevoKey!, "Content-Type": "application/json" } : { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },

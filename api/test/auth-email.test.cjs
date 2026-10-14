@@ -31,7 +31,14 @@ test("Brevo rejects a request: log status/category, never raw provider data", as
   for (const secret of [email, link, "secret-test-key", "private-token"]) assert.ok(!logs.join().includes(secret));
 });
 test("provider acceptance requires a message ID and does not claim delivery", async () => {
-  brevo(); global.fetch = async () => ({ ok: true, status: 201, json: async () => ({ messageId: "accepted-id" }) });
+  brevo(); global.fetch = async (url, init) => {
+    const body = JSON.parse(init.body);
+    assert.equal(url, "https://api.brevo.com/v3/smtp/email");
+    assert.equal(body.html, undefined);
+    assert.ok(body.htmlContent.includes(link));
+    assert.deepEqual(body.to, [{ email }]);
+    return { ok: true, status: 201, json: async () => ({ messageId: "accepted-id" }) };
+  };
   assert.equal(await sendAuthEmail(email, "Verify", link, logger), true);
   assert.match(logs[0], /result=ACCEPTED/); assert.doesNotMatch(logs[0], /DELIVERED/);
 });
@@ -50,7 +57,7 @@ test("network and timeout failures never log exception secrets", async () => {
 });
 test("Resend follows the same acceptance and privacy policy", async () => {
   process.env.RESEND_API_KEY = "test-resend-key"; process.env.RESEND_FROM_EMAIL = "sender@example.test";
-  global.fetch = async (url, init) => { assert.equal(url, "https://api.resend.com/emails"); assert.equal(init.headers.Authorization, "Bearer test-resend-key"); return { ok: true, status: 200, json: async () => ({ id: "opaque-id" }) }; };
+  global.fetch = async (url, init) => { assert.equal(url, "https://api.resend.com/emails"); assert.equal(init.headers.Authorization, "Bearer test-resend-key"); const body = JSON.parse(init.body); assert.ok(body.html.includes(link)); assert.equal(body.htmlContent, undefined); return { ok: true, status: 200, json: async () => ({ id: "opaque-id" }) }; };
   assert.equal(await sendAuthEmail(email, "Verify", link, logger), true); assert.match(logs[0], /provider=resend/);
 });
 test("safe failure codes distinguish sender, IP, quota and account restrictions", () => {
