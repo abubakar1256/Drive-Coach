@@ -10,6 +10,7 @@ import "./landing.css";
 import "./account.css";
 import "./dashboard.css";
 import "./route-reference.css";
+import "./routes/google-maps.css";
 import ServiceWorkerRegister from "./ServiceWorkerRegister";
 import InstallAppPrompt from "./InstallAppPrompt";
 import AIChatbot from "./AIChatbot";

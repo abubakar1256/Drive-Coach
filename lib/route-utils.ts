@@ -5,8 +5,8 @@ type RoutePointLike = {
 };
 
 function hasCoordinates(point: RoutePointLike): point is RoutePointLike & { latitude: number; longitude: number } {
-  return typeof point.latitude === "number" && Number.isFinite(point.latitude)
-    && typeof point.longitude === "number" && Number.isFinite(point.longitude);
+  return typeof point.latitude === "number" && Number.isFinite(point.latitude) && Math.abs(point.latitude) <= 90
+    && typeof point.longitude === "number" && Number.isFinite(point.longitude) && Math.abs(point.longitude) <= 180;
 }
 
 export function routeSequence(points: RoutePointLike[]): string {
@@ -57,4 +57,27 @@ export function googleMapsNavigationUrl(points: RoutePointLike[]): string | null
   const params = new URLSearchParams({ api: "1", origin: coordinates[0], destination, travelmode: "driving", dir_action: "navigate" });
   if (waypoints) params.set("waypoints", waypoints);
   return `https://www.google.com/maps/dir/?${params.toString()}`;
+}
+
+export type GoogleMapsSection = {
+  firstPoint: number;
+  lastPoint: number;
+  url: string;
+  navigationUrl: string;
+};
+
+// Each section fits mobile's three intermediate waypoints. Consecutive
+// sections share their boundary point, preserving every ordered route leg.
+export function googleMapsRouteSections(points: RoutePointLike[]): GoogleMapsSection[] {
+  if (points.length < 2 || !points.every(hasCoordinates)) return [];
+  const sections: GoogleMapsSection[] = [];
+  for (let start = 0; start < points.length - 1; start += 4) {
+    const end = Math.min(start + 4, points.length - 1);
+    const section = points.slice(start, end + 1);
+    const url = googleMapsRouteUrl(section);
+    const navigationUrl = googleMapsNavigationUrl(section);
+    if (!url || !navigationUrl) return [];
+    sections.push({ firstPoint: start + 1, lastPoint: end + 1, url, navigationUrl });
+  }
+  return sections;
 }
