@@ -30,22 +30,30 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
 
   useEffect(() => {
     let cancelled = false;
+    let generation = 0;
     setActiveCentre(centre);
     setDriving(initialDriving);
     setAccessMode("preview");
     setHasVoiceAccess(false);
     setSelectedIndex(0);
-    const accessToken = sessionStorage.getItem("routepilot.accessToken");
-    if (!accessToken) return () => { cancelled = true; };
-
-    void getFullRouteBySlug(routeSlug, accessToken).then((route) => {
-      if (cancelled || !route) return;
+    const sync = () => {
+      const request = ++generation;
+      if (!sessionStorage.getItem("routepilot.accessToken")) {
+        setActiveCentre(centre); setDriving(initialDriving); setAccessMode("preview"); setHasVoiceAccess(false);
+        return;
+      }
+      void getFullRouteBySlug(routeSlug).then((route) => {
+      if (cancelled || request !== generation) return;
+      if (!route) { setActiveCentre(centre); setDriving(initialDriving); setAccessMode("preview"); setHasVoiceAccess(false); return; }
       setActiveCentre(routeToCentre(route, centre));
       setDriving(route.driving);
       setAccessMode("full");
       setHasVoiceAccess(Boolean(route.access?.premium));
-    });
-    return () => { cancelled = true; };
+      });
+    };
+    sync();
+    window.addEventListener("routepilot-auth-change", sync);
+    return () => { cancelled = true; window.removeEventListener("routepilot-auth-change", sync); };
   }, [centre, routeSlug, initialDriving]);
 
   const googleMapsSections = accessMode === "full" && driving?.valid ? googleMapsRouteSections(activeCentre.routePoints) : [];

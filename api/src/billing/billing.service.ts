@@ -27,7 +27,7 @@ export class BillingService {
             { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
           ],
         },
-        include: { plan: true }, orderBy: { createdAt: "desc" },
+        include: { plan: true }, orderBy: [{ plan: { name: "asc" } }, { createdAt: "desc" }],
       }),
     ]);
     if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Diamond", startsAt: null, expiresAt: null, provider: "INTERNAL" };
@@ -71,6 +71,8 @@ export class BillingService {
     const plan = await this.prisma.plan.findUnique({ where: { id: dto.planId }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true, isActive: true } });
     if (!plan?.isActive) throw new BadRequestException("Plan not found or inactive");
     if (!["Premium", "Diamond"].includes(plan.name)) throw new BadRequestException("Unsupported plan");
+    const current = await this.subscription(userId);
+    if (current.status === "ACTIVE" && (current.plan === "Diamond" || current.plan === plan.name)) throw new BadRequestException("This access is already active on your account");
     if (plan.name === "Premium" && (!dto.centreId || !await this.prisma.examCentre.findFirst({ where: { id: dto.centreId, isPublished: true } }))) throw new BadRequestException("Choose your exam centre before buying Premium");
     if (dto.schoolId && !await this.prisma.drivingSchool.findFirst({ where: { id: dto.schoolId, createdByUserId: userId } })) throw new BadRequestException("School billing is limited to the school owner");
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } });

@@ -5,6 +5,8 @@ import { isLocale, type Locale } from "../lib/i18n";
 import { navLabel, type NavKey } from "../lib/navCopy";
 import { accessTokenKey, clearClientSession, refreshTokenKey, validateClientSession } from "../lib/clientSession";
 
+import PlanAccessLink from "./PlanAccess";
+
 type MenuLink = { href: string; label: string };
 
 function navKeyForLink(link: MenuLink): NavKey | null {
@@ -70,6 +72,7 @@ export default function MobileMenu({ links }: { links: MenuLink[] }) {
       {open && (
         <div className="mobile-menu-panel" id={menuId}>
           {visibleLinks.map((link) => <a href={link.href} key={link.href} onClick={() => setOpen(false)}>{link.label}</a>)}
+          <PlanAccessLink />
           {signedIn && <button className="mobile-menu-logout" type="button" onClick={() => void logout()}>{locale === "nl" ? "Uitloggen" : "Log out"}</button>}
         </div>
       )}

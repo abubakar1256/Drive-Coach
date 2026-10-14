@@ -14,6 +14,35 @@ const { validMediaSignature } = require("../dist/src/media/media-signature");
 const { centreRouteCatalog, ExamCentresService } = require("../dist/src/exam-centres/exam-centres.service");
 const { RoutesService } = require("../dist/src/routes/routes.service");
 const geometry = [[5, 50], [5.01, 50], [5.01, 50.01], [5, 50.01], [5, 50]];
+test("billing selects strongest valid plan and filters expired/future access", async () => {
+  const service = new BillingService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findFirst: async args => {
+    assert.equal(args.where.status, "ACTIVE");
+    assert.equal(args.where.AND.length, 2);
+    assert.deepEqual(args.orderBy, [{ plan: { name: "asc" } }, { createdAt: "desc" }]);
+    return { status: "ACTIVE", plan: { name: "Diamond" }, centreId: null, expiresAt: null };
+  } } });
+  assert.equal((await service.subscription("u")).plan, "Diamond");
+});
+test("Diamond cannot checkout Premium or Diamond again", async () => {
+  const previous = process.env.STRIPE_SECRET_KEY;
+  process.env.STRIPE_SECRET_KEY = "test-only";
+  try {
+    for (const requested of ["Premium", "Diamond"]) {
+      const service = new BillingService({ plan: { findUnique: async () => ({ name: requested, isActive: true }) } });
+      service.subscription = async () => ({ status: "ACTIVE", plan: "Diamond" });
+      await assert.rejects(service.checkout("u", { planId: "p" }), /already active/);
+    }
+  } finally { if (previous === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = previous; }
+});
+test("Premium cannot checkout its active plan again", async () => {
+  const previous = process.env.STRIPE_SECRET_KEY;
+  process.env.STRIPE_SECRET_KEY = "test-only";
+  try {
+    const service = new BillingService({ plan: { findUnique: async () => ({ name: "Premium", isActive: true }) } });
+    service.subscription = async () => ({ status: "ACTIVE", plan: "Premium" });
+    await assert.rejects(service.checkout("u", { planId: "p" }), /already active/);
+  } finally { if (previous === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = previous; }
+});
 const snapshot = { geometry, points: geometry, distanceM: snapshotDistance(geometry) };
 function accessFixture(plan, centreId, role = "LEARNER", routeId = "paid-route") {
   let calls = 0;

@@ -1,4 +1,5 @@
 import { centres, type Centre } from "./data";
+import { authFetch } from "./clientSession";
 
 export type ApiRoute = {
   id: string;
@@ -92,10 +93,9 @@ export async function getRouteBySlug(slug: string): Promise<ApiRoute | null> {
   }
 }
 
-export async function getFullRouteBySlug(slug: string, accessToken: string): Promise<ApiRoute | null> {
+export async function getFullRouteBySlug(slug: string, _accessToken?: string): Promise<ApiRoute | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "/api/v1"}/routes/${encodeURIComponent(slug)}/access`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+    const response = await authFetch(`${process.env.NEXT_PUBLIC_API_URL ?? "/api/v1"}/routes/${encodeURIComponent(slug)}/access`, {
       cache: "no-store",
     });
     if (!response.ok) return null;
