@@ -144,7 +144,7 @@ export class AdminService {
     const checked = await this.driving.requireValid(item.points);
     if (checked.durationSec! > 3600) throw new BadRequestException("Starter loop exceeds 60 minutes");
     const route = await this.prisma.$transaction(async tx => {
-      await tx.$queryRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", slug);
+      await tx.$queryRawUnsafe("SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtext($1))", slug);
       const found = await tx.route.findUnique({ where: { slug } });
       if (found) return found;
       const created = await tx.route.create({ data: {

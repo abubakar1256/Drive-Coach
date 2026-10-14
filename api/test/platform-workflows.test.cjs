@@ -117,7 +117,7 @@ test("starter import fails closed before any writes when roads are invalid", asy
 test("starter import publishes checked content once and sends route notice", async () => {
   const { AdminService } = require("../dist/src/admin/admin.service");
   let saved, notified = false;
-  const tx = { $queryRawUnsafe: async () => [], route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "new", version: 1, ...args.data }; } }, auditLog: { create: async () => ({}) } };
+  const tx = { $queryRawUnsafe: async sql => { assert.match(sql, /SELECT 1 AS locked FROM pg_advisory_xact_lock/); return [{ locked: 1 }]; }, route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "new", version: 1, ...args.data }; } }, auditLog: { create: async () => ({}) } };
   const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "ghent-east", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async () => ({ valid: true, durationSec: 1800 }) }, { routePublished: async () => { notified = true; } });
   await service.importStarterRoute("admin", "centre"); assert.equal(saved.status, "PUBLISHED"); assert.equal(saved.verificationStatus, "ROAD_VALIDATED"); assert.match(saved.sourceLabel, /Shared Ghent/); assert.equal(notified, true);
 });

@@ -23,7 +23,7 @@ async function main() {
       const fingerprint = createHash("sha256").update(JSON.stringify(item.points)).digest("hex");
       await prisma.$transaction(async tx => {
         // Serialize concurrent imports; check again under the lock.
-        await tx.$queryRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", slug);
+        await tx.$queryRawUnsafe("SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtext($1))", slug);
         if (await tx.route.findUnique({ where: { slug } })) return;
         const route = await tx.route.create({ data: {
           centreId: centre.id, slug, name: "Road-network practice loop 1",
