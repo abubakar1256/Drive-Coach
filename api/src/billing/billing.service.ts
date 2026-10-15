@@ -21,7 +21,7 @@ export class BillingService {
       this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
       this.prisma.subscription.findFirst({
         where: {
-          userId, status: "ACTIVE",
+          userId, status: "ACTIVE", plan: { name: { in: ["Premium", "Diamond"] } },
           AND: [
             { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
             { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },

@@ -7,31 +7,31 @@ import { DrivingRouteService } from "../routes/driving-route.service";
 import { RouteAccessService } from "../routes/route-access.service";
 import { snapshotDistance, trackProgress, type PracticeSnapshot } from "./practice-progress";
 import type { Prisma } from "@prisma/client";
+import { BillingService } from "../billing/billing.service";
 
 type Row = Record<string, any>;
 
 @Injectable()
 export class LearningService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService, private readonly billing: BillingService) {}
 
   private query<T extends Row = Row>(sql: string, ...values: unknown[]) {
     return this.prisma.$queryRawUnsafe<T[]>(sql, ...values);
   }
 
   async dashboard(userId: string) {
-    const [userRows, favoriteRows, sessionRows, subscriptionRows] = await Promise.all([
+    const [userRows, favoriteRows, sessionRows, subscription] = await Promise.all([
       this.query('SELECT "id", "email", "displayName", "role", "createdAt" FROM "User" WHERE "id" = $1', userId),
       this.query('SELECT f."id", f."createdAt", r."id" AS "routeId", r."slug", r."name", r."durationMin", c."slug" AS "centreSlug", c."name" AS "centreName", c."city", COUNT(rp."id")::int AS "pointCount" FROM "Favorite" f JOIN "Route" r ON r."id" = f."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE f."userId" = $1 GROUP BY f."id", r."id", c."id" ORDER BY f."createdAt" DESC LIMIT 6', userId),
       this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."completionKind", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."overallFeeling", sr."difficultyCategories", sr."difficultyDetails", sr."instructorFeedback", sr."instructorCategories", sr."instructorNotes" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
-      this.query('SELECT s."status", s."expiresAt", p."name" AS "planName" FROM "Subscription" s JOIN "Plan" p ON p."id" = s."planId" WHERE s."userId" = $1 AND s."status" = \'ACTIVE\' AND (s."expiresAt" IS NULL OR s."expiresAt" > NOW()) ORDER BY s."createdAt" DESC LIMIT 1', userId),
+      this.billing.subscription(userId),
     ]);
     if (!userRows[0]) throw new NotFoundException("User not found");
     const sessions = sessionRows.map((row) => this.sessionShape(row));
     const completed = sessions.filter((session) => session.completionKind === "COMPLETED").length;
     const averageProgress = sessions.length ? Math.round(sessions.reduce((sum, session) => sum + session.completionPct, 0) / sessions.length) : 0;
     const reflection = sessionRows.find((row) => row.speedCompliance !== null || row.rightOfWayConfidence !== null || row.roundaboutConfidence !== null || row.laneChangeConfidence !== null || row.observedSpeedKph !== null || row.speedLimitKph !== null || row.flaggedSpeeding || row.missedRightOfWay);
-    const adminHasDiamond = userRows[0].role === "ADMIN" || userRows[0].role === "SUPER_ADMIN";
-    return { user: userRows[0], subscription: adminHasDiamond ? { status: "ACTIVE", plan: "Diamond", expiresAt: null } : subscriptionRows[0] ? { status: subscriptionRows[0].status, plan: subscriptionRows[0].planName, expiresAt: subscriptionRows[0].expiresAt } : { status: "FREE", plan: "Free", expiresAt: null }, stats: { favoriteCount: favoriteRows.length, sessionCount: sessions.length, completedSessions: completed, averageProgress }, favorites: favoriteRows, sessions, recommendations: this.recommendations(reflection) };
+    return { user: userRows[0], subscription, stats: { favoriteCount: favoriteRows.length, sessionCount: sessions.length, completedSessions: completed, averageProgress }, favorites: favoriteRows, sessions, recommendations: this.recommendations(reflection) };
   }
 
   async listFavorites(userId: string) {

@@ -18,10 +18,39 @@ test("billing selects strongest valid plan and filters expired/future access", a
   const service = new BillingService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findFirst: async args => {
     assert.equal(args.where.status, "ACTIVE");
     assert.equal(args.where.AND.length, 2);
+    assert.deepEqual(args.where.plan.name.in, ["Premium", "Diamond"]);
     assert.deepEqual(args.orderBy, [{ plan: { name: "asc" } }, { createdAt: "desc" }]);
     return { status: "ACTIVE", plan: { name: "Diamond" }, centreId: null, expiresAt: null };
   } } });
   assert.equal((await service.subscription("u")).plan, "Diamond");
+});
+
+test("dashboard uses the same effective subscription as billing for every plan", async () => {
+  for (const plan of ["Free", "Premium", "Diamond"]) {
+    const subscription = { status: plan === "Free" ? "FREE" : "ACTIVE", plan, expiresAt: null, centreId: plan === "Premium" ? "centre-a" : null };
+    const prisma = { $queryRawUnsafe: async sql => {
+      assert.ok(!sql.includes('FROM "Subscription"'), "dashboard must not calculate a conflicting plan separately");
+      return sql.includes('FROM "User"') ? [{id: "u", role: "LEARNER"}] : [];
+    } };
+    const billing = { subscription: async id => { assert.equal(id, "u"); return subscription; } };
+    const result = await new LearningService(prisma, {}, {}, billing).dashboard("u");
+    assert.deepEqual(result.subscription, subscription);
+  }
+});
+
+test("Free route access never grants paid voice guidance", async () => {
+  const prisma = { routePoint: { findUnique: async () => ({routeId: "free-route"}) } };
+  const access = { requireAccess: async () => ({premium: false}) };
+  await assert.rejects(new LearningService(prisma, {}, access, {}).triggerVoiceTip("u", "point", 20), /Paid route access required/);
+});
+
+test("learning module resolves the shared BillingService without a database connection", async () => {
+  const { Test } = require("@nestjs/testing");
+  const { LearningModule } = require("../dist/src/learning/learning.module");
+  const { PrismaService } = require("../dist/src/prisma.service");
+  const module = await Test.createTestingModule({imports: [LearningModule]}).overrideProvider(PrismaService).useValue({}).compile();
+  try { assert.equal(module.get(LearningService).billing, module.get(BillingService)); }
+  finally { await module.close(); }
 });
 test("Diamond cannot checkout Premium or Diamond again", async () => {
   const previous = process.env.STRIPE_SECRET_KEY;

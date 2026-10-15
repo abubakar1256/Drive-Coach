@@ -4,6 +4,7 @@ import { PrismaModule } from "../prisma.module";
 import { LearningController } from "./learning.controller";
 import { LearningService } from "./learning.service";
 import { RoutesModule } from "../routes/routes.module";
+import { BillingModule } from "../billing/billing.module";
 
-@Module({ imports: [PrismaModule, AuthModule, RoutesModule], controllers: [LearningController], providers: [LearningService] })
+@Module({ imports: [PrismaModule, AuthModule, RoutesModule, BillingModule], controllers: [LearningController], providers: [LearningService] })
 export class LearningModule {}

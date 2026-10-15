@@ -59,3 +59,39 @@ test("signed-out header offers access; loading/errors do not pretend a paid user
 test("Dutch header recognizes Diamond with the same account destination", () => {
   assert.match(renderAccessLink({status: "ACTIVE", plan: "Diamond", expiresAt: null}, "ready", "nl"), /Diamond actief/);
 });
+
+function renderBilling(plan) {
+  const copyFile = path.resolve(__dirname, "../lib/siteCopy.ts"), copyModule = new Module(copyFile, module);
+  copyModule._compile(ts.transpileModule(fs.readFileSync(copyFile, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, copyFile);
+  const file = path.resolve(__dirname, "../app/account/BillingPanel.tsx"), component = new Module(file, module);
+  const plans = ["Premium", "Diamond"].map((name, index) => ({id: String(index), name, durationHours: 2160, priceCents: index ? 1999 : 1499, currency: "EUR"}));
+  const states = [[], "", null, null, false, plans, [], [], "", ""];
+  component.paths = module.paths;
+  component.require = id => {
+    if (id === "react") return {...React, useEffect: () => {}, useState: () => [states.shift(), () => {}]};
+    if (id === "../PlanAccess") return {usePlanAccess: () => ({plan, state: "ready"})};
+    if (id === "../../lib/useLocale") return {useCurrentLocale: () => "en", useSiteCopy: () => copyModule.exports.siteCopy.en};
+    if (id === "../../lib/clientSession") return {};
+    if (id === "../../lib/plan-access") return loaded.exports;
+    return require(id);
+  };
+  component._compile(ts.transpileModule(fs.readFileSync(file, "utf8"), { compilerOptions: {module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX}}).outputText, file);
+  return renderToStaticMarkup(React.createElement(component.exports.default));
+}
+test("Free billing shows neutral heading and no current paid plan", () => {
+  const html = renderBilling("Free");
+  assert.match(html, /<h2>Plans &amp; billing<\/h2>/);
+  assert.doesNotMatch(html, />Active<|>Included<|· Manage access/);
+  assert.equal((html.match(/>Choose plan<\/button>/g) ?? []).length, 2);
+});
+test("Diamond billing includes Premium and disables both duplicate purchase actions", () => {
+  const html = renderBilling("Diamond");
+  assert.match(html, /Diamond · Manage access/);
+  assert.match(html, /disabled="">Included<\/button>/); assert.match(html, /disabled="">Active<\/button>/);
+  assert.doesNotMatch(html, />Choose plan<\/button>/);
+});
+test("Premium billing keeps only the Diamond upgrade available", () => {
+  const html = renderBilling("Premium");
+  assert.match(html, /Premium · Manage access/); assert.match(html, /disabled="">Active<\/button>/);
+  assert.equal((html.match(/>Choose plan<\/button>/g) ?? []).length, 1);
+});

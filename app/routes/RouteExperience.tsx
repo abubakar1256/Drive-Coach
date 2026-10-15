@@ -38,6 +38,8 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
     setSelectedIndex(0);
     const sync = () => {
       const request = ++generation;
+      // A changed login must never keep the previous user's paid route visible.
+      setActiveCentre(centre); setDriving(initialDriving); setAccessMode("preview"); setHasVoiceAccess(false);
       if (!sessionStorage.getItem("routepilot.accessToken")) {
         setActiveCentre(centre); setDriving(initialDriving); setAccessMode("preview"); setHasVoiceAccess(false);
         return;

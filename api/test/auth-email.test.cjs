@@ -87,3 +87,19 @@ test("registration persists unverified account but explicitly reports email fail
   const result = await service.register({ email, password: "test-password-only" });
   assert.equal(result.user.id, "u"); assert.equal(result.emailVerification.required, true); assert.equal(result.emailVerification.deliveryStatus, "failed"); assert.equal(result.emailVerification.developmentToken, undefined);
 });
+
+test("account plan ignores expired/future/Free subscriptions and gives active Diamond precedence", async () => {
+  const now = Date.now(), yesterday = new Date(now - 86400000), tomorrow = new Date(now + 86400000);
+  const sub = (name, startsAt = yesterday, expiresAt = tomorrow) => ({status: "ACTIVE", plan: { name }, startsAt, expiresAt});
+  for (const [subscriptions, expected] of [
+    [[], "Free"],
+    [[sub("Diamond", tomorrow)], "Free"],
+    [[sub("Diamond", yesterday, yesterday)], "Free"],
+    [[sub("Free"), sub("Premium")], "Premium"],
+    [[sub("Premium"), sub("Diamond")], "Diamond"],
+  ]) {
+    const user = {id: "u", email, role: "LEARNER", subscriptions};
+    const service = new AuthService({user: {findUnique: async () => user}, $queryRawUnsafe: async () => [{emailVerifiedAt: new Date()}]}, {});
+    assert.equal((await service.me("u")).subscription.planName, expected);
+  }
+});
