@@ -227,7 +227,12 @@ test("real-road bundle covers every official centre without fake coordinates", (
 test("corner-preserving loop sampler retains bends and closes the loop", () => {
   const { cycleWaypoints } = require("../dist/src/routes/practice-loop.service");
   const points = cycleWaypoints(geometry, geometry[0]);
-  assert.equal(points.length, 5); assert.deepEqual(points[0], points.at(-1));
+  assert.equal(points.length, 5);
+  assert.equal(points[0].latitude, points.at(-1).latitude);
+  assert.equal(points[0].longitude, points.at(-1).longitude);
+  // A closed loop returns to the same coordinate with its arrival heading;
+  // it need not have the departure bearing of the first road segment.
+  assert.equal(points[0].bearing, 90); assert.equal(points.at(-1).bearing, 180);
   for (const [longitude, latitude] of geometry) assert.ok(points.some(p => p.latitude === latitude && p.longitude === longitude));
 });
 test("database media upload stores bytes and audit atomically without local files", async () => {

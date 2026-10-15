@@ -45,7 +45,15 @@ export function cycleWaypoints(cycle: [number, number][], origin: [number, numbe
     if (best < 0 || deviation < 0.00001) break;
     indexes.push(best); indexes.sort((a, b) => a - b);
   }
-  return indexes.map(index => { const p = closed[index], next = closed[index + 1] ?? closed[1]; const bearing = (Math.atan2((next[0] - p[0]) * Math.cos(p[1] * Math.PI / 180), next[1] - p[1]) * 180 / Math.PI + 360) % 360; return { latitude: p[1], longitude: p[0], name: "Road-network waypoint", bearing }; });
+  return indexes.map(index => {
+    const p = closed[index];
+    // At the finish constrain arrival heading, not the first leg's departure.
+    // Forcing the outgoing heading here can introduce a needless return/U-turn.
+    const from = index === closed.length - 1 ? closed[index - 1] : p;
+    const to = index === closed.length - 1 ? p : closed[index + 1];
+    const bearing = (Math.atan2((to[0] - from[0]) * Math.cos(p[1] * Math.PI / 180), to[1] - from[1]) * 180 / Math.PI + 360) % 360;
+    return { latitude: p[1], longitude: p[0], name: "Road-network waypoint", bearing };
+  });
 }
 
 export function removeSharedAccessStem(geometry: [number, number][], points: Array<{ latitude: number; longitude: number; name: string; bearing?: number | null }>) {
@@ -56,10 +64,10 @@ export function removeSharedAccessStem(geometry: [number, number][], points: Arr
   return points.map((p, i) => i === 0 || i === points.length - 1 ? { latitude: meeting[1], longitude: meeting[0], name: "Practice meeting point at loop junction" } : p);
 }
 
-export function loopCandidates(latitude: number, longitude: number, variant = 0) {
+export function loopCandidates(latitude: number, longitude: number, variant = 0, radii = [3000, 4500, 6000, 7500, 9000, 10500]) {
   // These are search anchors only. Never save/display them as real road points.
   // Only a successful road-network response's snapped waypoints are persisted.
-  return [3000, 4500, 6000, 7500, 9000, 10500].map((radius, index) => {
+  return radii.map((radius, index) => {
     const rotation = (variant * 51 + index * 17) * Math.PI / 180;
     const points = [{ latitude, longitude }];
     // Keep the meeting point on the perimeter, rather than forcing a trip from
@@ -79,17 +87,26 @@ export class PracticeLoopService {
   async generate(latitude: number, longitude: number, variant = 0) {
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) throw new BadRequestException("Centre map anchor required");
     let issues: string[] = [];
-    for (const candidate of loopCandidates(latitude, longitude, variant)) {
+    // Search smaller loops first. Check exact driving seconds, not a display label.
+    const candidates = loopCandidates(latitude, longitude, variant, [1800, 2400, 3000, 3600, 4200, 5000, 6000]).map(points => ({ points, adjusted: false }));
+    for (let index = 0; index < candidates.length; index++) {
+      const { points: candidate, adjusted } = candidates[index];
       const result = await this.driving.evaluate(candidate, 1000);
       issues = result.issues;
       if (issues.some(i => ["ROUTING_NOT_CONFIGURED", "ROUTING_UNAVAILABLE"].includes(i))) break;
+      // Adapt search anchors only; never scale or relabel a saved road route.
+      // One adjustment per original candidate keeps this search bounded.
+      if (!adjusted && Number.isFinite(result.durationSec) && result.durationSec! > 0 && (result.durationSec! < 1440 || result.durationSec! > 1800)) {
+        const scale = Math.max(0.5, Math.min(1.8, 1620 / result.durationSec!));
+        candidates.splice(index + 1, 0, { adjusted: true, points: candidate.map(point => ({ latitude: latitude + (point.latitude - latitude) * scale, longitude: longitude + (point.longitude - longitude) * scale })) });
+      }
       if (!result.snappedPoints || !result.coordinates.length || result.durationSec! < 1440) continue;
       // Recheck the exact saved snapped points with the ordinary route policy.
       const cycles = result.valid ? [] : simpleRoadCycles(result.coordinates);
       const snappedPoints = cycles.length ? cycleWaypoints(cycles[0], [longitude, latitude]) : removeSharedAccessStem(result.coordinates, result.snappedPoints);
       const checked = await this.driving.evaluate(snappedPoints);
-      if (checked.valid && checked.durationSec! <= 3600) return { ...checked, snappedPoints };
-      issues = checked.issues;
+      if (checked.valid && checked.durationSec! <= 1800) return { ...checked, snappedPoints };
+      issues = checked.durationSec! > 1800 ? [...checked.issues, "OVER_30_MINUTES"] : checked.issues;
     }
     throw new BadRequestException({ message: `No compliant loop found within the bounded search: ${issues.join(", ")}. No route was fabricated or published. Try another starting point/variant.`, issues });
   }
