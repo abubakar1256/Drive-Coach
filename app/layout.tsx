@@ -13,6 +13,7 @@ import "./dashboard.css";
 import "./route-reference.css";
 import "./routes/google-maps.css";
 import "./routes/route-studio.css";
+import "./practice/drive-report.css";
 import ServiceWorkerRegister from "./ServiceWorkerRegister";
 import InstallAppPrompt from "./InstallAppPrompt";
 import AIChatbot from "./AIChatbot";

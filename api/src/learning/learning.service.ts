@@ -1,13 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
-import { CreatePracticeSessionDto, CreateReflectionDto, UpdatePracticeSessionDto } from "./dto/learning.dto";
+import { CreatePracticeSessionDto, CreateReflectionDto, UpdatePracticeSessionDto, SaveDriveReviewDto } from "./dto/learning.dto";
 import { CreateTrackPointDto } from "./dto/track.dto";
 import { DrivingRouteService } from "../routes/driving-route.service";
 import { RouteAccessService } from "../routes/route-access.service";
 import { snapshotDistance, trackProgress, type PracticeSnapshot } from "./practice-progress";
 import type { Prisma } from "@prisma/client";
 import { BillingService } from "../billing/billing.service";
+import { buildDriveReport, gpsObservation, reviewItems } from "./drive-report";
 
 type Row = Record<string, any>;
 
@@ -55,6 +56,35 @@ export class LearningService {
   async listSessions(userId: string) {
     const rows = await this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."completionKind", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC', userId);
     return rows.map((row) => this.sessionShape(row));
+  }
+
+  async driveReport(userId: string, id: string) {
+    const session = await this.prisma.practiceSession.findFirst({ where: { id, userId }, include: { route: { select: { name: true, slug: true } } } });
+    if (!session) throw new NotFoundException("Practice session not found");
+    const samples = await this.prisma.practiceTrackPoint.findMany({ where: { sessionId: id }, orderBy: { recordedAt: "asc" }, take: 20001 });
+    const truncated = samples.length > 20000;
+    let routeVisible = true;
+    try { await this.routeAccess.requireAccess(userId, session.routeId); }
+    catch (error) { if (error instanceof ForbiddenException || error instanceof NotFoundException) routeVisible = false; else throw error; }
+    const report = buildDriveReport(session, samples.slice(0, 20000));
+    // A historical practice report is not a back door to an expired paid route.
+    return { id, route: session.route, ...report, geometry: routeVisible ? report.geometry : [], routeVisible, truncated };
+  }
+
+  async saveDriveReview(userId: string, id: string, dto: SaveDriveReviewDto) {
+    if (!dto.ratings || Object.keys(dto.ratings).length > reviewItems.length || Object.entries(dto.ratings).some(([key, value]) => !reviewItems.includes(key as typeof reviewItems[number]) || !["good", "practice", "not_assessed"].includes(value))) throw new BadRequestException("Invalid checklist ratings");
+    return this.prisma.$transaction(async tx => {
+      await tx.$queryRawUnsafe('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2 FOR UPDATE', id, userId);
+      const session = await tx.practiceSession.findFirst({ where: { id, userId } });
+      if (!session) throw new NotFoundException("Practice session not found");
+      if (!session.completedAt) throw new BadRequestException("End practice before completing your review while safely parked");
+      if (!session.routeSnapshot) throw new BadRequestException("Legacy session has no route snapshot");
+      const snapshot = session.routeSnapshot as unknown as Record<string, Prisma.InputJsonValue>;
+      // Additive session metadata; preserve the immutable route geometry and unrelated reflection.
+      await tx.practiceSession.update({ where: { id }, data: { routeSnapshot: { ...snapshot, coachingReview: { source: dto.source, ratings: { ...dto.ratings }, notes: dto.notes, savedAt: new Date().toISOString() } } } });
+      await tx.auditLog.create({ data: { userId, action: "DRIVE_REVIEW_SAVED", entity: "PracticeSession", entityId: id, metadata: { source: dto.source } } });
+      return { success: true };
+    });
   }
 
   async routeAssistant(userId: string, routeId: string) {
@@ -171,15 +201,22 @@ export class LearningService {
       if (session.completedAt) throw new BadRequestException("Practice session has ended");
       const snapshot = session.routeSnapshot as PracticeSnapshot | null;
       if (!snapshot) throw new BadRequestException("Restart this legacy session to capture reviewed route geometry");
+      if (dto.recordedAt) {
+        const age = Date.now() - new Date(dto.recordedAt).getTime();
+        if (!Number.isFinite(age) || age > 60000 || age < -15000) return { accepted: false, reason: "STALE_GPS", completionPct: session.completionPct, feedback: { status: "unavailable", confidence: "low", distanceFromRouteM: null } };
+      }
       const last = await tx.practiceTrackPoint.findFirst({ where: { sessionId }, orderBy: { recordedAt: "desc" } });
       const now = new Date();
       if (last && now.getTime() - last.recordedAt.getTime() < 1000) return { accepted: false, reason: "GPS_THROTTLED", completionPct: session.completionPct };
       const result = trackProgress(snapshot, session.progressM, session.visitedPoints, [dto.longitude, dto.latitude], dto.accuracyM, last ? (now.getTime() - last.recordedAt.getTime()) / 1000 : 1);
-      if (!result.accepted) return { ...result, completionPct: session.completionPct };
+      // Keep consented, throttled samples even when route-progress rejects them:
+      // otherwise off-route/weak-signal observations disappear from the report.
       await tx.practiceTrackPoint.create({ data: { sessionId, latitude: dto.latitude, longitude: dto.longitude, accuracyM: dto.accuracyM, speedKph: dto.speedKph, recordedAt: now } });
+      const feedback = gpsObservation(snapshot, { ...dto, accuracyM: dto.accuracyM ?? null, speedKph: dto.speedKph ?? null, recordedAt: now });
+      if (!result.accepted) return { ...result, completionPct: session.completionPct, feedback };
       const completionPct = Math.min(99, Math.floor(result.progressM / snapshot.distanceM * 100));
       await tx.practiceSession.update({ where: { id: sessionId }, data: { progressM: result.progressM, visitedPoints: result.visited, completionPct: Math.max(session.completionPct, completionPct) } });
-      return { accepted: true, completionPct: Math.max(session.completionPct, completionPct), visitedPoints: result.visited, pointCount: snapshot.points.length };
+      return { accepted: true, completionPct: Math.max(session.completionPct, completionPct), visitedPoints: result.visited, pointCount: snapshot.points.length, feedback };
     });
   }
 

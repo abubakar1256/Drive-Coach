@@ -10,6 +10,8 @@ import { confirmedRouteCompletion, type RouteStep } from "../../lib/route-progre
 import NextRoutePrompt from "./NextRoutePrompt";
 import GoogleMapsLinks from "./GoogleMapsLinks";
 import GpsConsentDialog from "./GpsConsentDialog";
+import Link from "next/link";
+import DrivePreparation from "./DrivePreparation";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 type Localized = { en: string; nl: string };
@@ -60,6 +62,10 @@ export default function PracticeControls({ routeLabel, nextRoute, centreSlug, pa
   const [consentMode, setConsentMode] = useState<"start" | "gps" | null>(null);
   const [gpsPending, setGpsPending] = useState(false);
   const watchGeneration = useRef(0);
+  const [feedback, setFeedback] = useState<{ status: string; distanceFromRouteM: number | null; speedKph?: number | null } | null>(null);
+  const [reportSession, setReportSession] = useState<string | null>(null);
+  useEffect(() => { if (sessionId) setReportSession(sessionId); }, [sessionId]);
+  useEffect(() => { if (!tracking) setFeedback(null); }, [tracking]);
 
   useEffect(() => { const sync = () => { const stored = window.localStorage.getItem("routepilot.locale"); if (isLocale(stored)) setLocale(stored); }; sync(); window.addEventListener("routepilot-locale-change", sync); return () => window.removeEventListener("routepilot-locale-change", sync); }, []);
   useEffect(() => { const token = window.sessionStorage.getItem("routepilot.accessToken"); if (!token || !routeId) return; fetch(`${API}/me/favorites`, { headers: { Authorization: `Bearer ${token}` } }).then(async (response) => { if (!response.ok) return; const items = await response.json() as Array<{ routeId: string }>; setFavorite(items.some((item) => item.routeId === routeId)); }).catch(() => undefined); }, [routeId]);
@@ -81,10 +87,12 @@ export default function PracticeControls({ routeLabel, nextRoute, centreSlug, pa
     const onPosition = (position: GeolocationPosition) => {
       if (generation !== watchGeneration.current) return;
       setGpsPending(false); setTracking(true); onTrackingChange?.(true); setMessage(routeCopy.gpsEnabled); onPositionUpdate?.(position);
-      void authFetch(`${API}/practice-sessions/${activeSessionId}/track`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracyM: position.coords.accuracy, speedKph: position.coords.speed === null ? undefined : position.coords.speed * 3.6 }) }).then(async response => {
+      const speedKph = position.coords.speed !== null && Number.isFinite(position.coords.speed) && position.coords.speed >= 0 && position.coords.speed * 3.6 <= 300 ? position.coords.speed * 3.6 : undefined;
+      void authFetch(`${API}/practice-sessions/${activeSessionId}/track`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracyM: position.coords.accuracy, speedKph, recordedAt: Number.isFinite(position.timestamp) ? new Date(position.timestamp).toISOString() : undefined }) }).then(async response => {
         if (generation !== watchGeneration.current) return;
         const update = await response.json().catch(() => null);
-        if (response.ok && Number.isFinite(update?.completionPct)) setProgress(Math.max(0, Math.min(100, update.completionPct)));
+        if (response.ok && update?.feedback) setFeedback({ ...update.feedback, speedKph: update.feedback.status !== "unavailable" && position.coords.accuracy <= 35 ? speedKph ?? null : null });
+        if (response.ok && Number.isFinite(update?.completionPct)) setProgress(current => Math.max(current, Math.max(0, Math.min(100, update.completionPct))));
         else if (!response.ok) setMessage(locale === "nl" ? "Je positie is zichtbaar, maar de voortgang kon niet worden opgeslagen." : "Your position is visible, but progress could not be saved.");
       }).catch(() => { if (generation === watchGeneration.current) setMessage(locale === "nl" ? "Geen verbinding. Je laatste locatie-update is niet opgeslagen." : "Connection lost. Your last location update was not saved."); });
     };
@@ -105,6 +113,8 @@ export default function PracticeControls({ routeLabel, nextRoute, centreSlug, pa
   const stepTitle = reflectionStep === 1 ? copy.heading : reflectionStep === 2 ? copy.difficultyHeading : reflectionStep === 3 ? copy.detailsFor : copy.instructorHeading;
 
   return <div className="practice-controls" id="practice-controls"><div className="practice-panel-heading"><div><span className="small-label">{locale === "nl" ? "JE OEFENRIT" : "YOUR PRACTICE RUN"}</span><strong>{routeLabel} · {sessionId ? (locale === "nl" ? "Sessie" : "Session") : (locale === "nl" ? "Klaar voor vertrek?" : "Ready to drive?")}</strong></div><span className={`gps-status-chip ${tracking ? "is-live" : ""}`}>{tracking ? "GPS · Live" : gpsPending ? "GPS · …" : "GPS · Off"}</span></div><GpsConsentDialog open={consentMode !== null} routeLabel={routeLabel} starting={consentMode === "start"} onEnable={confirmGps} onWithoutGps={withoutGps} onClose={() => setConsentMode(null)} /><div className="practice-control-actions"><button className={`save-route-button ${favorite ? "is-saved" : ""}`} onClick={() => void toggleFavorite()} disabled={busy}><span>{favorite ? "♥" : "♡"}</span>{favorite ? routeCopy.saved : routeCopy.save}</button>{completedSession ? <button className="start-practice-button is-active" onClick={() => void saveReflection()} disabled={busy}>{copy.save} <span>✓</span></button> : sessionId ? <button className="start-practice-button is-active" onClick={() => void completePractice()} disabled={busy}>{routeCopy.completePractice} <span>✓</span></button> : <button className="start-practice-button" onClick={requestPractice} disabled={busy || !practiceReady}>{routeCopy.startPractice} <span>↗</span></button>}</div>
+    <DrivePreparation active={Boolean(sessionId && !completedSession)} feedback={feedback} paid={paidCentreAccess} />
+    {reportSession && <Link className="drive-report-link" href={`/practice/${reportSession}`}>{completedSession || !sessionId ? "03 · View after-drive report & checklist" : "View session observations (only while parked)"} ↗</Link>}
     <div className="practice-progress-panel"><div><span>{locale === "nl" ? "Opgeslagen routevoortgang" : "Recorded route progress"}</span><strong>{progress}%</strong></div><progress max={100} value={progress} aria-label={locale === "nl" ? "Opgeslagen routevoortgang" : "Recorded route progress"} /><div className="practice-progress-scale"><span>0%</span><span>100%</span></div><p role="status">{sessionId ? `Route-following progress: ${progress}% · ` : ""}{locale === "nl" ? "Alleen GPS en bevestiging van de server tellen mee. Geen beoordeling van je rijvaardigheid." : "Only GPS and server-confirmed progress count. Not a driving-skill assessment. Ending practice does not automatically mean the full route was followed."}</p></div>
     {sessionId && !completedSession && <button className={`gps-button ${tracking ? "is-tracking" : ""}`} onClick={() => tracking || gpsPending ? stopTracking() : setConsentMode("gps")}>{gpsPending ? (locale === "nl" ? "GPS-verzoek annuleren" : "Cancel GPS request") : tracking ? routeCopy.stopGps : routeCopy.enableGps} <span>⌖</span></button>}
     {sessionId && !completedSession && <GoogleMapsLinks routeLabel={routeLabel} sections={googleMapsSections} navigation />}

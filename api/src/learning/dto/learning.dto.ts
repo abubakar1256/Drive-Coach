@@ -1,4 +1,10 @@
-import { ArrayUnique, IsArray, IsBoolean, IsInt, IsObject, IsOptional, IsString, Max, MaxLength, Min } from "class-validator";
+import { ArrayUnique, IsArray, IsBoolean, IsIn, IsInt, IsObject, IsOptional, IsString, Max, MaxLength, Min } from "class-validator";
+
+export class SaveDriveReviewDto {
+  @IsIn(["self", "instructor_reported"]) source!: "self" | "instructor_reported";
+  @IsObject() ratings!: Record<string, "good" | "practice" | "not_assessed">;
+  @IsString() @MaxLength(2000) notes!: string;
+}
 
 export class CreatePracticeSessionDto {
   @IsString()

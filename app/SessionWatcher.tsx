@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { clearClientSession, loginRedirectPath, validateClientSession } from "../lib/clientSession";
 
 function isProtectedPath(pathname: string) {
-  return pathname === "/account" || pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || pathname.startsWith("/routes");
+  return pathname === "/account" || pathname.startsWith("/dashboard") || pathname.startsWith("/admin") || pathname.startsWith("/routes") || pathname.startsWith("/practice");
 }
 
 export default function SessionWatcher() {

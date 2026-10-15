@@ -13,6 +13,7 @@
     "test:platform": "pnpm --dir api build && node api/test/platform-workflows.test.cjs && node --test api/test/route-quality.test.cjs api/test/short-road-catalog.test.cjs && node --test tests/route-utils.test.cjs tests/route-progression.test.cjs tests/practice-gps.test.cjs tests/plan-access.test.cjs",
     "api:dev": "pnpm --dir api dev",
     "api:build": "pnpm --dir api build",
+    "test:drive-feedback": "pnpm --dir api build && node --test api/test/drive-report.test.cjs tests/drive-report.test.cjs tests/practice-gps.test.cjs tests/route-progression.test.cjs",
     "api:prisma:validate": "pnpm --dir api prisma:validate"
   },
   "dependencies": {

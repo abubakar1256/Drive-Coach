@@ -87,6 +87,8 @@ test('actual practice handlers retain confirmed next-step after reflection, but 
         '../../lib/route-progression': helpers,
         './GoogleMapsLinks': {__esModule: true, default: () => null},
         './GpsConsentDialog': {__esModule: true, default: () => null},
+        './DrivePreparation': {__esModule: true, default: () => null},
+        'next/link': {__esModule: true, default: props => React.createElement('a', props)},
         './NextRoutePrompt': {__esModule: true, default: promptComponent},
       }).default;
       function render() {cursor = 0; return component({routeLabel: 'Route A', nextRoute: steps[1], centreSlug: 'alken', paidCentreAccess: false, routeId: 'a', routeSlug: 'alken-a', practiceReady: true});}

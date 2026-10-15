@@ -18,6 +18,8 @@ function harness(){
  const mocks={
   react:{...React,useEffect:()=>{},useRef:initial=>{const i=refCursor++;return refs[i]??=( {current:initial} );},useState:initial=>{const i=cursor++;if(!(i in states))states[i]=initial;return [states[i],value=>states[i]=typeof value==='function'?value(states[i]):value];}},
   'next/navigation':{useRouter:()=>({push:()=>{}})},
+  'next/link':{__esModule:true,default:props=>React.createElement('a',props)},
+  './DrivePreparation':{__esModule:true,default:()=>null},
   '../../lib/clientSession':{authFetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>url.endsWith('/track')?{completionPct:23}:{id:'test-session',completionPct:0}};}},
   '../../lib/i18n':{isLocale:()=>true},
   '../../lib/useLocale':{useSiteCopy:()=>({route:{startPractice:'Start practice',completePractice:'Complete practice',enableGps:'Enable optional GPS tracking',stopGps:'Stop GPS tracking',gpsEnabled:'GPS tracking enabled',locationUnsupported:'GPS not supported'}})},
