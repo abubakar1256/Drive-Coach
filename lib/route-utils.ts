@@ -66,6 +66,12 @@ export type GoogleMapsSection = {
   navigationUrl: string;
 };
 
+// Waypoint-leg coverage, not distance travelled or recorded practice completion.
+export function googleMapsSectionRange(section: GoogleMapsSection, sections: GoogleMapsSection[]) {
+  const legs = Math.max(1, (sections.at(-1)?.lastPoint ?? 1) - 1);
+  return { start: Math.round((section.firstPoint - 1) / legs * 100), end: Math.round((section.lastPoint - 1) / legs * 100) };
+}
+
 // Each section fits mobile's three intermediate waypoints. Consecutive
 // sections share their boundary point, preserving every ordered route leg.
 export function googleMapsRouteSections(points: RoutePointLike[]): GoogleMapsSection[] {

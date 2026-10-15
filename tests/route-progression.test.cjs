@@ -51,7 +51,7 @@ test('eligible next route opens only its own slug; completion is not claimed bef
 });
 test('Google parts are labelled as the selected route, not alternative routes', () => {
   const utils = load('lib/route-utils.ts');
-  const component = load('app/routes/GoogleMapsLinks.tsx', {'../../lib/useLocale': {useCurrentLocale: () => 'en'}}).default;
+  const component = load('app/routes/GoogleMapsLinks.tsx', {'../../lib/useLocale': {useCurrentLocale: () => 'en'}, '../../lib/route-utils':utils}).default;
   const sections = utils.googleMapsRouteSections(Array.from({length: 25}, (_, i) => ({latitude: 50 + i / 1000, longitude: 5})));
   const html = renderToStaticMarkup(React.createElement(component, {sections, routeLabel: 'Route A'}));
   assert.match(html, /Route A · Section 6\/6/);
@@ -86,6 +86,7 @@ test('actual practice handlers retain confirmed next-step after reflection, but 
         '../../lib/useLocale': {useSiteCopy: () => ({route: {completePractice: 'End practice', finishError: 'Error'}})},
         '../../lib/route-progression': helpers,
         './GoogleMapsLinks': {__esModule: true, default: () => null},
+        './GpsConsentDialog': {__esModule: true, default: () => null},
         './NextRoutePrompt': {__esModule: true, default: promptComponent},
       }).default;
       function render() {cursor = 0; return component({routeLabel: 'Route A', nextRoute: steps[1], centreSlug: 'alken', paidCentreAccess: false, routeId: 'a', routeSlug: 'alken-a', practiceReady: true});}

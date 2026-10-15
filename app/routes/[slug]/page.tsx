@@ -48,7 +48,7 @@ export default async function RoutePage({ params }: { params: { slug: string } }
 
   const copy = siteCopy[locale].route;
   return (
-    <main>
+    <main className="route-page">
       <PageViewTracker eventType="ROUTE_VIEW" centreSlug={centre.slug} routeSlug={params.slug} />
       <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} /><div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><PlanAccessLink unlock /></div><MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} /></nav>
       <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.routeExperience} · {centre.area}</p><h1>{routeName}</h1></div></div>{apiRoute.sourceLabel && <p className="route-list-note">{apiRoute.sourceLabel}</p>}<RouteExperience key={params.slug} centre={centre} routeId={apiRoute.id} initialDriving={apiRoute.driving} routeSlug={params.slug} routeLabel={routeName} nextRoute={progression.next} /></section>
