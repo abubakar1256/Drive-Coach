@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test:chatbot": "node --test tests/ai-chat.test.cjs && pnpm --dir api test:chatbot",
     "test:auth-email": "pnpm --dir api build && node --test api/test/auth-email.test.cjs tests/email-delivery.test.cjs",
-    "test:routes": "node --test tests/route-utils.test.cjs tests/route-progression.test.cjs && pnpm --dir api build && node --test api/test/route-quality.test.cjs api/test/short-road-catalog.test.cjs",
+    "test:routes": "node --test tests/route-utils.test.cjs tests/route-progression.test.cjs && pnpm --dir api build && node --test api/test/route-quality.test.cjs api/test/short-road-catalog.test.cjs api/test/short-route-replacement.test.cjs",
     "test:platform": "pnpm --dir api build && node api/test/platform-workflows.test.cjs && node --test api/test/route-quality.test.cjs api/test/short-road-catalog.test.cjs && node --test tests/route-utils.test.cjs tests/route-progression.test.cjs tests/plan-access.test.cjs",
     "api:dev": "pnpm --dir api dev",
     "api:build": "pnpm --dir api build",
