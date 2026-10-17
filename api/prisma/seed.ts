@@ -184,13 +184,18 @@ async function main() {
     });
   }
 
-  await prisma.plan.updateMany({ where: { name: { notIn: ["Premium", "Diamond"] } }, data: { isActive: false } });
+  // Keep configured prices, historical IDs and purchased periods unchanged.
   for (const plan of [
-    { name: "Premium", durationHours: 2160, priceCents: 1499 },
-    { name: "Diamond", durationHours: 2160, priceCents: 1999 },
-  ]) await prisma.plan.upsert({ where: { name: plan.name }, update: { ...plan, isActive: true }, create: { ...plan, currency: "EUR", isActive: true } });
+    { name: "Premium", tier: "Basic", durationHours: 2160, priceCents: 1499 },
+    { name: "Diamond", tier: "Premium", durationHours: 2160, priceCents: 1999 },
+  ]) await prisma.plan.upsert({ where: { name: plan.name }, update: { tier: plan.tier }, create: { ...plan, currency: "EUR", isActive: true } });
+  await prisma.plan.updateMany({ where: { name: { in: ["Basic", "Premium", "Diamond"] } }, data: { isActive: false } });
+  for (const tier of ["Basic", "Premium"]) for (const [label, hours, basicPrice, premiumPrice] of [["1 day", 24, 200, 300], ["1 week", 168, 400, 600], ["1 month", 720, 600, 900], ["3 months", 2160, 800, 1200]] as const) {
+    const name = `${tier} ${label}`;
+    await prisma.plan.upsert({ where: { name }, update: {}, create: { name, tier, durationHours: hours, priceCents: tier === "Basic" ? basicPrice : premiumPrice, currency: "EUR", isActive: true } });
+  }
 
-  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${allWeaknesses.length} weaknesses, ${tipCatalog.length} tips (${verifiedTips.length} approved) and 2 access plans.`);
+  console.log(`Seeded ${centres.length} centres, ${drivingSkills.length} skills, ${allWeaknesses.length} weaknesses, ${tipCatalog.length} tips (${verifiedTips.length} approved) and 8 access offers.`);
 }
 
 main().catch((error) => { console.error(error); process.exitCode = 1; }).finally(() => prisma.$disconnect());

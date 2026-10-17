@@ -4,6 +4,7 @@ import { PrismaModule } from "../prisma.module";
 import { AdminModule } from "../admin/admin.module";
 import { MediaController } from "./media.controller";
 import { MediaService } from "./media.service";
+import { RoutesModule } from "../routes/routes.module";
 
-@Module({ imports: [PrismaModule, AuthModule, AdminModule], controllers: [MediaController], providers: [MediaService] })
+@Module({ imports: [PrismaModule, AuthModule, AdminModule, RoutesModule], controllers: [MediaController], providers: [MediaService] })
 export class MediaModule {}

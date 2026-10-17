@@ -24,7 +24,7 @@ test('only backend COMPLETED counts; ended/forged percentage/unknown does not', 
   for (const value of [null, {}, {completionKind: 'ENDED'}, {completionPct: 100}, {completionKind: 'ENDED_EARLY'}]) assert.equal(helpers.confirmedRouteCompletion(value), false);
   assert.equal(helpers.confirmedRouteCompletion({completionKind: 'COMPLETED'}), true);
 });
-test('Free and Premium at another centre must buy; eligible Premium/Diamond may open next', () => {
+test('Free and Basic at another centre must buy; eligible Basic/Premium may open next', () => {
   assert.deepEqual(helpers.nextRouteAction(steps[1], 'alken', false), {unlocked: false, href: '/#pricing'});
   assert.deepEqual(helpers.nextRouteAction(steps[1], 'alken', true), {unlocked: true, href: '/routes/alken-b'});
 });

@@ -27,11 +27,11 @@ const Renderer = loadTs("app/ChatMessageContent.tsx").default;
 const AccessGate = loadTs("app/AIChatAccessGate.tsx").default;
 const copy = loadTs("lib/siteCopy.ts").siteCopy;
 
-test("only explicit active Premium/Diamond entitlements unlock the frontend", () => {
+test("only explicit active Basic/Premium entitlements unlock the frontend", () => {
   const now = Date.now();
   const paid = { plan: "Premium", status: "ACTIVE", expiresAt: new Date(now + 1000).toISOString(), features: { aiChat: true } };
   assert.equal(chat.canUseAIChat(paid, now), true);
-  assert.equal(chat.canUseAIChat({ ...paid, plan: "Diamond", expiresAt: null }, now), true);
+  assert.equal(chat.canUseAIChat({ ...paid, plan: "Basic", expiresAt: null }, now), true);
   for (const overrides of [{ plan: "Free" }, { plan: "Other" }, { status: "PENDING" }, { status: "REFUNDED" }, { features: { aiChat: false } }, { features: {} }, { expiresAt: new Date(now).toISOString() }, { expiresAt: "invalid" }, { expiresAt: undefined }]) {
     assert.equal(chat.canUseAIChat({ ...paid, ...overrides }, now), false);
   }

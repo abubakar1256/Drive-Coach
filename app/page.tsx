@@ -8,7 +8,7 @@ const faqJsonLd = {
   "@type": "FAQPage",
   mainEntity: [
     { "@type": "Question", name: "Are the routes free to discover?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can browse centres and preview routes publicly. A time-based access plan unlocks the complete preparation experience." } },
-    { "@type": "Question", name: "Which access plans are available?", acceptedAnswer: { "@type": "Answer", text: "Premium gives 90 days of access for one chosen exam centre. Diamond gives 90 days of access to all exam centres and the complete Drive Coach experience." } },
+    { "@type": "Question", name: "Which access plans are available?", acceptedAnswer: { "@type": "Answer", text: "Free offers one chosen route for a single 24-hour trial. Basic covers one chosen centre and Premium covers all centres, for 1 day, 1 week, 30 days or 90 days." } },
     { "@type": "Question", name: "Are the routes official examiner routes?", acceptedAnswer: { "@type": "Answer", text: "Routes are preparation guides and can change. Always follow current signs, road rules and examiner instructions." } },
   ],
 };

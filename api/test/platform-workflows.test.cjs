@@ -15,18 +15,18 @@ const { centreRouteCatalog, ExamCentresService } = require("../dist/src/exam-cen
 const { RoutesService } = require("../dist/src/routes/routes.service");
 const geometry = [[5, 50], [5.01, 50], [5.01, 50.01], [5, 50.01], [5, 50]];
 test("billing selects strongest valid plan and filters expired/future access", async () => {
-  const service = new BillingService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findFirst: async args => {
+  const service = new BillingService({ routeTrial: { findUnique: async () => null }, user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findMany: async args => {
     assert.equal(args.where.status, "ACTIVE");
     assert.equal(args.where.AND.length, 2);
-    assert.deepEqual(args.where.plan.name.in, ["Premium", "Diamond"]);
+    assert.equal(args.include.plan, true);
     assert.deepEqual(args.orderBy, [{ plan: { name: "asc" } }, { createdAt: "desc" }]);
-    return { status: "ACTIVE", plan: { name: "Diamond" }, centreId: null, expiresAt: null };
+    return [{ status: "ACTIVE", plan: { name: "Diamond" }, centreId: null, startsAt: null, expiresAt: null }];
   } } });
-  assert.equal((await service.subscription("u")).plan, "Diamond");
+  assert.equal((await service.subscription("u")).plan, "Premium");
 });
 
 test("dashboard uses the same effective subscription as billing for every plan", async () => {
-  for (const plan of ["Free", "Premium", "Diamond"]) {
+  for (const plan of ["Free", "Basic", "Premium"]) {
     const subscription = { status: plan === "Free" ? "FREE" : "ACTIVE", plan, expiresAt: null, centreId: plan === "Premium" ? "centre-a" : null };
     const prisma = { $queryRawUnsafe: async sql => {
       assert.ok(!sql.includes('FROM "Subscription"'), "dashboard must not calculate a conflicting plan separately");
@@ -56,9 +56,9 @@ test("Diamond cannot checkout Premium or Diamond again", async () => {
   const previous = process.env.STRIPE_SECRET_KEY;
   process.env.STRIPE_SECRET_KEY = "test-only";
   try {
-    for (const requested of ["Premium", "Diamond"]) {
-      const service = new BillingService({ plan: { findUnique: async () => ({ name: requested, isActive: true }) } });
-      service.subscription = async () => ({ status: "ACTIVE", plan: "Diamond" });
+    for (const requested of ["Basic", "Premium"]) {
+      const service = new BillingService({ plan: { findUnique: async () => ({ name: `${requested} 1 day`, tier: requested, durationHours: 24, priceCents: 200, isActive: true }) } });
+      service.subscription = async () => ({ status: "ACTIVE", plan: "Premium" });
       await assert.rejects(service.checkout("u", { planId: "p" }), /already active/);
     }
   } finally { if (previous === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = previous; }
@@ -67,7 +67,7 @@ test("Premium cannot checkout its active plan again", async () => {
   const previous = process.env.STRIPE_SECRET_KEY;
   process.env.STRIPE_SECRET_KEY = "test-only";
   try {
-    const service = new BillingService({ plan: { findUnique: async () => ({ name: "Premium", isActive: true }) } });
+    const service = new BillingService({ plan: { findUnique: async () => ({ name: "Basic 1 day", tier: "Basic", durationHours: 24, priceCents: 200, isActive: true }) } });
     service.subscription = async () => ({ status: "ACTIVE", plan: "Premium" });
     await assert.rejects(service.checkout("u", { planId: "p" }), /already active/);
   } finally { if (previous === undefined) delete process.env.STRIPE_SECRET_KEY; else process.env.STRIPE_SECRET_KEY = previous; }
@@ -75,29 +75,29 @@ test("Premium cannot checkout its active plan again", async () => {
 const snapshot = { geometry, points: geometry, distanceM: snapshotDistance(geometry) };
 function accessFixture(plan, centreId, role = "LEARNER", routeId = "paid-route") {
   let calls = 0;
-  const prisma = { route: { findFirst: async args => { calls++; return args.where.id ? { id: routeId, centreId: "centre-a" } : { id: "free-route" }; } }, user: { findUnique: async () => ({ role }) }, subscription: { findMany: async args => { assert.equal(args.where.status, "ACTIVE"); assert.ok(args.where.AND.length === 2); return plan ? [{ plan: { name: plan }, centreId }] : []; } } };
+  const prisma = { routeTrial: { findUnique: async () => null }, route: { findFirst: async args => { calls++; return args.where.id ? { id: routeId, centreId: "centre-a" } : { id: "free-route" }; } }, user: { findUnique: async () => ({ role }) }, subscription: { findMany: async args => { assert.equal(args.where.status, "ACTIVE"); assert.ok(args.where.AND.length === 2); return plan ? [{ status: "ACTIVE", startsAt: null, expiresAt: null, plan: { name: plan }, centreId }] : []; } } };
   return new RouteAccessService(prisma);
 }
-test("Premium is scoped to purchased centre", async () => { assert.equal((await accessFixture("Premium", "centre-a").requireAccess("u", "paid-route")).premium, true); await assert.rejects(accessFixture("Premium", "centre-b").requireAccess("u", "paid-route"), /Choose Premium/); });
-test("unbound legacy Premium cannot unlock another centre", async () => assert.rejects(accessFixture("Premium", null).requireAccess("u", "paid-route"), /Choose Premium/));
+test("Premium is scoped to purchased centre", async () => { assert.equal((await accessFixture("Premium", "centre-a").requireAccess("u", "paid-route")).premium, true); await assert.rejects(accessFixture("Premium", "centre-b").requireAccess("u", "paid-route"), /choose Basic/); });
+test("unbound legacy Premium cannot unlock another centre", async () => assert.rejects(accessFixture("Premium", null).requireAccess("u", "paid-route"), /choose Basic/));
 test("Diamond and admins can access multiple centres", async () => { assert.equal((await accessFixture("Diamond", null).requireAccess("u", "paid-route")).premium, true); assert.equal((await accessFixture(null, null, "ADMIN").requireAccess("u", "paid-route")).premium, true); });
-test("free first route is allowed but other routes are denied", async () => { assert.equal((await accessFixture(null, null, "LEARNER", "free-route").requireAccess("u", "free-route")).premium, false); await assert.rejects(accessFixture(null, null).requireAccess("u", "paid-route")); });
+test("no route is unlocked until the one-route trial is explicitly claimed", async () => { await assert.rejects(accessFixture(null, null, "LEARNER", "free-route").requireAccess("u", "free-route")); await assert.rejects(accessFixture(null, null).requireAccess("u", "paid-route")); });
 
 const centreCatalogFixture = { id: "centre-a", name: "Alken", city: "Alken", region: "Limburg", routes: Array.from({ length: 7 }, (_, i) => ({ id: `route-${i}`, name: `Route ${i}`, durationMin: 24 + i, points: [{ latitude: 50, longitude: 5, title: `PRIVATE-${i}`, imageUrl: "private-image", videoUrl: "private-video" }], _count: { points: 25 } })) };
-test("seven-route catalogue exposes one free route and no paid point previews", () => {
+test("public catalogue exposes metadata only, with no automatic free route", () => {
   const result = centreRouteCatalog(centreCatalogFixture);
-  assert.equal(result.routes.filter(r => r.isFree).length, 1);
-  assert.equal(result.routes.filter(r => r.canAccess).length, 1);
+  assert.equal(result.routes.filter(r => r.isFree).length, 0);
+  assert.equal(result.routes.filter(r => r.canAccess).length, 0);
   assert.equal(result.routes[0].label, "Route A"); assert.equal(result.routes[6].label, "Route G");
   assert.ok(result.routes.slice(1).every(r => r.points.length === 0));
   assert.equal(result.routes[1].pointCount, 25);
   assert.equal(result.premiumInfo, null);
-  assert.equal(result.routes[0].points[0].imageUrl, null);
+  assert.equal(result.routes[0].points.length, 0);
 });
 test("paid centre catalogue unlocks all seven routes and bilingual preparation information", () => {
   const result = centreRouteCatalog(centreCatalogFixture, { premium: true, plan: "Premium" }, true);
   assert.equal(result.routes.filter(r => r.canAccess).length, 7);
-  assert.equal(result.routes.filter(r => r.isFree).length, 1);
+  assert.equal(result.routes.filter(r => r.isFree).length, 0);
   assert.equal(result.premiumInfo.sections.length, 4);
   assert.ok(result.premiumInfo.sections.every(s => s.text.en && s.text.nl));
   assert.match(result.premiumInfo.disclaimer.en, /not official examiner criteria/);
@@ -120,7 +120,7 @@ test("public centre route query enforces 24-minute reviewed publication and stab
   assert.equal(result.routes[1].points.length, 0);
 });
 test("expired or revoked subscriptions cannot unlock centre information", async () => {
-  const service = new RouteAccessService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findMany: async args => {
+  const service = new RouteAccessService({ routeTrial: { findUnique: async () => null }, user: { findUnique: async () => ({ role: "LEARNER" }) }, subscription: { findMany: async args => {
     assert.equal(args.where.status, "ACTIVE");
     assert.ok(args.where.AND[0].OR.some(condition => condition.startsAt?.lte instanceof Date));
     assert.ok(args.where.AND[1].OR.some(condition => condition.expiresAt?.gt instanceof Date));
@@ -136,7 +136,7 @@ test("paid route public URLs and point endpoints do not expose a waypoint previe
   const service = new RoutesService(prisma, driving, {});
   const result = await service.getBySlug("paid");
   assert.deepEqual(result.points, []); assert.deepEqual(result.driving.coordinates, []);
-  assert.equal(result.access.requiresPaid, true);
+  assert.equal(result.access.requiresAccess, true);
   assert.deepEqual(await service.points("paid"), []);
 });
 
@@ -188,7 +188,7 @@ test("HTML disguised as media is rejected by file signature", () => { assert.equ
 test("unpaid signed checkout must not activate subscriptions", async () => { let updated = false; const tx = { payment: { update: async () => { updated = true; } } }; await new BillingService({}).completeCheckout(tx, { payment_status: "unpaid" }); assert.equal(updated, false); });
 test("paid amount/currency mismatch is rejected", async () => { const tx = { $queryRawUnsafe: async () => [{ id: "p" }], payment: { findUnique: async () => ({ id: "p", amountCents: 1499, currency: "EUR", status: "PENDING", plan: { name: "Premium" } }) } }; await assert.rejects(new BillingService({}).completeCheckout(tx, { id: "cs", payment_status: "paid", amount_total: 1, currency: "eur" }), /mismatch/); });
 test("already fulfilled checkout cannot create another subscription/commission", async () => { const tx = { $queryRawUnsafe: async () => [{ id: "p" }], payment: { findUnique: async () => ({ status: "SUCCEEDED" }) } }; await new BillingService({}).completeCheckout(tx, { id: "cs", payment_status: "paid" }); });
-test("one-time Premium centre selection cannot switch an existing centre", async () => { const service = new BillingService({ examCentre: { findFirst: async () => ({ id: "b" }) }, subscription: { findFirst: async () => ({ id: "s", centreId: "a" }) } }); await assert.rejects(service.selectCentre("u", "b"), /cannot be changed/); });
+test("one-time Premium centre selection cannot switch an existing centre", async () => { const service = new BillingService({ examCentre: { findFirst: async () => ({ id: "b" }) }, subscription: { findMany: async () => [{ id: "s", centreId: "a", status: "ACTIVE", startsAt: null, expiresAt: null, plan: { name: "Premium" } }] } }); await assert.rejects(service.selectCentre("u", "b"), /cannot be changed/); });
 test("successful payment creates scoped access, commission and notification", async () => {
   const created = {};
   const tx = { $queryRawUnsafe: async () => [{ id: "p" }], payment: { findUnique: async () => ({ id: "p", userId: "u", planId: "plan", amountCents: 1499, currency: "EUR", status: "PENDING", metadata: { centreId: "a" }, plan: { name: "Premium", durationHours: 2160 } }), update: async args => { created.payment = args.data; } }, subscription: { create: async args => { created.subscription = args.data; return { ...args.data, id: "sub" }; } }, referralAttribution: { findUnique: async () => ({ codeId: "code", code: { ownerUserId: "owner", commissionBps: 1000 } }) }, commission: { upsert: async args => { created.commission = args.create; } }, notification: { createMany: async args => { created.notification = args.data[0]; } } };
@@ -244,8 +244,8 @@ test("database media upload stores bytes and audit atomically without local file
     const bytes = Buffer.from([137,80,78,71,13,10,26,10,0]);
     const result = await new MediaService(prisma).uploadFile("u", "point", { buffer: bytes, originalname: "test.png", mimetype: "image/png", size: bytes.length });
     assert.equal(result.provider, "database"); assert.deepEqual(asset.dataBytes, bytes); assert.equal(audited, true);
-    const reader = new MediaService({ $queryRawUnsafe: async () => [{ storageKey: asset.storageKey, publicUrl: asset.publicUrl, mimeType: asset.mimeType }], mediaAsset: { findUnique: async () => ({ dataBytes: bytes }) } });
-    assert.deepEqual((await reader.file(asset.id)).buffer, bytes);
+    const reader = new MediaService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, $queryRawUnsafe: async () => [{ storageKey: asset.storageKey, publicUrl: asset.publicUrl, mimeType: asset.mimeType }], mediaAsset: { findUnique: async () => ({ routePoint: { routeId: "r" }, dataBytes: bytes }) } }, { requireAccess: async (user, route) => { assert.equal(user, "u"); assert.equal(route, "r"); return { premium: true }; } });
+    assert.deepEqual((await reader.file("u", asset.id)).buffer, bytes);
   } finally { if (previous === undefined) delete process.env.MEDIA_PROVIDER; else process.env.MEDIA_PROVIDER = previous; }
 });
 test("starter import preserves existing routes without routing or overwriting", async () => {

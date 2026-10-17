@@ -4,6 +4,8 @@ import type { Prisma } from "@prisma/client";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CheckoutDto, CouponValidationDto, CreateCouponDto } from "./dto/billing.dto";
+import { ACCESS_PERIODS, planTier, validSubscription } from "./access-policy";
+import { publishedRoutePolicy } from "../routes/published-route-policy";
 
 type StripeResponse = { [key: string]: unknown; id?: string; url?: string; payment_intent?: string | null; invoice?: string | null; subscription?: string | null; amount_total?: number; currency?: string; metadata?: Record<string, string> };
 
@@ -11,17 +13,40 @@ type StripeResponse = { [key: string]: unknown; id?: string; url?: string; payme
 export class BillingService {
   constructor(private readonly prisma: PrismaService) {}
 
-  listPlans() {
-    return this.prisma.plan.findMany({ where: { isActive: true, name: { in: ["Premium", "Diamond"] } }, orderBy: { priceCents: "asc" }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true } });
+  async listPlans() {
+    const plans = await this.prisma.plan.findMany({ orderBy: { durationHours: "asc" } });
+    return plans.filter(p => planTier(p) && !["Basic", "Premium", "Diamond"].includes(p.name) && ACCESS_PERIODS.includes(p.durationHours as typeof ACCESS_PERIODS[number])).map(p => ({ id: p.id, name: planTier(p), durationHours: p.durationHours, priceCents: p.isActive && p.priceCents > 0 ? p.priceCents : null, currency: p.currency, purchasable: p.isActive && p.priceCents > 0 }));
+  }
+
+  async trial(userId: string) {
+    const trial = await this.prisma.routeTrial.findUnique({ where: { userId }, include: { route: { select: { slug: true, name: true } } } });
+    return { available: !trial, active: Boolean(trial && trial.startedAt <= new Date() && trial.expiresAt > new Date()), routeId: trial?.routeId ?? null, routeSlug: trial?.route.slug ?? null, startedAt: trial?.startedAt ?? null, expiresAt: trial?.expiresAt ?? null };
+  }
+
+  async startTrial(userId: string, routeId: string) {
+    if ((await this.subscription(userId)).status === "ACTIVE") throw new BadRequestException("Your paid access is already active; no trial is needed");
+    return this.prisma.$transaction(async tx => {
+      await tx.$executeRawUnsafe('SELECT pg_advisory_xact_lock(hashtext($1))', `route-trial:${userId}`);
+      const existing = await tx.routeTrial.findUnique({ where: { userId } });
+      if (existing) {
+        if (existing.routeId === routeId && existing.expiresAt > new Date()) return existing;
+        throw new BadRequestException("Your one-route trial has already been used. Choose Basic or Premium for further access.");
+      }
+      if (!await tx.route.findFirst({ where: { id: routeId, ...publishedRoutePolicy, centre: { isPublished: true } } })) throw new BadRequestException("Reviewed published route not found");
+      const startedAt = new Date();
+      const trial = await tx.routeTrial.create({ data: { userId, routeId, startedAt, expiresAt: new Date(startedAt.getTime() + 86400000) } });
+      await tx.auditLog.create({ data: { userId, action: "ROUTE_TRIAL_STARTED", entity: "Route", entityId: routeId } });
+      return trial;
+    });
   }
 
   async subscription(userId: string) {
     const now = new Date();
-    const [user, subscription] = await Promise.all([
+    const [user, subscriptions, trial] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
-      this.prisma.subscription.findFirst({
+      this.prisma.subscription.findMany({
         where: {
-          userId, status: "ACTIVE", plan: { name: { in: ["Premium", "Diamond"] } },
+          userId, status: "ACTIVE",
           AND: [
             { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
             { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
@@ -29,15 +54,18 @@ export class BillingService {
         },
         include: { plan: true }, orderBy: [{ plan: { name: "asc" } }, { createdAt: "desc" }],
       }),
+      this.trial(userId),
     ]);
-    if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Diamond", startsAt: null, expiresAt: null, provider: "INTERNAL" };
-    return user && subscription ? { status: subscription.status, plan: subscription.plan.name, centreId: subscription.centreId, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider } : { status: "FREE", plan: "Free", centreId: null, startsAt: null, expiresAt: null, provider: null };
+    const eligible = subscriptions.filter(s => planTier(s.plan) && validSubscription(s, now));
+    const subscription = eligible.find(s => planTier(s.plan) === "Premium") ?? eligible[0];
+    if (user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN) return { status: "ACTIVE", plan: "Premium", startsAt: null, expiresAt: null, provider: "INTERNAL", trial };
+    return user && subscription ? { status: subscription.status, plan: planTier(subscription.plan)!, centreId: subscription.centreId, startsAt: subscription.startsAt, expiresAt: subscription.expiresAt, provider: subscription.provider, trial } : { status: "FREE", plan: "Free", centreId: null, startsAt: null, expiresAt: null, provider: null, trial };
   }
 
   async entitlements(userId: string) {
     const subscription = await this.subscription(userId);
     const premium = subscription.status === "ACTIVE" && subscription.plan !== "Free";
-    const aiChat = subscription.status === "ACTIVE" && ["Premium", "Diamond"].includes(subscription.plan);
+    const aiChat = subscription.status === "ACTIVE" && ["Basic", "Premium"].includes(subscription.plan);
     return { premium, plan: subscription.plan, status: subscription.status, expiresAt: subscription.expiresAt, features: { routeDetails: true, fullRouteMedia: premium, practiceSessions: true, progressHistory: true, savedRoutes: true, prioritySupport: premium, aiChat } };
   }
 
@@ -68,12 +96,13 @@ export class BillingService {
   async checkout(userId: string, dto: CheckoutDto) {
     const secret = process.env.STRIPE_SECRET_KEY;
     if (!secret) return this.checkoutUnavailable();
-    const plan = await this.prisma.plan.findUnique({ where: { id: dto.planId }, select: { id: true, name: true, durationHours: true, priceCents: true, currency: true, isActive: true } });
-    if (!plan?.isActive) throw new BadRequestException("Plan not found or inactive");
-    if (!["Premium", "Diamond"].includes(plan.name)) throw new BadRequestException("Unsupported plan");
+    const plan = await this.prisma.plan.findUnique({ where: { id: dto.planId } });
+    if (!plan?.isActive || ["Basic", "Premium", "Diamond"].includes(plan.name)) throw new BadRequestException("Plan not found or inactive");
+    const tier = planTier(plan);
+    if (!tier || !ACCESS_PERIODS.includes(plan.durationHours as typeof ACCESS_PERIODS[number]) || plan.priceCents <= 0) throw new BadRequestException("This access period has no configured paid price");
     const current = await this.subscription(userId);
-    if (current.status === "ACTIVE" && (current.plan === "Diamond" || current.plan === plan.name)) throw new BadRequestException("This access is already active on your account");
-    if (plan.name === "Premium" && (!dto.centreId || !await this.prisma.examCentre.findFirst({ where: { id: dto.centreId, isPublished: true } }))) throw new BadRequestException("Choose your exam centre before buying Premium");
+    if (current.status === "ACTIVE" && (current.plan === "Premium" || current.plan === tier)) throw new BadRequestException("This access is already active on your account");
+    if (tier === "Basic" && (!dto.centreId || !await this.prisma.examCentre.findFirst({ where: { id: dto.centreId, isPublished: true } }))) throw new BadRequestException("Choose your exam centre before buying Basic");
     if (dto.schoolId && !await this.prisma.drivingSchool.findFirst({ where: { id: dto.schoolId, createdByUserId: userId } })) throw new BadRequestException("School billing is limited to the school owner");
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
     if (!user) throw new BadRequestException("User not found");
@@ -84,11 +113,11 @@ export class BillingService {
       amountCents = Math.max(0, plan.priceCents - discount);
     }
     const paymentId = randomUUID();
-    await this.prisma.$executeRawUnsafe('INSERT INTO "Payment" ("id", "userId", "planId", "provider", "amountCents", "currency", "status", "metadata", "schoolId") VALUES ($1,$2,$3,\'STRIPE\',$4,$5,\'PENDING\',$6::jsonb,$7)', paymentId, userId, plan.id, amountCents, plan.currency, JSON.stringify({ couponCode: dto.couponCode ?? null, originalAmountCents: plan.priceCents, centreId: plan.name === "Premium" ? dto.centreId : null }), dto.schoolId ?? null);
+    await this.prisma.$executeRawUnsafe('INSERT INTO "Payment" ("id", "userId", "planId", "provider", "amountCents", "currency", "status", "metadata", "schoolId") VALUES ($1,$2,$3,\'STRIPE\',$4,$5,\'PENDING\',$6::jsonb,$7)', paymentId, userId, plan.id, amountCents, plan.currency, JSON.stringify({ couponCode: dto.couponCode ?? null, originalAmountCents: plan.priceCents, tier, durationHours: plan.durationHours, centreId: tier === "Basic" ? dto.centreId : null }), dto.schoolId ?? null);
     const webOrigin = process.env.WEB_ORIGIN ?? "http://localhost:3000";
     const form = new URLSearchParams();
     form.set("mode", "payment"); form.set("success_url", process.env.STRIPE_SUCCESS_URL ?? `${webOrigin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`); form.set("cancel_url", process.env.STRIPE_CANCEL_URL ?? `${webOrigin}/account?checkout=cancelled`); form.set("customer_email", user.email); form.set("client_reference_id", userId); form.set("invoice_creation[enabled]", "true");
-    form.set("line_items[0][price_data][currency]", plan.currency.toLowerCase()); form.set("line_items[0][price_data][unit_amount]", String(amountCents)); form.set("line_items[0][price_data][product_data][name]", `RoutePilot ${plan.name} access`); form.set("line_items[0][quantity]", "1");
+    form.set("line_items[0][price_data][currency]", plan.currency.toLowerCase()); form.set("line_items[0][price_data][unit_amount]", String(amountCents)); form.set("line_items[0][price_data][product_data][name]", `Drive Coach ${tier} · ${plan.durationHours / 24} days`); form.set("line_items[0][quantity]", "1");
     form.set("metadata[paymentId]", paymentId); form.set("metadata[userId]", userId); form.set("metadata[planId]", plan.id); if (dto.couponCode) form.set("metadata[couponCode]", dto.couponCode.trim().toUpperCase());
     form.set("payment_intent_data[metadata][paymentId]", paymentId);
     try {
@@ -141,8 +170,9 @@ export class BillingService {
   async selectCentre(userId: string, centreId: string) {
     if (!await this.prisma.examCentre.findFirst({ where: { id: centreId, isPublished: true } })) throw new BadRequestException("Published centre not found");
     const now = new Date();
-    const current = await this.prisma.subscription.findFirst({ where: { userId, status: "ACTIVE", plan: { name: "Premium" }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }, orderBy: { createdAt: "desc" } });
-    if (!current) throw new BadRequestException("Active Premium subscription required");
+    const rows = await this.prisma.subscription.findMany({ where: { userId, status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }, include: { plan: true }, orderBy: { createdAt: "desc" } });
+    const current = rows.find(s => planTier(s.plan) === "Basic" && validSubscription(s, now));
+    if (!current) throw new BadRequestException("Active Basic subscription required");
     if (current.centreId && current.centreId !== centreId) throw new BadRequestException("The purchased centre cannot be changed during this access period");
     const result = await this.prisma.subscription.updateMany({ where: { id: current.id, userId, status: "ACTIVE", centreId: null }, data: { centreId } });
     if (!result.count && current.centreId !== centreId) throw new BadRequestException("Centre already selected; refresh your account");
@@ -181,10 +211,13 @@ export class BillingService {
     if (!payment || payment.status === "SUCCEEDED" || payment.status === "REFUNDED") return;
     if (session.amount_total !== payment.amountCents || String(session.currency).toUpperCase() !== payment.currency.toUpperCase()) throw new BadRequestException("Checkout amount or currency mismatch");
     const metadata = (payment.metadata ?? {}) as Record<string, unknown>;
-    const centreId = payment.plan.name === "Premium" && typeof metadata.centreId === "string" ? metadata.centreId : null;
-    if (payment.plan.name === "Premium" && !centreId) throw new BadRequestException("Premium payment needs its purchased centre");
+    const tier = metadata.tier === "Basic" || metadata.tier === "Premium" ? metadata.tier : planTier(payment.plan);
+    const durationHours = typeof metadata.durationHours === "number" ? metadata.durationHours : payment.plan.durationHours;
+    if (!tier || !ACCESS_PERIODS.includes(durationHours as typeof ACCESS_PERIODS[number])) throw new BadRequestException("Invalid purchased access period");
+    const centreId = tier === "Basic" && typeof metadata.centreId === "string" ? metadata.centreId : null;
+    if (tier === "Basic" && !centreId && metadata.tier) throw new BadRequestException("Basic payment needs its purchased centre");
     const now = new Date();
-    const subscription = await tx.subscription.create({ data: { userId: payment.userId, planId: payment.planId, centreId, status: "ACTIVE", provider: "STRIPE", providerRef: typeof session.payment_intent === "string" ? session.payment_intent : session.id, startsAt: now, expiresAt: new Date(now.getTime() + payment.plan.durationHours * 3600000) } });
+    const subscription = await tx.subscription.create({ data: { userId: payment.userId, planId: payment.planId, centreId, status: "ACTIVE", provider: "STRIPE", providerRef: typeof session.payment_intent === "string" ? session.payment_intent : session.id, startsAt: now, expiresAt: new Date(now.getTime() + durationHours * 3600000) } });
     await tx.payment.update({ where: { id: payment.id }, data: { status: "SUCCEEDED", checkoutSessionId: session.id, subscriptionId: subscription.id, providerPaymentId: typeof session.payment_intent === "string" ? session.payment_intent : session.id } });
     if (typeof metadata.couponCode === "string") await tx.coupon.updateMany({ where: { code: metadata.couponCode.toUpperCase(), active: true }, data: { redeemCount: { increment: 1 } } });
     const attribution = await tx.referralAttribution.findUnique({ where: { referredUserId: payment.userId }, include: { code: true } });
@@ -192,7 +225,7 @@ export class BillingService {
       const cents = Math.floor(payment.amountCents * attribution.code.commissionBps / 10000);
       if (cents > 0) await tx.commission.upsert({ where: { paymentId: payment.id }, update: {}, create: { referralCodeId: attribution.codeId, referredUserId: payment.userId, paymentId: payment.id, amountCents: payment.amountCents, commissionCents: cents } });
     }
-    await tx.notification.createMany({ data: [{ userId: payment.userId, type: "PAYMENT_SUCCEEDED", title: "Your preparation access is active", body: `${payment.plan.name} is active until ${subscription.expiresAt!.toISOString().slice(0, 10)}.`, dedupeKey: `payment-paid:${payment.id}` }], skipDuplicates: true });
+    await tx.notification.createMany({ data: [{ userId: payment.userId, type: "PAYMENT_SUCCEEDED", title: "Your preparation access is active", body: `${tier} is active until ${subscription.expiresAt!.toISOString().slice(0, 10)}.`, dedupeKey: `payment-paid:${payment.id}` }], skipDuplicates: true });
   }
 
   private async refundRecords(tx: Prisma.TransactionClient, object: StripeResponse) {

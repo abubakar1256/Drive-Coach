@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:access": "pnpm --dir api build && node --test api/test/phase-one-access.test.cjs api/test/platform-workflows.test.cjs tests/phase-one-access.test.cjs tests/plan-access.test.cjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

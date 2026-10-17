@@ -15,7 +15,7 @@ export default function AIChatAccessGate({ status, copy, loginHref, onRetry, onN
     <span className="ai-chat-access-label">{copy.paidAccess}</span>
     <h2>{copy.lockedTitle}</h2>
     <p>{copy.lockedDescription}</p>
-    <div className="ai-chat-plan-badges"><span>Premium</span><span>Diamond</span></div>
+    <div className="ai-chat-plan-badges"><span>Basic</span><span>Premium</span></div>
     <Link className="button button-small button-full" href="/#pricing" onClick={onNavigate}>{copy.viewPlans} <span aria-hidden="true">↗</span></Link>
     {status === "guest" ? <><small>{copy.loginHint}</small><Link className="ai-chat-access-link" href={loginHref} onClick={onNavigate}>{copy.logIn} →</Link></>
       : <button className="ai-chat-access-link" type="button" onClick={onRetry}>{copy.refreshAccess} ↻</button>}

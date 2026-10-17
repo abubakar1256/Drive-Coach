@@ -95,8 +95,8 @@ test("account plan ignores expired/future/Free subscriptions and gives active Di
     [[], "Free"],
     [[sub("Diamond", tomorrow)], "Free"],
     [[sub("Diamond", yesterday, yesterday)], "Free"],
-    [[sub("Free"), sub("Premium")], "Premium"],
-    [[sub("Premium"), sub("Diamond")], "Diamond"],
+    [[sub("Free"), sub("Premium")], "Basic"],
+    [[sub("Premium"), sub("Diamond")], "Premium"],
   ]) {
     const user = {id: "u", email, role: "LEARNER", subscriptions};
     const service = new AuthService({user: {findUnique: async () => user}, $queryRawUnsafe: async () => [{emailVerifiedAt: new Date()}]}, {});

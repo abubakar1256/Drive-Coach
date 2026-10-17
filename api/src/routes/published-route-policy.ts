@@ -5,5 +5,5 @@ export const publishedRoutePolicy = {
   durationMin: { gte: 24 },
 };
 
-// Keep Route A/free access stable when administrators add or rename routes.
+// Keep route labels and progression stable when administrators add or rename routes.
 export const publishedRouteOrder = [{ createdAt: "asc" as const }, { id: "asc" as const }];

@@ -10,15 +10,16 @@ const fallbackCentres = officialCentres.map((centre) => ({ ...centre, routes: 0 
 
 type CatalogCentre = Pick<ExamCentre, "name" | "city" | "region"> & { routes: Array<Route & { points: RoutePoint[]; _count?: { points: number } }> };
 
-export function centreRouteCatalog<T extends CatalogCentre>(centre: T, entitlement = { premium: false, plan: "Free" }, signedIn = false) {
+export function centreRouteCatalog<T extends CatalogCentre>(centre: T, entitlement: { premium: boolean; plan: string; expiresAt?: Date | null; trial?: { available: boolean; active: boolean; routeId: string | null; expiresAt: Date | null } } = { premium: false, plan: "Free" }, signedIn = false) {
   return { ...centre,
     access: { ...entitlement, signedIn },
     premiumInfo: entitlement.premium ? premiumCentreInfo(centre) : null,
     routes: centre.routes.map((route, index) => ({
       ...route, label: `Route ${String.fromCharCode(65 + index)}`,
-      isFree: index === 0, canAccess: index === 0 || entitlement.premium,
+      isFree: Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id), canAccess: entitlement.premium || Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id),
+      canStartTrial: signedIn && Boolean(entitlement.trial?.available),
       pointCount: route._count?.points ?? route.points.length,
-      points: index === 0 || entitlement.premium ? route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [],
+      points: entitlement.premium || (entitlement.trial?.active && entitlement.trial.routeId === route.id) ? route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [],
     })),
   };
 }

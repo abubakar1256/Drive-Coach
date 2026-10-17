@@ -1,31 +1,38 @@
-import { BadRequestException, Body, Controller, Get, Headers, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Header, Headers, Param, Post, Req, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
 import { AdminGuard } from "../admin/admin.guard";
 import { FinanceGuard } from "../admin/finance.guard";
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { BillingService } from "./billing.service";
 import { CheckoutDto, CouponValidationDto, CreateCouponDto, SelectCentreDto } from "./dto/billing.dto";
+import { CreatePracticeSessionDto } from "../learning/dto/learning.dto";
 
 @Controller()
 export class BillingController {
   constructor(private readonly billingService: BillingService) {}
 
-  @Get("plans")
+  @Get("plans") @Header("Cache-Control", "no-store")
   listPlans() { return this.billingService.listPlans(); }
 
-  @Get("me/subscription")
+  @Get("me/trial") @UseGuards(JwtAuthGuard) @Header("Cache-Control", "private, no-store")
+  trial(@Req() request: AuthenticatedRequest) { return this.billingService.trial(request.user.sub); }
+
+  @Post("me/trial") @UseGuards(JwtAuthGuard)
+  startTrial(@Req() request: AuthenticatedRequest, @Body() dto: CreatePracticeSessionDto) { return this.billingService.startTrial(request.user.sub, dto.routeId); }
+
+  @Get("me/subscription") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   subscription(@Req() request: AuthenticatedRequest) { return this.billingService.subscription(request.user.sub); }
 
-  @Get("me/entitlements")
+  @Get("me/entitlements") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   entitlements(@Req() request: AuthenticatedRequest) { return this.billingService.entitlements(request.user.sub); }
 
-  @Get("me/payments")
+  @Get("me/payments") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   payments(@Req() request: AuthenticatedRequest) { return this.billingService.payments(request.user.sub); }
 
-  @Get("me/invoices")
+  @Get("me/invoices") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   invoices(@Req() request: AuthenticatedRequest) { return this.billingService.invoices(request.user.sub); }
 

@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Header, NotFoundException, Param, Req, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard, type AuthenticatedRequest } from "../auth/auth.guard";
 import { ExamCentresService } from "./exam-centres.service";
 
@@ -11,7 +11,7 @@ export class ExamCentresController {
     return this.examCentresService.list();
   }
 
-  @Get(":slug/access")
+  @Get(":slug/access") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   async access(@Param("slug") slug: string, @Req() req: AuthenticatedRequest) {
     const centre = await this.examCentresService.getBySlug(slug, req.user.sub);

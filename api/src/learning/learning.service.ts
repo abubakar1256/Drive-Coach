@@ -199,6 +199,7 @@ export class LearningService {
       const session = await tx.practiceSession.findFirst({ where: { id: sessionId, userId } });
       if (!session) throw new NotFoundException("Practice session not found");
       if (session.completedAt) throw new BadRequestException("Practice session has ended");
+      await this.routeAccess.requireAccess(userId, session.routeId);
       const snapshot = session.routeSnapshot as PracticeSnapshot | null;
       if (!snapshot) throw new BadRequestException("Restart this legacy session to capture reviewed route geometry");
       if (dto.recordedAt) {

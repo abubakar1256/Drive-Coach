@@ -7,6 +7,7 @@ import { ChangePasswordDto, ForgotPasswordDto, LoginDto, RegisterDto, ResendVeri
 import { PrismaService } from "../prisma.service";
 
 import { sendAuthEmail } from "./auth-email";
+import { planTier, validSubscription } from "../billing/access-policy";
 
 export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET ?? "development-only-change-this-secret";
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000;
@@ -82,11 +83,11 @@ export class AuthService {
       const user = await this.prisma.user.findUnique({ where: { id: userId }, include: { subscriptions: { include: { plan: true }, orderBy: { createdAt: "desc" } } } });
       if (!user) throw new UnauthorizedException("User no longer exists");
       const now = new Date();
-      const validSubscriptions = user.subscriptions.filter((item) => ["Premium", "Diamond"].includes(item.plan.name) && item.status === "ACTIVE" && (!item.startsAt || item.startsAt <= now) && (!item.expiresAt || item.expiresAt > now));
-      const subscription = validSubscriptions.find((item) => item.plan.name === "Diamond") ?? validSubscriptions[0];
-      const adminHasDiamond = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN;
+      const validSubscriptions = user.subscriptions.filter((item) => planTier(item.plan) && validSubscription(item, now));
+      const subscription = validSubscriptions.find((item) => planTier(item.plan) === "Premium") ?? validSubscriptions[0];
+      const adminHasPremium = user.role === UserRole.ADMIN || user.role === UserRole.SUPER_ADMIN;
       const verification = await this.prisma.$queryRawUnsafe<Array<{ emailVerifiedAt: Date | null }>>('SELECT "emailVerifiedAt" FROM "User" WHERE "id" = $1', userId);
-      return { ...this.safeUser(user), emailVerified: Boolean(verification[0]?.emailVerifiedAt), subscription: adminHasDiamond ? { status: "ACTIVE", planName: "Diamond", expiresAt: null } : subscription ? { status: subscription.status, planName: subscription.plan.name, expiresAt: subscription.expiresAt } : { status: "FREE", planName: "Free", expiresAt: null } };
+      return { ...this.safeUser(user), emailVerified: Boolean(verification[0]?.emailVerifiedAt), subscription: adminHasPremium ? { status: "ACTIVE", planName: "Premium", expiresAt: null } : subscription ? { status: subscription.status, planName: planTier(subscription.plan), expiresAt: subscription.expiresAt } : { status: "FREE", planName: "Free", expiresAt: null } };
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
       throw new ServiceUnavailableException("Authentication database is unavailable");

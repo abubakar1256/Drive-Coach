@@ -1,29 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isLocale, type Locale } from "../lib/i18n";
+import { useCurrentLocale } from "../lib/useLocale";
 import { usePlanAccess } from "./PlanAccess";
 import { includesPlan } from "../lib/plan-access";
-
-type Plan = { name: string; subtitle: string; price: string; access: string; features: string[]; featured?: boolean; action: string };
-
-const plans: Record<Locale, { eyebrow: string; title: string; titleAccent: string; intro: string; compare: string; popularLabel: string; plans: Plan[] }> = {
-  en: { eyebrow: "Simple access, no surprises", title: "Choose your", titleAccent: "preparation plan.", intro: "Start free, focus on one exam centre, or practise across Belgium with the complete Drive Coach experience.", compare: "Choose a plan", popularLabel: "MOST POPULAR", plans: [
-    { name: "Free", subtitle: "Perfect to discover Drive Coach", price: "€0", access: "Free access", features: ["View all exam centres", "Route A free at every centre", "Interactive map"], action: "Start for free" },
-    { name: "Premium", subtitle: "Everything for preparation at one exam centre", price: "€14.99", access: "90 days access", featured: true, features: ["All published routes for 1 chosen exam centre", "Premium exam centre preparation information", "Passage points & attention points", "Interactive route guidance", "AI spoken tips while driving", "Drive Coach AI chatbot", "Self-reflection & instructor feedback", "Personal route recommendations", "Personal attention points & guidance"], action: "Choose Premium" },
-    { name: "💎 Diamond", subtitle: "The complete Drive Coach experience", price: "€19.99", access: "90 days access", features: ["All published routes for all exam centres", "Premium preparation information for every centre", "Passage points & attention points", "Interactive route guidance", "AI spoken tips while driving", "Drive Coach AI chatbot", "Self-reflection & instructor feedback", "Personal route recommendations", "Personal attention points & guidance", "Local practical-exam practice routes"], action: "Choose Diamond" },
-  ] },
-  nl: { eyebrow: "DUIDELIJKE TOEGANG, ZONDER VERRASSINGEN", title: "Kies jouw", titleAccent: "voorbereidingsplan.", intro: "Start gratis, focus op één examencentrum of oefen in heel België met de volledige Drive Coach-ervaring.", compare: "Kies een pakket", popularLabel: "MEEST GEKOZEN", plans: [
-    { name: "Gratis", subtitle: "Perfect om Drive Coach te ontdekken", price: "€0", access: "Gratis toegang", features: ["Alle examencentra bekijken", "Route A gratis bij elk centrum", "Interactieve kaart"], action: "Start gratis" },
-    { name: "Premium", subtitle: "Alles voor je voorbereiding bij één examencentrum", price: "€14,99", access: "90 dagen toegang", featured: true, features: ["Alle gepubliceerde routes van 1 gekozen examencentrum", "Premium voorbereiding over het examencentrum", "Doorgangspunten & aandachtspunten", "Interactieve routebegeleiding", "AI gesproken tips tijdens het rijden", "Drive Coach AI-chatbot", "Zelfreflectie & feedback instructeur", "Persoonlijke route-aanbevelingen", "Persoonlijke aandachtspunten & begeleiding"], action: "Kies Premium" },
-    { name: "💎 Diamond", subtitle: "De meest complete Drive Coach-ervaring", price: "€19,99", access: "90 dagen toegang", features: ["Alle gepubliceerde routes van alle examencentra", "Premium voorbereiding over elk examencentrum", "Doorgangspunten & aandachtspunten", "Interactieve routebegeleiding", "AI gesproken tips tijdens het rijden", "Drive Coach AI-chatbot", "Zelfreflectie & feedback instructeur", "Persoonlijke route-aanbevelingen", "Persoonlijke aandachtspunten & begeleiding", "Lokale praktijkexamen-oefenroutes"], action: "Kies Diamond" },
-  ] },
-};
+import { accessPeriods, offerPrice, type PlanOffer } from "../lib/plan-offers";
 
 export default function PricingPlans() {
-  const [locale, setLocale] = useState<Locale>("en");
+  const locale = useCurrentLocale();
+  const nl = locale === "nl";
   const { state, plan: currentPlan } = usePlanAccess();
-  useEffect(() => { const sync = () => { const stored = window.localStorage.getItem("routepilot.locale"); if (isLocale(stored)) setLocale(stored); }; sync(); window.addEventListener("routepilot-locale-change", sync); return () => window.removeEventListener("routepilot-locale-change", sync); }, []);
-  const active = plans[locale];
-  return <section className="pricing-section" id="pricing"><div className="shell"><div className="pricing-heading"><div><p className="eyebrow">{active.eyebrow}</p><h2>{active.title}<br /><span>{active.titleAccent}</span></h2></div><p>{active.intro}</p></div><div className="plans-grid">{active.plans.map((plan, index) => { const paid = index > 0; const requested = index === 2 ? "Diamond" : index === 1 ? "Premium" : "Free"; const included = includesPlan(currentPlan, requested); const uncertain = state === "loading" || state === "error"; const href = uncertain || included ? "/account" : state === "ready" ? (paid ? "/account#billing" : "/dashboard") : index === 0 ? "/auth/register" : `/auth/register?plan=${requested.toLowerCase()}`; const label = uncertain ? (locale === "nl" ? "Mijn toegang" : "My access") : included ? (requested === currentPlan ? (locale === "nl" ? "Actief pakket · Beheren" : "Current plan · Manage") : (locale === "nl" ? "Inbegrepen in je pakket" : "Included in your plan")) : state === "ready" ? (paid ? (locale === "nl" ? "Verder naar betaling" : "Continue to checkout") : (locale === "nl" ? "Naar dashboard" : "Go to dashboard")) : plan.action; return <article className={`plan-card ${plan.featured ? "plan-card-featured" : ""}`} key={plan.name}>{plan.featured && <span className="plan-tag">{active.popularLabel}</span>}<h3>{plan.name}</h3><p className="plan-subtitle">{plan.subtitle}</p><div className="plan-price"><strong>{plan.price}</strong><small>{plan.access}</small></div><ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul><a className={`button button-full ${plan.featured ? "" : "button-outline"}`} href={href}>{label} <span>↗</span></a></article>; })}</div></div></section>;
+  const [hours, setHours] = useState(24);
+  const [offers, setOffers] = useState<PlanOffer[]>([]);
+  useEffect(() => {
+    let disposed = false;
+    void fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "/api/v1"}/plans`, { cache: "no-store" }).then(async r => {
+      if (!r.ok) throw Error("Prices unavailable");
+      const data = await r.json();
+      if (!disposed && Array.isArray(data)) setOffers(data);
+    }).catch(() => { if (!disposed) setOffers([]); });
+    return () => { disposed = true; };
+  }, []);
+  const tiers = [
+    { name: "Free", subtitle: nl ? "Ontdek één route, 24 uur lang" : "Discover one route for 24 hours", features: nl ? ["Alle centra en routeoverzichten bekijken", "Eén gekozen route: eenmalige proefperiode van 24 uur", "Kaart en basis-oefenregistratie tijdens je proefperiode", "Geen creditcard nodig"] : ["Browse all centres and route summaries", "One chosen route: a single 24-hour trial per account", "Map and basic practice tracking during your trial", "No credit card needed"] },
+    { name: "Basic", subtitle: nl ? "Alle routes van één gekocht centrum" : "All routes at one purchased centre", features: nl ? ["Alle gepubliceerde routes van je gekozen centrum", "Informatie en aandachtspunten van dat centrum", "Interactieve routekaart en Google Maps-links", "Gesproken tips en Drive Coach AI", "Oefengeschiedenis en feedback"] : ["All published routes for your chosen centre", "Centre preparation information and attention points", "Interactive route map and Google Maps links", "Voice reminders and Drive Coach AI", "Practice history and feedback"] },
+    { name: "Premium", subtitle: nl ? "Volledige toegang tot alle centra" : "Complete access across all centres", features: nl ? ["Alle Basic-functies voor alle examencentra", "Alle gepubliceerde routes en centruminformatie", "Uitgebreide oefenfeedback en ritrapporten", "Gesproken tips en Drive Coach AI", "Oefen bij meerdere centra zonder te wisselen"] : ["All Basic features across every exam centre", "All published routes and centre preparation information", "Advanced practice feedback and after-drive reports", "Voice reminders and Drive Coach AI", "Practise across centres without changing your purchase"] },
+  ];
+  return <section className="pricing-section" id="pricing"><div className="shell">
+    <div className="pricing-heading"><div><p className="eyebrow">{nl ? "DUIDELIJKE TOEGANG" : "Simple access, no surprises"}</p><h2>{nl ? "Kies jouw" : "Choose your"}<br /><span>{nl ? "voorbereidingsplan." : "preparation plan."}</span></h2></div><p>{nl ? "Free, Basic of Premium. Eenmalige betaling, geen automatische verlenging. Je toegang eindigt na de gekozen periode." : "Free, Basic or Premium. One-time payment, no automatic renewal. Access ends after your selected period."}</p></div>
+    <label className="plan-period-picker">{nl ? "Toegangsduur" : "Access period"}<select value={hours} onChange={e => setHours(Number(e.target.value))}>{accessPeriods.map(p => <option key={p.hours} value={p.hours}>{p[locale]}</option>)}</select></label>
+    <div className="plans-grid">{tiers.map((tier, index) => {
+      const offer = offers.find(p => p.name === tier.name && p.durationHours === hours);
+      const price = index === 0 ? "€0" : offerPrice(offer, locale);
+      const included = state === "ready" && includesPlan(currentPlan, tier.name);
+      const uncertain = state === "loading" || state === "error";
+      const unavailable = index > 0 && !price;
+      const href = included || uncertain ? "/account" : state === "ready" ? (index ? `/account?period=${hours}#billing` : "/centres") : index ? `/auth/register?plan=${tier.name.toLowerCase()}&period=${hours}` : "/auth/register";
+      const label = unavailable ? (nl ? "Tijdelijk niet beschikbaar" : "Temporarily unavailable") : uncertain ? (nl ? "Mijn toegang" : "My access") : included ? (tier.name === currentPlan ? (nl ? "Actief pakket · Beheren" : "Current plan · Manage") : (nl ? "Inbegrepen" : "Included in your plan")) : (nl ? `Kies ${tier.name}` : `Choose ${tier.name}`);
+      return <article className={`plan-card ${index === 1 ? "plan-card-featured" : ""}`} key={tier.name}>
+        {index === 1 && <span className="plan-tag">{nl ? "MEEST GEKOZEN" : "MOST POPULAR"}</span>}<h3>{tier.name}</h3><p className="plan-subtitle">{tier.subtitle}</p>
+        <div className="plan-price"><strong>{price ?? "—"}</strong><small>{index ? accessPeriods.find(p => p.hours === hours)?.[locale] : (nl ? "Eén route · 24 uur" : "One route · 24 hours")}</small></div>
+        <ul>{tier.features.map(feature => <li key={feature}>{feature}</li>)}</ul>
+        {unavailable ? <button className="button button-full button-outline" disabled>{label}</button> : <a className={`button button-full ${index === 1 ? "" : "button-outline"}`} href={href}>{label} ↗</a>}
+      </article>;
+    })}</div>
+    <p className="route-list-note">{nl ? "De proefperiode start pas na je bevestiging op een route. Betaalde toegang start na bevestigde betaling. Geschatte rijtijden zijn geen garantie." : "Your trial starts only when you confirm on a route. Paid access starts after confirmed payment. Estimated driving times are not a guarantee."}</p>
+  </div></section>;
 }

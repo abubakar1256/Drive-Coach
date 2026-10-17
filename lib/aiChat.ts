@@ -15,7 +15,7 @@ export type ChatEntitlements = {
 // Fail closed until the server explicitly confirms the paid chat feature.
 // The server still independently enforces the entitlement on every question.
 export function canUseAIChat(access: ChatEntitlements, now = Date.now()) {
-  return access.status === "ACTIVE" && ["Premium", "Diamond"].includes(access.plan ?? "")
+  return access.status === "ACTIVE" && ["Basic", "Premium"].includes(access.plan ?? "")
     && access.features?.aiChat === true
     && (access.expiresAt === null || (typeof access.expiresAt === "string" && Date.parse(access.expiresAt) > now));
 }

@@ -11,6 +11,6 @@ export function confirmedRouteCompletion(result: { completionKind?: string } | n
 }
 
 export function nextRouteAction(next: RouteStep, centreSlug: string, paidCentreAccess: boolean) {
-  const unlocked = next.isFree || paidCentreAccess;
+  const unlocked = paidCentreAccess;
   return { unlocked, href: unlocked ? `/routes/${encodeURIComponent(next.slug)}` : `/#pricing` };
 }

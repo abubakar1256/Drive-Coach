@@ -52,6 +52,6 @@ test("public preview checks all points but never exposes full geometry or paid m
   const all = points.map((p, i) => ({ ...p, id: `p${i}`, imageUrl: "private", videoUrl: "private" }));
   const service = new RoutesService({ route: { findFirst: async () => ({ id: "r", points: all }) } }, { evaluate: async p => { checked = p; return { valid: true, coordinates: square, durationSec: 1800, distanceM: 14000, issues: [] }; } });
   const result = await service.getBySlug("r");
-  assert.equal(checked.length, 5); assert.equal(result.points.length, 3); assert.deepEqual(result.driving.coordinates, []); assert.equal(result.durationMin, 30);
+  assert.equal(checked.length, 5); assert.equal(result.points.length, 0); assert.deepEqual(result.driving.coordinates, []); assert.equal(result.durationMin, 30);
   assert.ok(result.points.every(p => p.imageUrl === null && p.videoUrl === null));
 });

@@ -30,7 +30,7 @@ export class AiChatService {
     let allowed: boolean;
     try { allowed = (await this.billingService.entitlements(userId)).features.aiChat; }
     catch { this.fail("AI_ACCESS_UNAVAILABLE", "Your AI coach access could not be checked. Please try again."); }
-    if (!allowed) this.fail("AI_PLAN_REQUIRED", "An active Premium or Diamond plan is required for Drive Coach AI.", HttpStatus.FORBIDDEN);
+    if (!allowed) this.fail("AI_PLAN_REQUIRED", "An active Basic or Premium plan is required for Drive Coach AI.", HttpStatus.FORBIDDEN);
     if (!dto.messages.length || dto.messages[dto.messages.length - 1].role !== "user") {
       throw new BadRequestException("The last chat message must be a question from the user.");
     }

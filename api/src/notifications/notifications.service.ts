@@ -48,7 +48,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     const route = await this.prisma.route.findUnique({ where: { id: routeId }, include: { favorites: { select: { userId: true } } } });
     if (!route) return;
     const now = new Date();
-    const subscribers = await this.prisma.subscription.findMany({ where: { status: "ACTIVE", OR: [{ plan: { name: "Diamond" } }, { plan: { name: "Premium" }, centreId: route.centreId }], AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }] }, select: { userId: true } });
+    const subscribers = await this.prisma.subscription.findMany({ where: { status: "ACTIVE", OR: [{ plan: { tier: "Premium" } }, { plan: { tier: "Basic" }, centreId: route.centreId }, { plan: { tier: null, name: "Diamond" } }, { plan: { tier: null, name: { in: ["Premium", "Basic"] } }, centreId: route.centreId }], AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }] }, select: { userId: true } });
     const ids = [...new Set([...route.favorites, ...subscribers].map(u => u.userId))];
     for (let i = 0; i < ids.length; i += 500) await this.prisma.notification.createMany({ data: ids.slice(i, i + 500).map(userId => ({ userId, type: "ROUTE_UPDATE", title: "Route content updated", body: `${route.name} has a newly reviewed version. Check the route before your next practice.`, metadata: { routeSlug: route.slug }, dedupeKey: `route:${routeId}:${version}:${userId}` })), skipDuplicates: true });
   }

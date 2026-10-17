@@ -47,14 +47,15 @@ const route = (preview = true) => ({
 // Simulate database filtering, while asserting the actual Prisma access query.
 function billingFor({ role = "LEARNER", exists = true, plan = "Premium", status = "ACTIVE", startsAt = new Date(Date.now() - 1000), expiresAt = new Date(Date.now() + 60_000) } = {}) {
   return new BillingService({
+    routeTrial: { findUnique: async () => null },
     user: { findUnique: async () => exists ? { role } : null },
-    subscription: { findFirst: async ({ where }) => {
+    subscription: { findMany: async ({ where }) => {
       assert.equal(where.status, "ACTIVE");
       assert.deepEqual(where.AND[0].OR[0], { startsAt: null });
       assert.deepEqual(where.AND[1].OR[0], { expiresAt: null });
       const now = where.AND[1].OR[1].expiresAt.gt.getTime();
       return status === where.status && (startsAt === null || startsAt <= where.AND[0].OR[1].startsAt.lte) && (expiresAt === null || expiresAt.getTime() > now)
-        ? { status, startsAt, expiresAt, provider: "STRIPE", plan: { name: plan } } : null;
+        ? [{ status, startsAt, expiresAt, provider: "STRIPE", plan: { name: plan } }] : [];
     } },
   });
 }
@@ -195,7 +196,7 @@ test("free, unknown, pending, expired, cancelled, refunded and future-start plan
 test("admins retain internal Diamond; content managers do not bypass the paid plan", async () => {
   for (const role of ["ADMIN", "SUPER_ADMIN"]) {
     const entitlement = await billingFor({ role, status: "PENDING" }).entitlements("admin");
-    assert.equal(entitlement.plan, "Diamond");
+    assert.equal(entitlement.plan, "Premium");
     assert.equal(entitlement.features.aiChat, true);
     assert.equal(entitlement.expiresAt, null);
   }

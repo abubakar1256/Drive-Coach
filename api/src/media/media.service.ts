@@ -1,17 +1,18 @@
-import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, ServiceUnavailableException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { PrismaService } from "../prisma.service";
 import { UploadMediaDto } from "./dto/media.dto";
 import { validMediaSignature } from "./media-signature";
+import { RouteAccessService } from "../routes/route-access.service";
 
 const MIME_EXTENSIONS: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm" };
 const MAX_BYTES = 15 * 1024 * 1024;
 
 @Injectable()
 export class MediaService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly routeAccess: RouteAccessService) {}
 
   upload(userId: string, dto: UploadMediaDto) {
     const encoded = dto.dataBase64.replace(/^data:[^;]+;base64,/, "");
@@ -70,7 +71,19 @@ export class MediaService {
     return { publicId: payload.public_id, publicUrl: payload.secure_url };
   }
 
-  async file(id: string) {
+  async file(userId: string, id: string) {
+    const [asset, user] = await Promise.all([
+      this.prisma.mediaAsset.findUnique({ where: { id }, select: { routePoint: { select: { routeId: true } } } }),
+      this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+    ]);
+    if (!asset) throw new NotFoundException("Media asset not found");
+    if (!user) throw new ForbiddenException("Account required");
+    // Content editors may preview drafts they manage. Learners must have paid
+    // access for this exact route; a free trial does not include route media.
+    if (!["ADMIN", "SUPER_ADMIN", "CONTENT_MANAGER"].includes(user.role)) {
+      const access = await this.routeAccess.requireAccess(userId, asset.routePoint.routeId);
+      if (!access.premium) throw new ForbiddenException("Paid route access required for media");
+    }
     const rows = await this.prisma.$queryRawUnsafe<Array<{ storageKey: string; publicUrl: string; mimeType: string; originalName: string }>>('SELECT "storageKey", "publicUrl", "mimeType", "originalName" FROM "MediaAsset" WHERE "id" = $1', id);
     if (!rows[0]) throw new NotFoundException("Media asset not found");
     if (rows[0].storageKey.startsWith("database:")) {

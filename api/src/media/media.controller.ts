@@ -24,9 +24,10 @@ export class MediaController {
     return this.mediaService.uploadFile(request.user.sub, routePointId, file);
   }
 
-  @Get("media/:id")
-  async serve(@Param("id") id: string, @Res() response: Response) {
-    const asset = await this.mediaService.file(id);
+  @Get("media/:id") @UseGuards(JwtAuthGuard)
+  async serve(@Req() request: AuthenticatedRequest, @Param("id") id: string, @Res() response: Response) {
+    const asset = await this.mediaService.file(request.user.sub, id);
+    response.setHeader("Cache-Control", "private, no-store");
     if ("remoteUrl" in asset) { response.redirect(asset.remoteUrl); return; }
     response.setHeader("Content-Type", asset.mimeType);
     response.setHeader("Content-Disposition", `inline; filename="${asset.originalName.replace(/[\r\n"]/g, "")}"`);

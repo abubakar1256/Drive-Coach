@@ -35,6 +35,13 @@ export function PlanAccessProvider({ children }: { children: React.ReactNode }) 
     window.addEventListener("focus", listener);
     return () => { disposed = true; ++generation; clearInterval(timer); window.removeEventListener("routepilot-auth-change", listener); window.removeEventListener("focus", listener); };
   }, []);
+  useEffect(() => {
+    const now = Date.now();
+    const dates = [value.subscription?.expiresAt, value.subscription?.trial?.expiresAt].map(d => d ? Date.parse(d) : NaN).filter(d => Number.isFinite(d) && d > now);
+    if (!dates.length) return;
+    const timer = window.setTimeout(() => window.dispatchEvent(new Event("routepilot-auth-change")), Math.min(2147483647, Math.min(...dates) - now + 20));
+    return () => clearTimeout(timer);
+  }, [value.subscription]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

@@ -1,5 +1,5 @@
-const SHELL_CACHE = "routepilot-shell-v2";
-const DATA_CACHE = "routepilot-public-data-v2";
+const SHELL_CACHE = "routepilot-shell-v3-access";
+const DATA_CACHE = "routepilot-public-data-v3-access";
 const SHELL = ["/", "/centres", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {

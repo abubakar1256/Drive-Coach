@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query, Req, UseGuards } from "@nestjs/common";
+import { Controller, Get, Header, NotFoundException, Param, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { RoutesService } from "./routes.service";
 
@@ -18,7 +18,7 @@ export class RoutesController {
     return points;
   }
 
-  @Get(":slug/access")
+  @Get(":slug/access") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   async accessible(@Param("slug") slug: string, @Req() request: AuthenticatedRequest) {
     const route = await this.routesService.getAccessibleBySlug(request.user.sub, slug);
@@ -26,7 +26,7 @@ export class RoutesController {
     return route;
   }
 
-  @Get(":slug/points/access")
+  @Get(":slug/points/access") @Header("Cache-Control", "private, no-store")
   @UseGuards(JwtAuthGuard)
   async accessiblePoints(@Param("slug") slug: string, @Req() request: AuthenticatedRequest) {
     const points = await this.routesService.accessiblePoints(request.user.sub, slug);

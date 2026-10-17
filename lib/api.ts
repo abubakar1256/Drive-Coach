@@ -32,7 +32,7 @@ export type ApiRoute = {
     imageUrl?: string | null;
     videoUrl?: string | null;
   }>;
-  access?: { premium: boolean; preview: boolean };
+  access?: { premium: boolean; preview: boolean; expiresAt?: string | null };
 };
 
 export type ApiCentre = {
@@ -46,7 +46,7 @@ export type ApiCentre = {
   latitude: number | null;
   longitude: number | null;
   isPublished: boolean;
-  access?: { premium: boolean; plan: string; signedIn: boolean };
+  access?: { premium: boolean; plan: string; signedIn: boolean; expiresAt?: string | null; trial?: import("./plan-access").RouteTrial };
   premiumInfo?: { kind: string; disclaimer: { en: string; nl: string }; sections: Array<{ key: string; title: { en: string; nl: string }; text: { en: string; nl: string } }> } | null;
   routes: Array<{
     slug: string;
@@ -56,6 +56,7 @@ export type ApiCentre = {
     label?: string;
     isFree?: boolean;
     canAccess?: boolean;
+    canStartTrial?: boolean;
     pointCount?: number;
     points: ApiRoute["points"];
   }>;

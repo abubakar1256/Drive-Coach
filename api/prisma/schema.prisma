@@ -83,6 +83,7 @@ model User {
   skillProgress UserSkillProgress[]
   tipDeliveries TipDeliveryHistory[]
   routeRecommendations RouteRecommendation[]
+  routeTrial RouteTrial?
 }
 
 model ExamCentre {
@@ -125,6 +126,18 @@ model Route {
   practiceSessions PracticeSession[]
   recommendations RouteRecommendation[]
   assignments RouteAssignment[]
+  trials RouteTrial[]
+}
+
+model RouteTrial {
+  id String @id @default(cuid())
+  userId String @unique
+  routeId String
+  startedAt DateTime @default(now())
+  expiresAt DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route Route @relation(fields: [routeId], references: [id], onDelete: Restrict)
+  @@index([routeId])
 }
 
 model OfficialPassagePoint {
@@ -175,6 +188,7 @@ model RoutePoint {
 model Plan {
   id            String         @id @default(cuid())
   name          String         @unique
+  tier          String?
   durationHours Int
   priceCents    Int
   currency      String         @default("EUR")
