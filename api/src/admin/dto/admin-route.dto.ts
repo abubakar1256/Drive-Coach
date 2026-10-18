@@ -1,5 +1,5 @@
 import { RouteStatus } from "@prisma/client";
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsLatitude, IsLongitude, IsOptional, IsString, IsUrl, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsNumber, IsLatitude, IsLongitude, IsOptional, IsString, IsUrl, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateRouteDto {
@@ -211,7 +211,15 @@ export class ReviewDepartureDto {
   @IsString() @MinLength(8) @MaxLength(1000) notes!: string;
   @IsIn(["PENDING_REVIEW", "VERIFIED", "REJECTED"]) verificationStatus!: string;
 }
+export class PassageRouteAnchorDto {
+  @IsLatitude() latitude!: number;
+  @IsLongitude() longitude!: number;
+  @IsOptional() @IsNumber() @Min(0) @Max(359.999999) bearing?: number;
+}
 export class GeneratePassageRouteDto {
   @IsArray() @ArrayMinSize(2) @ArrayMaxSize(6) @ArrayUnique() @IsString({ each: true })
   passagePointIds!: string[];
+  @IsOptional() @IsArray() @ArrayMinSize(4) @ArrayMaxSize(25)
+  @ValidateNested({ each: true }) @Type(() => PassageRouteAnchorDto)
+  waypoints?: PassageRouteAnchorDto[];
 }

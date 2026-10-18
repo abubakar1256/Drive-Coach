@@ -1,6 +1,10 @@
 // Explicit user-approved task key only. Never reads/changes personal SSH config.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
-const dir=path.resolve(__dirname,'../../output/db-backups/temporary-ssh');
+const backupRoot=path.resolve(__dirname,'../../output/db-backups');
+const dir=path.resolve(process.env.TASK_SSH_KEY_DIRECTORY||path.join(backupRoot,'temporary-ssh'));
+if(!dir.startsWith(backupRoot+path.sep))throw Error('Task key directory must stay within ignored backup output');
+const name=process.env.TASK_SSH_KEY_NAME||'drivecoach-phase2-temporary-20261018';
+if(!/^drivecoach-phase2-[a-z0-9-]+$/.test(name))throw Error('Explicit task-only identity name required');
 const receiptFile=path.join(dir,'phase-two-key-receipt.json');
 const key=path.join(dir,'railway-route-maintenance');
 const cli=process.env.RAILWAY_CLI_PATH;
@@ -14,8 +18,7 @@ const mode=process.argv[2];
 if(mode==='register'){
  if(fs.existsSync(receiptFile))throw Error('Existing registration receipt must be reconciled, not overwritten');
  const publicKey=fs.readFileSync(`${key}.pub`,'utf8').trim();
- if(!/^ssh-ed25519 [A-Za-z0-9+/=]+ drivecoach-phase2-temporary-20261018$/.test(publicKey))throw Error('Unexpected task public key');
- const name='drivecoach-phase2-temporary-20261018';
+ if(!publicKey.startsWith('ssh-ed25519 ')||publicKey.split(' ').length!==3||publicKey.split(' ')[2]!==name)throw Error('Unexpected task public key');
  const data=api('mutation Register($input:SshPublicKeyCreateInput!){sshPublicKeyCreate(input:$input){id name fingerprint}}',{input:{name,publicKey}}).sshPublicKeyCreate;
  fs.writeFileSync(receiptFile,JSON.stringify({...data,createdAt:new Date().toISOString()},null,2),{flag:'wx',mode:0o600});
  console.log(JSON.stringify({registered:data.name,id:data.id,fingerprint:data.fingerprint,revokeRequired:true}));
@@ -29,7 +32,7 @@ if(mode==='register'){
  console.log(JSON.stringify({host:'ssh.railway.com',firstConnectionPin:fingerprint.stdout.trim(),strictHostChecking:true}));
 }else if(mode==='revoke'){
  const receipt=JSON.parse(fs.readFileSync(receiptFile,'utf8'));
- if(receipt.name!=='drivecoach-phase2-temporary-20261018'||!receipt.id)throw Error('Unexpected registration receipt');
+ if(receipt.name!==name||!receipt.id)throw Error('Unexpected registration receipt');
  if(receipt.revokedAt){console.log('Task SSH key was already revoked.');process.exit(0);}
  if(api('mutation Revoke($id:String!){sshPublicKeyDelete(id:$id)}',{id:receipt.id}).sshPublicKeyDelete!==true)throw Error('Task key revocation was not confirmed');
  fs.writeFileSync(receiptFile,JSON.stringify({...receipt,revokedAt:new Date().toISOString()},null,2),{mode:0o600});

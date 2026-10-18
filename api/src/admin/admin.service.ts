@@ -11,6 +11,7 @@ import { NotificationsService } from "../notifications/notifications.service";
 import { PracticeLoopService } from "../routes/practice-loop.service";
 import catalogBundle from "../../prisma/data/road-practice-phase-two-prepared.json";
 import { OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
+import { orderedCoverageIssues } from "../routes/foundation-quality";
 
 type CatalogRoute = { centreSlug: string; slot: number; points: Array<{ latitude: number; longitude: number; bearing?: number | null }> };
 
@@ -196,7 +197,10 @@ export class AdminService {
       if (!reviewed || (!actorId && !current.reviewedBy)) throw new BadRequestException("Confirm instructor/content review before publishing");
       const points = await this.prisma.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
       const result = await this.driving.requireValid(points);
-      if (current.foundation) await this.foundation.validateSnapshot(current, points);
+      if (current.foundation) {
+        await this.foundation.validateSnapshot(current, points);
+        if (orderedCoverageIssues(result.coordinates, points).length) throw new BadRequestException("Fresh road geometry no longer covers the reviewed passage order");
+      }
       dto.durationMin = Math.ceil(result.durationSec! / 60);
     }
     const updated = await this.prisma.$transaction(async tx => {

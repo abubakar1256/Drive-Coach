@@ -3,7 +3,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {officialPassageCatalog, passageFingerprint} = require('../dist/src/exam-centres/official-passage-catalog');
 const {OfficialRouteFoundationService, publicFoundation, reviewedPassage} = require('../dist/src/routes/official-route-foundation.service');
-const {orderedCoverageIssues, belgianCoordinate} = require('../dist/src/routes/foundation-quality');
+const {orderedCoverageIssues, belgianCoordinate, passageShapeIssues} = require('../dist/src/routes/foundation-quality');
 const {durationIssues} = require('../dist/src/routes/route-quality');
 const {RouteAccessService} = require('../dist/src/routes/route-access.service');
 const {centreRouteCatalog} = require('../dist/src/exam-centres/exam-centres.service');
@@ -75,6 +75,31 @@ test('draft generation saves only a bounded checked draft, private proof and ord
   assert.ok(f.locks.some(([sql])=>sql.includes('FOR SHARE')));assert.equal(f.audits[0].userId,'admin');
   const again=await f.service.generateDraft('admin','c',f.points.map(p=>p.id));assert.equal(again.preserved,true);assert.equal(f.created.length,1);
 });
+
+test('optional road anchors preserve exact passage order and are saved in private provenance', async () => {
+  const f=fixture();
+  const shape=[{...f.departure,bearing:90},{latitude:50,longitude:5.005,bearing:90},...f.points,{...f.departure,bearing:90}];
+  f.driving.requireValid=async input=>({valid:true,durationSec:1500,coordinates:input.map(p=>[p.longitude,p.latitude])});
+  const result=await f.service.generateDraft('admin','c',['p0','p1'],shape);
+  assert.equal(result.points.create.length,5);assert.equal(result.points.create[1].category,'waypoint');
+  assert.equal(result.points.create[2].category,'passage');assert.equal(result.points.create[2].title,f.points[0].junction);
+  assert.equal(result.points.create[0].bearing,90);assert.equal(result.foundation.shape.length,5);
+  await f.service.validateSnapshot(result,result.points.create);
+  for(const change of [p=>p[1].longitude+=.001,p=>p[0].bearing=180,p=>p.splice(2,1)]) {
+    const changed=structuredClone(result.points.create);change(changed);await assert.rejects(f.service.validateSnapshot(result,changed),/no longer match/);
+  }
+  assert.deepEqual(publicFoundation(result.foundation),{kind:'PUBLISHED_PASSAGE_PRACTICE',passagePointCount:2,officialExamItinerary:false});
+});
+
+test('shaping controls cannot move, repeat, reorder or omit reviewed passages or departure', async () => {
+  for(const mutate of [p=>p.reverse(),p=>p.splice(1,1),p=>p.splice(1,0,p[1]),p=>p[0]={latitude:50.1,longitude:5},p=>p[1]={latitude:50,longitude:5.0101},p=>p[1]={latitude:52,longitude:5},p=>p[1].bearing=360,p=>p[1].bearing=NaN,p=>p.push(...Array(25).fill(p[0]))]) {
+    const f=fixture(),shape=structuredClone(f.routePoints);mutate(shape);
+    // A closed loop reversed has the same endpoints but wrong passage ordering.
+    assert.ok(passageShapeIssues(shape,f.departure,f.points).length);
+    await assert.rejects(f.service.generateDraft('admin','c',['p0','p1'],shape));assert.equal(f.calls(),0);
+  }
+  assert.ok(passageShapeIssues([null,null,null,null],fixture().departure,fixture().points).length);
+});
 test('missing departure, unreviewed coordinates, duplicate or foreign selection never calls routing or saves a route', async () => {
   for(const mutate of [f=>f.departure.verificationStatus='PENDING_REVIEW',f=>f.points[0].latitude=null,f=>f.points[0].duplicateOfSequence=2]) {
     const f=fixture();mutate(f);await assert.rejects(f.service.generateDraft('admin','c',['p0','p1']));assert.equal(f.calls(),0);assert.equal(f.created.length,0);
@@ -133,7 +158,18 @@ test('foundation mutation endpoints retain admin guards and strict departure/sel
   assert.ok(guards.includes(AdminGuard)&&guards.includes(JwtAuthGuard));
   for(const ids of [[],['one'],['one','one'],Array.from({length:7},(_,i)=>`${i}`)]) assert.ok((await validate(Object.assign(new GeneratePassageRouteDto(),{passagePointIds:ids}))).length);
   assert.equal((await validate(Object.assign(new GeneratePassageRouteDto(),{passagePointIds:['one','two']}))).length,0);
+  const {plainToInstance}=require('class-transformer');
+  for(const waypoints of [[null,null,null,null],Array(4).fill({latitude:100,longitude:5}),Array(4).fill({latitude:50,longitude:5,bearing:360}),Array(4).fill({latitude:50,longitude:5,bearing:'90'})])assert.ok((await validate(plainToInstance(GeneratePassageRouteDto,{passagePointIds:['one','two'],waypoints}))).length);
+  assert.equal((await validate(plainToInstance(GeneratePassageRouteDto,{passagePointIds:['one','two'],waypoints:fixture().routePoints.map(p=>({latitude:p.latitude,longitude:p.longitude,bearing:90}))}))).length,0);
   const valid={latitude:50,longitude:5,label:'TEST public-road departure',notes:'Review evidence for synthetic fixture',sourceUrl:'https://example.invalid/source',verificationStatus:'VERIFIED'};
   assert.equal((await validate(Object.assign(new ReviewDepartureDto(),valid))).length,0);
   for(const change of [{verificationStatus:'AUTO_VERIFIED'},{notes:''},{sourceUrl:'javascript:alert(1)'},{latitude:100}])assert.ok((await validate(Object.assign(new ReviewDepartureDto(),{...valid,...change}))).length);
+});
+
+test('publication rechecks ordered geometry, not just reviewed saved coordinates',async()=>{
+ const f=fixture(),{AdminService}=require('../dist/src/admin/admin.service');
+ const db={route:{findUnique:async()=>({centreId:'c',foundation:{kind:'PUBLISHED_PASSAGE_PRACTICE'},version:1,sourceLabel:'Remote map/register practice review'})},routePoint:{findMany:async()=>f.routePoints},$transaction:async()=>{throw Error('MUST_NOT_WRITE');}};
+ const driving={requireValid:async()=>({valid:true,durationSec:1500,coordinates:[[5,50],[5,50.01],[5,50]]})};
+ const admin=new AdminService(db,driving,{}, {},{validateSnapshot:async()=>{}});
+ await assert.rejects(admin.updateRoute('r',{status:'PUBLISHED',verificationStatus:'VERIFIED'},'admin'),/no longer covers/);
 });

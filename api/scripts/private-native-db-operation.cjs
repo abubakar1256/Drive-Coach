@@ -9,7 +9,10 @@ if (!cli || !target.startsWith(root + path.sep) || !target.endsWith('.cjs')) thr
 const project = '05b7486b-46a3-4fa5-9cb6-bdbe02e871d6';
 const environment = 'd9734e0c-0ef6-406d-8104-815f5500de8c';
 const service = 'd3f60050-9276-4b79-af8c-bc85e13803aa';
-const key = path.resolve(root, '../../output/db-backups/temporary-ssh/railway-route-maintenance');
+const backupRoot=path.resolve(root,'../../output/db-backups');
+const taskKeyDirectory=path.resolve(process.env.TASK_SSH_KEY_DIRECTORY||path.join(backupRoot,'temporary-ssh'));
+if(!taskKeyDirectory.startsWith(backupRoot+path.sep))throw Error('Task key directory must stay within ignored backup output');
+const key = path.join(taskKeyDirectory,'railway-route-maintenance');
 const known = path.join(path.dirname(key), 'known_hosts');
 let tunnel, worker, timer, finished = false;
 function finish(code, message) {

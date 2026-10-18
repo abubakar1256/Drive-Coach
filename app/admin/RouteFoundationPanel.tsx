@@ -20,11 +20,12 @@ export default function RouteFoundationPanel({ centres, onCreated }: { centres: 
   const [centreId, setCentreId] = useState("");
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [order, setOrder] = useState<string[]>([]);
+  const [shapeText, setShapeText] = useState("");
   const [busy, setBusy] = useState(false), [loading, setLoading] = useState(false), [error, setError] = useState(""), [notice, setNotice] = useState("");
   const [search, setSearch] = useState("");
   useEffect(() => {
     let cancelled = false;
-    setWorkspace(null); setOrder([]); setSearch(""); setError(""); setNotice("");
+    setWorkspace(null); setOrder([]); setShapeText(""); setSearch(""); setError(""); setNotice("");
     setLoading(Boolean(centreId));
     if (!centreId) return;
     request(`/admin/centres/${centreId}/route-foundation`).then(data => { if (!cancelled) setWorkspace(data); }).catch(e => { if (!cancelled) setError(e.message); }).finally(() => { if (!cancelled) setLoading(false); });
@@ -32,14 +33,17 @@ export default function RouteFoundationPanel({ centres, onCreated }: { centres: 
   }, [centreId]);
   async function action(run: () => Promise<unknown>, message: string) {
     setBusy(true); setError(""); setNotice("");
-    try { await run(); setWorkspace(await request(`/admin/centres/${centreId}/route-foundation`)); setOrder([]); setNotice(message); }
+    try { await run(); setWorkspace(await request(`/admin/centres/${centreId}/route-foundation`)); setOrder([]); setShapeText(""); setNotice(message); }
     catch (e) { setError(e instanceof Error ? e.message : "Review could not be saved"); }
     finally { setBusy(false); }
   }
   async function generate() {
+    let waypoints: unknown;
+    try { if (shapeText.trim()) { waypoints = JSON.parse(shapeText); if (!Array.isArray(waypoints) || waypoints.length < 4 || waypoints.length > 25) throw Error("Use a JSON array of 4–25 road anchors."); } }
+    catch { setError("Road anchors must be a JSON array of 4–25 { latitude, longitude, bearing? } objects."); return; }
     if (!window.confirm("Check this exact passage sequence with Mapbox? Up to one Directions request uses your existing account limits. A passing route is saved as a draft only; this is not an official exam itinerary.")) return;
     setBusy(true); setError(""); setNotice("");
-    try { const result = await request(`/admin/centres/${centreId}/route-foundation/generate`, "POST", { passagePointIds: order }); await onCreated(result.id); }
+    try { const result = await request(`/admin/centres/${centreId}/route-foundation/generate`, "POST", { passagePointIds: order, ...(waypoints ? { waypoints } : {}) }); await onCreated(result.id); }
     catch (e) { setError(e instanceof Error ? e.message : "Generation failed"); }
     finally { setBusy(false); }
   }
@@ -54,6 +58,7 @@ export default function RouteFoundationPanel({ centres, onCreated }: { centres: 
       {workspace.source ? <div className="foundation-source"><strong>{workspace.centreName} · Autoveiligheid</strong><p>{workspace.source.address}</p><p>Document revision: {workspace.source.sourceRevision}. Names only: coordinates and legal access need separate review. Repeated source rows are retained but cannot both be selected.</p><div className="point-actions"><a href={workspace.source.sourceUrl} target="_blank" rel="noreferrer">Read passage PDF ↗</a><a href={workspace.source.centreSourceUrl} target="_blank" rel="noreferrer">Verify centre address ↗</a><button className="button button-small" disabled={busy} onClick={() => void action(() => request(`/admin/centres/${centreId}/route-foundation/import`, "POST"), "Current source imported. Existing coordinates preserved; changed source entries require re-review.")}>Import / refresh source</button></div></div> : <p className="foundation-warning">No verified operator passage list is bundled for this centre. Do not invent official points. Existing road-network practice routes remain separate from this workflow.</p>}
       <DepartureReview key={`${centreId}-${workspace.departure?.version ?? 0}`} departure={workspace.departure} suggestedUrl={workspace.source?.centreSourceUrl ?? ""} busy={busy} save={data => action(() => request(`/admin/centres/${centreId}/route-foundation/departure`, "PATCH", data), "Departure review saved. Previous provenance snapshots will need rebuilding if changed.")} />
       <details className="foundation-review-list"><summary>Review passage coordinates · {workspace.points.length} source rows</summary><label>Filter junction or municipality<input value={search} onChange={e => setSearch(e.target.value)} /></label>{workspace.points.filter(p => `${p.junction} ${p.municipality}`.toLowerCase().includes(search.toLowerCase())).map(p => <PassageReview key={`${p.id}-${p.verifiedAt}-${p.verificationStatus}`} point={p} busy={busy} save={data => action(() => request(`/admin/official-passage-points/${p.id}`, "PATCH", data), "Passage review saved with your administrator identity.")} />)}</details>
+      <details className="foundation-review-list"><summary>Advanced · connecting road anchors (optional)</summary><p>For a logical loop, provide the full 4–25 point sequence as JSON: latitude, longitude and optional bearing (0–359°). Start and finish at the exact reviewed departure. Include each selected passage exactly once, in the order below. Connecting anchors are road-shaping controls, not official passage points. The same fresh time, road, crossing and coverage checks still apply.</p><label>Full waypoint sequence<textarea rows={8} maxLength={6000} value={shapeText} disabled={busy} onChange={e => setShapeText(e.target.value)} placeholder={'[{"latitude":50.0,"longitude":5.0}, …]'} /></label></details>
       <div className="foundation-sequence"><h4>Compose a reviewed practice loop</h4><p>Select 2–6 distinct reviewed junctions in driving order. The reviewed departure is both the start and finish. One request checks the selected sequence; failed checks save nothing.</p><label>Add next passage<select value="" disabled={busy || order.length >= 6} onChange={e => setOrder(old => [...old, e.target.value])}><option value="">Choose a reviewed passage…</option>{workspace.points.filter(p => ready(p) && !order.includes(p.id)).map(p => <option key={p.id} value={p.id}>{p.sequence}. {p.junction} · {p.municipality}</option>)}</select></label><ol><li>{workspace.departure?.label ?? "Reviewed departure needed"} · start</li>{order.map((id, i) => <li key={id}><span>{workspace.points.find(p => p.id === id)?.junction}</span><div><button type="button" disabled={busy || i === 0} aria-label={`Move passage ${i + 1} earlier`} onClick={() => setOrder(old => { const next = [...old]; [next[i - 1], next[i]] = [next[i], next[i - 1]]; return next; })}>↑</button><button type="button" disabled={busy || i === order.length - 1} aria-label={`Move passage ${i + 1} later`} onClick={() => setOrder(old => { const next = [...old]; [next[i], next[i + 1]] = [next[i + 1], next[i]]; return next; })}>↓</button><button type="button" disabled={busy} aria-label={`Remove passage ${i + 1}`} onClick={() => setOrder(old => old.filter(p => p !== id))}>×</button></div></li>)}<li>Return to the same reviewed departure · finish</li></ol><button className="button button-small" disabled={busy || !departureReady || order.length < 2} onClick={() => void generate()}>{busy ? "Working…" : "Validate & save draft"} ↗</button><p className="foundation-footnote">Passing geometry is not instructor approval. Review the draft in the route editor before publishing. The list does not describe mandatory points on every exam.</p></div>
     </>}
   </section>;
