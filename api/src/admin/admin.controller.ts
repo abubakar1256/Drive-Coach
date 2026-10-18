@@ -8,11 +8,25 @@ import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { AnnouncementDto } from "../notifications/notification.dto";
 import { GeneratePracticeLoopDto, ImportRoutePointsDto, ImportRoadCatalogRouteDto } from "./dto/admin-route.dto";
+import { ReviewDepartureDto, GeneratePassageRouteDto } from "./dto/admin-route.dto";
+import { OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, AdminGuard)
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService, private readonly foundation: OfficialRouteFoundationService) {}
+
+  @Get("centres/:id/route-foundation")
+  foundationWorkspace(@Param("id") id: string) { return this.foundation.workspace(id); }
+
+  @Post("centres/:id/route-foundation/import")
+  importFoundation(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.foundation.importSource(req.user.sub, id); }
+
+  @Patch("centres/:id/route-foundation/departure")
+  reviewDeparture(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: ReviewDepartureDto) { return this.foundation.reviewDeparture(req.user.sub, id, dto); }
+
+  @Post("centres/:id/route-foundation/generate")
+  generatePassageRoute(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: GeneratePassageRouteDto) { return this.foundation.generateDraft(req.user.sub, id, dto.passagePointIds); }
 
   @Post("notifications")
   announcement(@Req() req: AuthenticatedRequest, @Body() dto: AnnouncementDto) { return this.adminService.announce(req.user.sub, req.user.role, dto.title, dto.body); }
@@ -28,8 +42,8 @@ export class AdminController {
   }
 
   @Patch("official-passage-points/:id")
-  updateOfficialPassagePoint(@Param("id") id: string, @Body() dto: UpdateOfficialPassagePointDto) {
-    return this.adminService.updateOfficialPassagePoint(id, dto);
+  updateOfficialPassagePoint(@Param("id") id: string, @Body() dto: UpdateOfficialPassagePointDto, @Req() req: AuthenticatedRequest) {
+    return this.adminService.updateOfficialPassagePoint(id, dto, req.user.sub);
   }
 
   @Post("centres")

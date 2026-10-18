@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { Coordinate, geometryIssues, MIN_DRIVING_SECONDS } from "./route-quality";
+import { Coordinate, geometryIssues, durationIssues } from "./route-quality";
 
 type Point = { latitude: number; longitude: number; bearing?: number | null };
 export type DrivingRoute = {
@@ -48,10 +48,10 @@ export class DrivingRouteService {
       if (!Array.isArray(geometry) || geometry.length < 2 || geometry.length > 12000 || geometry.some((p: unknown) => !Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite) || Math.abs(p[0]) > 180 || Math.abs(p[1]) > 90)
           || !Number.isFinite(route.duration) || route.duration <= 0 || !Number.isFinite(route.distance) || route.distance <= 0) return invalid("INVALID_ROUTING_RESPONSE");
       const issues = geometryIssues(geometry);
-      if (route.duration < MIN_DRIVING_SECONDS) issues.push("UNDER_24_MINUTES");
+      issues.push(...durationIssues(route.duration));
       if (route.legs?.some((leg: { steps?: Array<{ maneuver?: { modifier?: string } }> }) => leg.steps?.some(step => step.maneuver?.modifier === "uturn"))) issues.push("U_TURN");
-      // Preserve the exact seconds for the minimum check, never round a short
-      // route up to 24 minutes before deciding whether it can be practised.
+      // Preserve the exact seconds for the duration-band check, never round a short
+      // route into the permitted band before deciding whether it can be practised.
       const snappedPoints = Array.isArray(payload.waypoints) && payload.waypoints.length === count && payload.waypoints.every((p: { location?: unknown[] }) => Array.isArray(p.location) && p.location.length === 2 && p.location.every(Number.isFinite)) ? payload.waypoints.map((p: { location: number[]; name?: string }) => ({ latitude: p.location[1], longitude: p.location[0], name: typeof p.name === "string" ? p.name : "" })) : undefined;
       return { valid: !issues.length, issues, durationSec: route.duration, distanceM: route.distance, coordinates: geometry, ...(snappedPoints ? { snappedPoints } : {}) };
     } catch { return invalid("ROUTING_UNAVAILABLE"); }
@@ -59,7 +59,7 @@ export class DrivingRouteService {
 
   async requireValid(points: Point[]) {
     const driving = await this.evaluate(points);
-    if (!driving.valid) throw new BadRequestException({ message: `Route needs review: ${driving.issues.join(", ")}. Use a drivable route of at least 24 minutes without self-crossing, repeated roads or U-turns.`, issues: driving.issues });
+    if (!driving.valid) throw new BadRequestException({ message: `Route needs review: ${driving.issues.join(", ")}. Use a 23–27 minute drive (25 ±2 minutes) without self-crossing, repeated roads or U-turns.`, issues: driving.issues });
     return driving;
   }
 }

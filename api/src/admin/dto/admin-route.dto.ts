@@ -1,5 +1,5 @@
 import { RouteStatus } from "@prisma/client";
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsLatitude, IsLongitude, IsOptional, IsString, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsBoolean, IsEnum, IsIn, IsInt, IsLatitude, IsLongitude, IsOptional, IsString, IsUrl, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateRouteDto {
@@ -24,7 +24,7 @@ export class CreateRouteDto {
 
   @IsOptional()
   @IsInt()
-  @Min(24)
+  @Min(23) @Max(27)
   durationMin?: number;
 
   @IsOptional()
@@ -55,7 +55,7 @@ export class UpdateRouteDto {
 
   @IsOptional()
   @IsInt()
-  @Min(24)
+  @Min(23) @Max(27)
   durationMin?: number;
 
   @IsOptional()
@@ -201,4 +201,17 @@ export class GeneratePracticeLoopDto {
 
 export class ImportRoadCatalogRouteDto {
   @IsInt() @Min(2) @Max(7) slot!: number;
+}
+
+export class ReviewDepartureDto {
+  @IsLatitude() latitude!: number;
+  @IsLongitude() longitude!: number;
+  @IsString() @MinLength(3) @MaxLength(160) label!: string;
+  @IsUrl({ protocols: ["https"], require_protocol: true }) @MaxLength(1000) sourceUrl!: string;
+  @IsString() @MinLength(8) @MaxLength(1000) notes!: string;
+  @IsIn(["PENDING_REVIEW", "VERIFIED", "REJECTED"]) verificationStatus!: string;
+}
+export class GeneratePassageRouteDto {
+  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(6) @ArrayUnique() @IsString({ each: true })
+  passagePointIds!: string[];
 }

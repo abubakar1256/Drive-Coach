@@ -45,6 +45,10 @@ let started=false,db;
  console.log('Full PostgreSQL 18 backup restore passed in isolated loopback cluster.');
  const url=new URL('postgresql://127.0.0.1:15440/route_restore');url.username='route_restore';url.password=password;
  db=new PrismaClient({datasourceUrl:url.toString(),log:[]});
+ // A pre-rollout archive can predate the additive foundation column. Rehearse
+ // the exact migration before using the new Prisma client, never against live DB.
+ const columns=await db.$queryRawUnsafe("SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='Route' AND column_name='foundation'");
+ if(!columns.length)run('psql',['-X','-v','ON_ERROR_STOP=1','-q','--dbname=route_restore','-f',path.resolve(__dirname,'../prisma/migrations/0018_official_route_foundation/migration.sql')]);
  const beforeAll=await fingerprints(db,true),protectedBefore=await fingerprints(db);
  // Force a late concurrent-content conflict and prove all earlier writes roll back.
  const conflict=JSON.parse(JSON.stringify(plan));const last=conflict.routes.at(-1);

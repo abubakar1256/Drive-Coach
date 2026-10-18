@@ -6,12 +6,13 @@ import { PrismaService } from "../prisma.service";
 import { CheckoutDto, CouponValidationDto, CreateCouponDto } from "./dto/billing.dto";
 import { ACCESS_PERIODS, planTier, validSubscription } from "./access-policy";
 import { publishedRoutePolicy } from "../routes/published-route-policy";
+import { OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
 
 type StripeResponse = { [key: string]: unknown; id?: string; url?: string; payment_intent?: string | null; invoice?: string | null; subscription?: string | null; amount_total?: number; currency?: string; metadata?: Record<string, string> };
 
 @Injectable()
 export class BillingService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly foundation: OfficialRouteFoundationService) {}
 
   async listPlans() {
     const plans = await this.prisma.plan.findMany({ orderBy: { durationHours: "asc" } });
@@ -32,7 +33,9 @@ export class BillingService {
         if (existing.routeId === routeId && existing.expiresAt > new Date()) return existing;
         throw new BadRequestException("Your one-route trial has already been used. Choose Basic or Premium for further access.");
       }
-      if (!await tx.route.findFirst({ where: { id: routeId, ...publishedRoutePolicy, centre: { isPublished: true } } })) throw new BadRequestException("Reviewed published route not found");
+      const route = await tx.route.findFirst({ where: { id: routeId, ...publishedRoutePolicy, centre: { isPublished: true } }, include: { points: { orderBy: { sequence: "asc" } } } });
+      if (!route) throw new BadRequestException("Reviewed published route not found");
+      if (route.foundation) await this.foundation.validateSnapshot(route, route.points, tx, true);
       const startedAt = new Date();
       const trial = await tx.routeTrial.create({ data: { userId, routeId, startedAt, expiresAt: new Date(startedAt.getTime() + 86400000) } });
       await tx.auditLog.create({ data: { userId, action: "ROUTE_TRIAL_STARTED", entity: "Route", entityId: routeId } });

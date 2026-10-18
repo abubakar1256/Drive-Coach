@@ -2,10 +2,11 @@ import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/commo
 import { PrismaService } from "../prisma.service";
 import { publishedRoutePolicy } from "./published-route-policy";
 import { planTier, validSubscription } from "../billing/access-policy";
+import { OfficialRouteFoundationService } from "./official-route-foundation.service";
 
 @Injectable()
 export class RouteAccessService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly foundation: OfficialRouteFoundationService) {}
 
   async centreAccess(userId: string, centreId: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
@@ -25,6 +26,11 @@ export class RouteAccessService {
   async requireAccess(userId: string, routeId: string) {
     const route = await this.prisma.route.findFirst({ where: { id: routeId, ...publishedRoutePolicy, centre: { isPublished: true } } });
     if (!route) throw new NotFoundException("Reviewed published route not found");
+    if (route.foundation) {
+      const points = await this.prisma.routePoint.findMany({ where: { routeId }, orderBy: { sequence: "asc" } });
+      try { await this.foundation.validateSnapshot(route, points); }
+      catch { throw new ForbiddenException("Route foundation needs a fresh source/start review"); }
+    }
     const entitlement = await this.centreAccess(userId, route.centreId);
     if (entitlement.premium) return { route, premium: true, expiresAt: entitlement.expiresAt };
     if (entitlement.trial?.active && entitlement.trial.routeId === route.id) return { route, premium: false, expiresAt: entitlement.trial.expiresAt };

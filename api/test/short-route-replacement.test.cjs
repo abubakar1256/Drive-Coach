@@ -16,8 +16,8 @@ test('database float round-trip preserves geometry without accepting shifted anc
  assert.equal(sameGeometry(a,[{...a[0],bearing:null}]),false);
 });
 for(const [name,change] of [
- ['short driving time',p=>p.routes[0].durationSec=1439.99],
- ['long driving time',p=>p.routes[0].durationSec=1800.01],
+ ['short driving time',p=>p.routes[0].durationSec=1379.99],
+ ['long driving time',p=>p.routes[0].durationSec=1620.01],
  ['invalid time',p=>p.createdAt='invalid'],
  ['stale provider result',p=>p.routes[0].checkedAt='2020-01-01'],
  ['duplicate route identity',p=>p.routes[1]=p.routes[0]],

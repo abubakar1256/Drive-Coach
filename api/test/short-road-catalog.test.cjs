@@ -2,13 +2,13 @@ require('reflect-metadata');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { PracticeLoopService, loopCandidates, cycleWaypoints } = require('../dist/src/routes/practice-loop.service');
-const { inWindow, identity, shorterCandidates, validateCompleteBundle } = require('../scripts/prepare-short-road-catalog.cjs');
+const { inWindow, identity, shorterCandidates, shortcutCandidates, validateCompleteBundle } = require('../scripts/prepare-short-road-catalog.cjs');
 const square = [[5, 50], [5.01, 50], [5.01, 50.01], [5, 50.01], [5, 50]];
 const points = square.map(([longitude, latitude]) => ({longitude, latitude, name: 'Checked road'}));
 
-test('24–30 minute preparation checks exact seconds and provider validity', () => {
-  for (const durationSec of [1440, 1550.1, 1800]) assert.equal(inWindow({valid: true, durationSec}), true);
-  for (const durationSec of [1439.999, 1800.001, 3600, null, NaN, Infinity]) assert.equal(inWindow({valid: true, durationSec}), false);
+test('23–27 minute preparation checks exact seconds and provider validity', () => {
+  for (const durationSec of [1380, 1550.1, 1620]) assert.equal(inWindow({valid: true, durationSec}), true);
+  for (const durationSec of [1379.999, 1620.001, 3600, null, NaN, Infinity]) assert.equal(inWindow({valid: true, durationSec}), false);
   assert.equal(inWindow({valid: false, durationSec: 1500}), false);
 });
 test('replacement identities preserve centre and route slot, not duration-based ordering', () => {
@@ -20,16 +20,16 @@ test('search radius can be smaller without changing centre origin or closure', (
   assert.equal(candidates.length, 2);
   for (const candidate of candidates) {assert.deepEqual(candidate[0], {latitude: 50, longitude: 5}); assert.deepEqual(candidate.at(-1), candidate[0]);}
 });
-test('generator accepts the exact 24 and 30 minute boundaries after saved-anchor recheck', async () => {
-  for (const durationSec of [1440, 1800]) {
+test('generator accepts the exact 23 and 27 minute boundaries after saved-anchor recheck', async () => {
+  for (const durationSec of [1380, 1620]) {
     let calls = 0;
     const service = new PracticeLoopService({evaluate: async () => {calls++; return {valid: true, issues: [], durationSec, distanceM: 14000, coordinates: square, snappedPoints: points};}});
     const result = await service.generate(50, 5);
     assert.equal(result.durationSec, durationSec); assert.equal(calls, 2);
   }
 });
-test('generator never returns a 30m01s loop or rounds a short route up to 24', async () => {
-  for (const durationSec of [1439.9, 1800.01, 3600]) {
+test('generator never returns an out-of-band loop or rounds a short route up to 23', async () => {
+  for (const durationSec of [1379.9, 1620.01, 3600]) {
     const service = new PracticeLoopService({evaluate: async () => ({valid: true, issues: [], durationSec, distanceM: 14000, coordinates: square, snappedPoints: points})});
     await assert.rejects(service.generate(50, 5), /No compliant loop/);
   }
@@ -49,7 +49,7 @@ test('shortening candidates reuse original road anchors and require independent 
     assert.ok(candidate.length < source.length);
     for (const point of candidate) assert.ok(source.some(p => p.latitude === point.latitude && p.longitude === point.longitude));
   }
-  assert.deepEqual(shorterCandidates({points: source, durationSec: 1800}), []);
+  assert.deepEqual(shorterCandidates({points: source, durationSec: 1620}), []);
 });
 test('adaptive search adjusts only search anchors, then saves independently checked road points', async () => {
   const calls = [];
@@ -64,6 +64,19 @@ test('adaptive search adjusts only search anchors, then saves independently chec
   assert.deepEqual(calls[3].candidate, points);
   assert.deepEqual(result.snappedPoints, points);
   assert.equal(result.durationSec, 1600);
+});
+
+test('shortcut search removes only contiguous saved anchors and preserves closure without inventing coordinates', () => {
+  const source = [...points.slice(0,-1), {latitude:50.005,longitude:4.99}, points[0]];
+  const candidates = shortcutCandidates({points:source,durationSec:1750});
+  assert.ok(candidates.length > 0 && candidates.length <= 20);
+  for (const c of candidates) {
+    assert.ok(c.length < source.length && c.length >= 4);
+    assert.equal(c[0].latitude,c.at(-1).latitude);
+    assert.equal(c[0].longitude,c.at(-1).longitude);
+    assert.ok(c.every(p => source.some(s => s.latitude===p.latitude && s.longitude===p.longitude)));
+  }
+  assert.deepEqual(shortcutCandidates({points:source,durationSec:1600}),[]);
 });
 test('adaptive search remains bounded when no route fits the window', async () => {
   let calls = 0;
@@ -86,7 +99,7 @@ test('export gate rejects partial, duplicated, stale or out-of-window bundles', 
   for (const changed of [{durationSec: 1800.1}, {checkedAt: '2020-01-01'}, {points: points.slice(0, -1)}, {slot: 2}]) assert.throws(() => validateCompleteBundle({...bundle, routes: [{...route, ...changed}]}, [route]));
   assert.throws(() => validateCompleteBundle({...bundle, routes: [route, route]}, [route]));
 });
-test('prepared asset covers every existing source slot with closed 24–30 minute road routes', () => {
+test('historical asset preserves its original closed 24–30 minute measurements, requiring fresh import checks', () => {
   const bundle = require('../prisma/data/road-practice-short-prepared.json');
   const starters = require('../prisma/data/road-practice-loops.json').routes.map(route => ({...route, slot: 1}));
   const expected = [...starters, ...require('../prisma/data/road-practice-catalog.json').routes];
@@ -97,11 +110,26 @@ test('prepared asset covers every existing source slot with closed 24–30 minut
   assert.equal(bundle.status, 'PREPARED_REQUIRES_IMPORT_REVALIDATION');
   const seen = new Set();
   for (const route of bundle.routes) {
-    assert.equal(inWindow({valid: true, durationSec: route.durationSec}), true);
+    assert.ok(route.durationSec >= 1440 && route.durationSec <= 1800);
     assert.equal(route.points[0].latitude, route.points.at(-1).latitude);
     assert.equal(route.points[0].longitude, route.points.at(-1).longitude);
     const coordinates = route.points.map(point => [point.longitude, point.latitude]);
     const fingerprint = route.centreSlug + ':' + [JSON.stringify(coordinates), JSON.stringify([...coordinates].reverse())].sort()[0];
     assert.equal(seen.has(fingerprint), false); seen.add(fingerprint);
+  }
+});
+
+test('Phase 2 export covers all 130 historical identities without replacing the historical asset', () => {
+  const old=require('../prisma/data/road-practice-short-prepared.json');
+  const current=require('../prisma/data/road-practice-phase-two-prepared.json');
+  assert.deepEqual(current.routes.map(identity).sort(),old.routes.map(identity).sort());
+  assert.equal(new Set(current.routes.map(identity)).size,130);
+  assert.equal(current.status,'PREPARED_REQUIRES_IMPORT_REVALIDATION');
+  assert.equal(current.instructorApproved,false);assert.deepEqual(current.pending,[]);
+  for(const r of current.routes){
+    assert.equal(inWindow({valid:true,durationSec:r.durationSec}),true);
+    assert.equal(r.points[0].latitude,r.points.at(-1).latitude);
+    assert.equal(r.points[0].longitude,r.points.at(-1).longitude);
+    assert.ok(Number.isFinite(Date.parse(r.checkedAt)));
   }
 });

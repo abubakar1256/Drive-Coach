@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { DrivingRouteService } from "./driving-route.service";
 import { metres } from "../learning/practice-progress";
-import { geometryIssues } from "./route-quality";
+import { geometryIssues, durationIssues, MIN_DRIVING_SECONDS, TARGET_DRIVING_SECONDS } from "./route-quality";
 
 export function simpleRoadCycles(geometry: [number, number][]) {
   const stack: [number, number][] = [], positions = new Map<string, number>(), cycles: [number, number][][] = [];
@@ -96,17 +96,17 @@ export class PracticeLoopService {
       if (issues.some(i => ["ROUTING_NOT_CONFIGURED", "ROUTING_UNAVAILABLE"].includes(i))) break;
       // Adapt search anchors only; never scale or relabel a saved road route.
       // One adjustment per original candidate keeps this search bounded.
-      if (!adjusted && Number.isFinite(result.durationSec) && result.durationSec! > 0 && (result.durationSec! < 1440 || result.durationSec! > 1800)) {
-        const scale = Math.max(0.5, Math.min(1.8, 1620 / result.durationSec!));
+      if (!adjusted && Number.isFinite(result.durationSec) && result.durationSec! > 0 && durationIssues(result.durationSec).length) {
+        const scale = Math.max(0.5, Math.min(1.8, TARGET_DRIVING_SECONDS / result.durationSec!));
         candidates.splice(index + 1, 0, { adjusted: true, points: candidate.map(point => ({ latitude: latitude + (point.latitude - latitude) * scale, longitude: longitude + (point.longitude - longitude) * scale })) });
       }
-      if (!result.snappedPoints || !result.coordinates.length || result.durationSec! < 1440) continue;
+      if (!result.snappedPoints || !result.coordinates.length || result.durationSec! < MIN_DRIVING_SECONDS) continue;
       // Recheck the exact saved snapped points with the ordinary route policy.
       const cycles = result.valid ? [] : simpleRoadCycles(result.coordinates);
       const snappedPoints = cycles.length ? cycleWaypoints(cycles[0], [longitude, latitude]) : removeSharedAccessStem(result.coordinates, result.snappedPoints);
       const checked = await this.driving.evaluate(snappedPoints);
-      if (checked.valid && checked.durationSec! <= 1800) return { ...checked, snappedPoints };
-      issues = checked.durationSec! > 1800 ? [...checked.issues, "OVER_30_MINUTES"] : checked.issues;
+      if (checked.valid && !durationIssues(checked.durationSec).length) return { ...checked, snappedPoints };
+      issues = [...new Set([...checked.issues, ...durationIssues(checked.durationSec)])];
     }
     throw new BadRequestException({ message: `No compliant loop found within the bounded search: ${issues.join(", ")}. No route was fabricated or published. Try another starting point/variant.`, issues });
   }

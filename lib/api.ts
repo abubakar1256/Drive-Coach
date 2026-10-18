@@ -57,6 +57,7 @@ export type ApiCentre = {
     isFree?: boolean;
     canAccess?: boolean;
     canStartTrial?: boolean;
+    needsReview?: boolean;
     pointCount?: number;
     points: ApiRoute["points"];
   }>;

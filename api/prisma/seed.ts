@@ -1,50 +1,19 @@
 import { PrismaClient, RouteStatus, UserRole } from "@prisma/client";
 import { officialCentres as centres } from "../src/exam-centres/official-centres";
+import { officialPassageCatalog, passageFingerprint } from "../src/exam-centres/official-passage-catalog";
 
 const prisma = new PrismaClient();
 
 // Official passage-point names published by Autoveiligheid for the Alken exam centre.
 // The source does not publish an exact Route 1 sequence or GPS coordinates, so those
 // fields intentionally remain pending admin verification rather than being guessed.
-const officialAlkenPassagePoints = [
-  ["Alken", "Meerdegatstraat - Expressweg"],
-  ["Hasselt", "Eugeen Leenlaan - Luikersteenweg"],
-  ["Hasselt", "Sint-Truidersteenweg - Vorststraat"],
-  ["Hasselt", "Lentestraat - Zomerstraat"],
-  ["Hasselt", "De Geloesplein"],
-  ["Hasselt", "Prins Bisschopssingel - Sint-Truidersteenweg"],
-  ["Hasselt", "Boomkensstraat - Kruisherenlaan"],
-  ["Hasselt", "Abelenstraat - Boomkensstraat"],
-  ["Hasselt", "Slagerslaan - Boerenkrijgsstraat"],
-  ["Hasselt", "Sint-Hubertusplein"],
-  ["Hasselt", "Runkstersteenweg - Boerenkrijgsingel"],
-  ["Hasselt", "Notelarenstraat - Jagersstraat"],
-  ["Hasselt", "Sint-Martinusplein"],
-  ["Hasselt", "Sint-Truidersteenweg - Overmerelaan"],
-  ["Hasselt", "Sint-Truidersteenweg - De Berlaymontstraat"],
-  ["Alken", "Meerdegatstraat - Kolmenstraat"],
-  ["Hasselt", "Schoolstraat - Fonteinstraat"],
-  ["Hasselt", "Groenmolenstraat - Stationsstraat"],
-  ["Hasselt", "Kliniekstraat - Prins Bisschopssingel"],
-  ["Hasselt", "Luikersteenweg - Daniëlstraat"],
-  ["Hasselt", "Kolmenstraat - Groenmolenstraat"],
-  ["Alken", "Meerdegatstraat - Steenweg"],
-  ["Hasselt", "Pastorijstraat - Sint-Truidersteenweg"],
-  ["Hasselt", "Graaf de Brigodestraat - Sint-Lambrechts-Herkstraat"],
-  ["Hasselt", "Rode-Kruisstraat - Lindenhofstraat"],
-  ["Hasselt", "Lindenhofstraat - Beukenhofstraat"],
-  ["Hasselt", "Steenweg - Stationsstraat"],
-  ["Hasselt", "Sint-Lambertusstraat - Sint-Truidersteenweg"],
-  ["Hasselt", "Pastorijstraat - Graaf de Brigodestraat"],
-  ["Hasselt", "Papenakkerstraat - Gravin de Stembierstraat"],
-  ["Hasselt", "Sint-Truidersteenweg - Kruisherenlaan"],
-  ["Hasselt", "Sint-Truidersteenweg - Biezenstraat"],
-] as const;
+const alkenSource = officialPassageCatalog.find(s => s.slug === "alken")!;
+const officialAlkenPassagePoints = alkenSource.points;
 
 const officialPassageSource = {
-  sourceLabel: "Autoveiligheid officiële doorgangspunten",
-  sourceUrl: "https://www.autoveiligheid.be/downloaden/doorgangspunten-1005",
-  sourceRevision: "NGD-EC126-GN 01-11-2024 (1005)",
+  sourceLabel: "Autoveiligheid published passage point — not mandatory on every exam",
+  sourceUrl: alkenSource.sourceUrl,
+  sourceRevision: alkenSource.sourceRevision,
 };
 
 const practicePointOffsets = [
@@ -176,11 +145,13 @@ async function main() {
     update: { centreId: alken.id, sourceLabel: officialPassageSource.sourceLabel, sourceUrl: officialPassageSource.sourceUrl, verificationStatus: "PENDING_REVIEW" },
     create: { centreId: alken.id, slug: "alken-route-1", name: "Route 1", status: RouteStatus.DRAFT, durationMin: 24, sourceLabel: officialPassageSource.sourceLabel, sourceUrl: officialPassageSource.sourceUrl, verificationStatus: "PENDING_REVIEW" },
   });
-  for (const [index, [municipality, junction]] of officialAlkenPassagePoints.entries()) {
+  for (const point of officialAlkenPassagePoints) {
     await prisma.officialPassagePoint.upsert({
-      where: { centreId_sequence: { centreId: alken.id, sequence: index + 1 } },
-      update: { municipality, junction, ...officialPassageSource },
-      create: { centreId: alken.id, sequence: index + 1, municipality, junction, ...officialPassageSource, verificationStatus: "PENDING_REVIEW" },
+      where: { centreId_sequence: { centreId: alken.id, sequence: point.sequence } },
+      // Source refresh/review now uses the audited Phase 2 importer. A seed rerun
+      // must not silently replace reviewed source metadata or coordinates.
+      update: {},
+      create: { centreId: alken.id, ...point, ...officialPassageSource, sourceFingerprint: passageFingerprint({ ...point, ...officialPassageSource }), sourceCheckedAt: new Date(alkenSource.sourceCheckedAt), verificationStatus: "PENDING_REVIEW" },
     });
   }
 

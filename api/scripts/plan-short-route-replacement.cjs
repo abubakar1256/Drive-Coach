@@ -6,7 +6,10 @@ const crypto=require('node:crypto');
 const {PrismaClient}=require('@prisma/client');
 const {DrivingRouteService}=require('../dist/src/routes/driving-route.service');
 const {similarRoads}=require('./build-road-catalog.cjs');
-const bundle=require('../prisma/data/road-practice-short-prepared.json');
+const dataRoot=path.resolve(__dirname,'../prisma/data');
+const bundleFile=path.resolve(process.env.ROAD_REPLACEMENT_BUNDLE||path.join(dataRoot,'road-practice-short-prepared.json'));
+if(!bundleFile.startsWith(dataRoot+path.sep)||!bundleFile.endsWith('.json'))throw Error('Reviewed task route data asset required');
+const bundle=JSON.parse(fs.readFileSync(bundleFile,'utf8'));
 const prisma=new PrismaClient({log:[]});
 const digest=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 async function main(){
@@ -39,7 +42,7 @@ async function main(){
    let checked=checks.get(key);
    if(!checked){
     checked=await driving.evaluate(item.points);
-    if(!checked.valid||checked.durationSec<1440||checked.durationSec>1800)throw Error(`Fresh route validation failed for ${key}`);
+    if(!checked.valid||checked.durationSec<1380||checked.durationSec>1620)throw Error(`Fresh route validation failed for ${key}`);
     if(item.points[0].latitude!==item.points.at(-1).latitude||item.points[0].longitude!==item.points.at(-1).longitude)throw Error('Meeting-point closure failed');
     const prior=geometries.get(centreSlug)||[];
     if(prior.some(g=>similarRoads(g,checked.coordinates)))throw Error('Routes are insufficiently distinct');

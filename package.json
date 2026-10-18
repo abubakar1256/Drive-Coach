@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:foundation": "pnpm --dir api build && node --test api/test/route-foundation.test.cjs api/test/route-quality.test.cjs api/test/platform-workflows.test.cjs api/test/short-road-catalog.test.cjs api/test/short-route-replacement.test.cjs",
     "test:access": "pnpm --dir api build && node --test api/test/phase-one-access.test.cjs api/test/platform-workflows.test.cjs tests/phase-one-access.test.cjs tests/plan-access.test.cjs",
     "dev": "next dev",
     "build": "next build",

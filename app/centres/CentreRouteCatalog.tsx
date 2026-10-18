@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CentreFoundationInfo from "./CentreFoundationInfo";
 import { useEffect, useState } from "react";
 import type { ApiCentre } from "../../lib/api";
 import { authFetch } from "../../lib/clientSession";
@@ -56,6 +57,7 @@ export default function CentreRouteCatalog({ initialCentre }: { initialCentre: A
   const topics = nl ? ["Wat te verwachten", "Focus voor examenvoorbereiding", "Veelgemaakte fouten", "Voorbereidingstips"] : ["What to expect", "Exam preparation focus", "Common mistakes", "Preparation tips"];
 
   return <>
+    <CentreFoundationInfo slug={initialCentre.slug} />
     <section className="shell premium-centre-section" aria-labelledby="premium-centre-heading">
       <div className={`premium-centre-panel ${paid ? "is-unlocked" : ""}`}>
         <div className="premium-centre-title"><span aria-hidden="true">{paid ? "✓" : "🔒"}</span><div><p className="eyebrow">{centre.name}</p><h2 id="premium-centre-heading">{nl ? "Premium informatie over het examencentrum" : "Premium Exam Center Information"}</h2></div></div>
@@ -84,15 +86,15 @@ export default function CentreRouteCatalog({ initialCentre }: { initialCentre: A
           const label = route.label ?? `Route ${String.fromCharCode(65 + index)}`;
           return <article className={`reference-route-card ${unlocked ? "is-free" : "is-locked"}`} key={route.slug}>
             <div className="reference-route-icon" aria-hidden="true"><span /><span /></div>
-            <div className="reference-route-main"><div className="reference-route-title"><h3>{label}</h3><span className={`reference-route-badge ${unlocked ? "badge-free" : "badge-locked"}`}>{free ? (nl ? "Proefperiode" : "Trial") : unlocked ? (nl ? "Ontgrendeld" : "Unlocked") : (nl ? "Vergrendeld" : "Locked")}</span></div>
-              <p className="reference-route-sequence">{unlocked ? localizeText(routeSequence(route.points) || route.name, locale) : checking || error ? (nl ? "Je centrumtoegang moet nog worden gecontroleerd." : "Your centre access still needs to be checked.") : (nl ? "Start je eenmalige proefperiode op deze route, of kies Basic voor dit centrum / Premium voor alle centra." : "Start your one-time trial on this route, or choose Basic for this centre / Premium for all centres.")}</p>
+            <div className="reference-route-main"><div className="reference-route-title"><h3>{label}</h3><span className={`reference-route-badge ${unlocked ? "badge-free" : "badge-locked"}`}>{route.needsReview ? (nl ? "Broncontrole nodig" : "Source review needed") : free ? (nl ? "Proefperiode" : "Trial") : unlocked ? (nl ? "Ontgrendeld" : "Unlocked") : (nl ? "Vergrendeld" : "Locked")}</span></div>
+              <p className="reference-route-sequence">{route.needsReview ? (nl ? "Deze route wacht op een nieuwe bron- of vertrekpuntcontrole. Je abonnement blijft ongewijzigd." : "This route is awaiting a new source or departure review. Your plan remains unchanged.") : unlocked ? localizeText(routeSequence(route.points) || route.name, locale) : checking || error ? (nl ? "Je centrumtoegang moet nog worden gecontroleerd." : "Your centre access still needs to be checked.") : (nl ? "Start je eenmalige proefperiode op deze route, of kies Basic voor dit centrum / Premium voor alle centra." : "Start your one-time trial on this route, or choose Basic for this centre / Premium for all centres.")}</p>
               <div className="reference-route-meta"><span>⌁ {route.pointCount ?? route.points.length} {nl ? "punten" : "points"}</span><span>◷ {route.durationMin ? `${route.durationMin} min` : (nl ? "Rijduur te controleren" : "Driving time to be checked")}</span></div>
             </div>
-            <div className="reference-route-actions">{unlocked ? <><Link className="route-action route-action-maps" href={`/routes/${route.slug}#google-maps`}>{copy.openGoogle} ↗</Link><Link className="route-action route-action-primary" href={`/routes/${route.slug}`}>{copy.viewRoute} →</Link></> : checking || error ? <button className="route-action route-action-upgrade" disabled>{nl ? "Toegang controleren" : "Check access"}</button> : <Link className="route-action route-action-upgrade" href={`/routes/${route.slug}`}>{route.canStartTrial ? (nl ? "Probeer 24 uur" : "Try for 24 hours") : (nl ? "Bekijk toegang" : "View access")} →</Link>}</div>
+            <div className="reference-route-actions">{route.needsReview ? <button className="route-action route-action-upgrade" disabled>{nl ? "Controle nodig" : "Review needed"}</button> : unlocked ? <><Link className="route-action route-action-maps" href={`/routes/${route.slug}#google-maps`}>{copy.openGoogle} ↗</Link><Link className="route-action route-action-primary" href={`/routes/${route.slug}`}>{copy.viewRoute} →</Link></> : checking || error ? <button className="route-action route-action-upgrade" disabled>{nl ? "Toegang controleren" : "Check access"}</button> : <Link className="route-action route-action-upgrade" href={`/routes/${route.slug}`}>{route.canStartTrial ? (nl ? "Probeer 24 uur" : "Try for 24 hours") : (nl ? "Bekijk toegang" : "View access")} →</Link>}</div>
           </article>;
         })}
       </div><p className="route-list-note">{copy.disclaimer}</p>
-      {routes.length < 7 && <p className="route-list-note">{nl ? "Meer routes verschijnen na controle van de echte wegen en minimaal 24 minuten rijtijd. Alleen bestaande gepubliceerde routes worden getoond." : "More routes appear after real-road checks and at least 24 minutes driving time. Only existing published routes are shown."}</p>}
+      {routes.length < 7 && <p className="route-list-note">{nl ? "Meer routes verschijnen na controle van de echte wegen en 23–27 minuten rijtijd (25 ±2). Alleen bestaande gepubliceerde routes worden getoond." : "More routes appear after real-road checks and 23–27 minutes driving time (25 ±2). Only existing published routes are shown."}</p>}
     </div></section>
   </>;
 }

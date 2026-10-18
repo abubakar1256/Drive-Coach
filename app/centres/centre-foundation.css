@@ -1,0 +1,13 @@
+.centre-foundation-wrap { margin-top:32px; margin-bottom:32px; }
+.centre-foundation-card { display:grid; grid-template-columns:minmax(220px,.85fr) minmax(0,1.25fr); gap:40px; padding:32px; border:1px solid #cfdfd5; border-radius:24px; background:linear-gradient(125deg,#edf6ee,#fff); }
+.centre-foundation-card h2 { font-size:30px; line-height:1.15; letter-spacing:-.035em; margin:14px 0; }
+.centre-foundation-card p { font-size:13px; line-height:1.75; color:#688074; }
+.centre-foundation-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.centre-foundation-metrics > div { padding:16px 12px; background:#fff; border:1px solid #e0e9e3; border-radius:13px; }
+.centre-foundation-metrics strong { font-size:20px; display:block; color:#136b53; overflow-wrap:anywhere; }
+.centre-foundation-metrics span { font-size:10px; display:block; margin-top:8px; color:#788d82; line-height:1.5; }
+.centre-foundation-source { margin-top:16px; padding:18px; border-left:3px solid #1d8c6d; background:#e8f2e9; border-radius:0 12px 12px 0; }
+.centre-foundation-source strong { font-size:13px; }.centre-foundation-source div { display:flex; flex-wrap:wrap; gap:18px; }.centre-foundation-source a,.centre-foundation-card button { color:#11644f; font-size:12px; text-decoration:underline; }
+.centre-foundation-card :focus-visible { outline:3px solid #ff922b; outline-offset:3px; }
+@media(max-width:800px) { .centre-foundation-card { grid-template-columns:1fr; padding:24px; gap:20px; } }
+@media(max-width:450px) { .centre-foundation-metrics { grid-template-columns:1fr; }.centre-foundation-metrics > div { display:flex; align-items:center; gap:12px; }.centre-foundation-metrics span { margin-top:0; }.centre-foundation-card h2 { font-size:26px; } }

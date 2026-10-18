@@ -1,0 +1,64 @@
+# Phase 2 — reviewed route foundation
+
+Implemented on the Phase 1 Free / Basic / Premium model. No prices, purchased periods, trial rules or existing route identities are migrated by Phase 2.
+
+## Quality contract
+
+- New publication, practice-start driving checks, road-network generation and explicit maintenance/import checks require **1,380–1,620 exact driving seconds (23–27 minutes, target 25 ±2)**. Rounding is display-only. Real traffic, stops and Google Maps recalculation can change actual elapsed time.
+- Existing Mapbox geometry checks reject self-crossings, revisited roads, backtracking and U-turn maneuvers conservatively. This is not a guarantee about current signs, closures, legal access or grade-separated junctions.
+- Reviewed passage drafts additionally check start/finish proximity and every selected passage in driving order. The route starts and finishes at the same reviewed public-road meeting location.
+- Existing routes are not automatically edited, unpublished or relabelled official. Metadata remains visible for historical longer routes; fresh navigation/practice checks can require reworking them to the new band. Do not call the historical 24–30 minute JSON export a Phase 2-ready catalogue.
+
+## Verified operator source bundles
+
+Checked 18 October 2026 against the linked operator pages/PDFs. These are **156 numbered source entries across six Autoveiligheid centres**, not 156 unique junctions, not every centre in the app, and not mandatory points on every exam.
+
+| App centre | Entries | Printed revision | Operator page / PDF |
+|---|---:|---|---|
+| Alken | 32 | 2024-11-01 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-alken) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1005-1758689674.pdf) |
+| Bree | 24 | 2025-11-17 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-bree) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1033-1781607015.pdf) |
+| Deurne / antwerp-north | 29 | 2025-11-17 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-deurne) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1004-1764336868.pdf) |
+| Geel / antwerp-geel | 27 | 2025-10-31 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-geel) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1023-1763127051.pdf) |
+| Kontich / antwerp-kontich | 25 | 2024-11-01 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-kontich) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1022-1758689674.pdf) |
+| Haasrode | 19 | 2025-11-17 | [Centre](https://www.autoveiligheid.be/rijbewijs/examencentra/examencentrum-haasrode) · [PDF](https://www.autoveiligheid.be/storage/files/doorgangspunten-1024-1763560723.pdf) |
+
+The source supplies names and municipalities, **not coordinates or fixed exam itineraries**. Coordinates are deliberately absent from the bundle. Duplicate/reversed junction rows remain in source order; duplicate rows are not eligible for route selection. Other centres explicitly show that no verified operator passage list is bundled yet.
+
+## Admin workflow (all-centre selector)
+
+1. In `/admin` → **Route foundation**, select a centre, including centres without routes. Read its operator address/PDF and explicitly import/refresh the source. No startup import or external scraping job runs.
+2. Review the legal public-road meeting point, exact coordinates, source and access evidence. A directory marker is not an exam entrance. Save pending/rejected or explicitly reviewed status. Existing directory anchors are not moved.
+3. Review distinct passage coordinates with evidence. The server records the reviewer and date; changing coordinates without renewed confirmation demotes the point. No automatic geocoding or verification occurs.
+4. Select **2–6** reviewed points in explicit driving order, between departure and return. Confirm one bounded Mapbox Directions check under existing account limits. Failed time/geometry/coverage checks save nothing. No paid upgrade or automatic exhaustive search.
+5. A passing result is an idempotent **DRAFT / PENDING_REVIEW**, named and labelled passage-point **practice**, never an official examiner itinerary. Review its map/content in the existing route editor, confirm content review, then publish through the existing publication gate.
+
+Private provenance captures reviewed source fingerprints, location coordinates, reviewer timestamps and departure version. Publication rechecks/locks those records; access and a new trial claim revalidate them. Source changes/rejection invalidate old snapshots. Catalogue entries then display review-needed and withhold points, not a misleading upgrade prompt. Re-review requires rebuilding/reviewing the route; it does not silently revive stale proof.
+
+Public centre cards expose only operator source metadata, reviewed counts and departure-review status. Raw proof coordinates/ids are stripped from public route/list/catalogue responses. Free/Basic/Premium authorization remains enforced server-side.
+
+## Migration and rollout
+
+`0018_official_route_foundation` is additive: private route JSON proof, source fingerprint/check metadata and `CentreDeparture`. It does not publish anything or change existing routes, payments, subscriptions, trial expiry or prices. The seed no longer overwrites reviewed passage metadata.
+
+Before a **separately authorized live rollout**, back up and rehearse the migration, deploy the API and frontend together, then perform real coordinate/access/content review. This implementation does not certify or publish geographic content across every centre. It does not claim that existing live routes are all 23–27 minutes.
+
+## Reproducible verification
+
+Run `pnpm test:foundation` for the focused API/route suite. For full regression: build API, run `node --test api/test/*.test.cjs tests/*.test.cjs`, then `pnpm build` and `pnpm --dir api exec prisma validate`.
+
+For the isolated PostgreSQL integration script, create a **new empty** `drivecoach_phase2_test...` database on loopback port **55443**. Set `PHASE_TWO_TEST_DATABASE_URL` and `PHASE_TWO_PSQL_PATH`, then run `node api/scripts/verify-phase-two.cjs`. It refuses any non-loopback host, other database name/port or non-empty database. It applies all migrations, uses synthetic coordinates and a mock routing provider, and verifies actual SQL locks/constraints, 156-row imports, publication, revocation, redaction and preservation of legacy billing/route data. Never point it at a live database.
+
+Phase 3 hometown/difficulty/AI personalisation, offline/mobile and additional languages are outside this phase.
+
+### Verification performed locally — 18 October 2026
+
+- API build, frontend production build and Prisma validation passed.
+- 171 API tests plus 64 frontend/shared tests passed (235 total).
+- The final isolated PostgreSQL run passed the complete additive migration/import/review/draft/publish/access/revocation rehearsal. All Directions responses were synthetic fixtures; no external routing spend or live account changes.
+- Browser QA checked the all-centre selector, 32-row Alken mock import feedback, disabled generation before location review, and public source-status layout. The temporary mock servers and test database server were stopped afterwards; test data remains local.
+- A fresh private PostgreSQL 18 archive was restored in an isolated password-protected loopback cluster. Migration 0018 preserved every existing table value; staged source imports left protected tables unchanged.
+- On 18 October, the approved additive migration 0018 and audited six-centre import of 156 source names were applied in production. Source import does not verify coordinates or publish routes.
+- `api/prisma/data/road-practice-phase-two-prepared.json` contains 130 freshly validated, distinct closed practice options in the exact 23–27 minute band. The old 24–30 minute asset remains unchanged. One shared Ghent mapping means 131 generated live records are covered by the replacement plan; the three unverified legacy/curated records are not replacement targets.
+- Operational preparation is explicitly bounded, checkpointed and separate from seeding/startup. `ROAD_REPLACEMENT_BUNDLE` selects the reviewed export; live replacement still requires a matching recent full restore/late-conflict rollback rehearsal. No paid upgrade is required or performed.
+- The approved production replacement passed after the full restore and late-conflict rollback rehearsal: 75 generated routes updated, 56 preserved across 33 directory entries. Existing route IDs/slugs/creation order and historical snapshots are retained. Fresh provider measurements for all 131 targets were 23.1089–26.9805 minutes. Three unverified legacy/curated records were left untouched, not presented as validated routes.
+- Public map collection produces **candidates only**, with OpenStreetMap attribution and cache provenance. An unavailable, ambiguous, private or restricted location must remain pending; a matching road name is not a legal-access review. Do not report official passage/start coverage complete while those reviews remain pending.

@@ -4,14 +4,14 @@ const crypto=require('node:crypto');
 const {PrismaClient}=require('@prisma/client');
 const digest=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const include={centre:{select:{slug:true}},points:{orderBy:{sequence:'asc'},include:{_count:{select:{mediaAssets:true,features:true}}}},_count:{select:{skillCoverage:true}}};
-const policy={status:'PUBLISHED',verificationStatus:{in:['VERIFIED','ROAD_VALIDATED']},reviewedBy:{not:null},durationMin:{gte:24},centre:{isPublished:true}};
+const policy={status:'PUBLISHED',verificationStatus:{in:['VERIFIED','ROAD_VALIDATED']},reviewedBy:{not:null},durationMin:{gte:23},centre:{isPublished:true}};
 function validatePlan(plan){
  if(plan.format!==1||!Array.isArray(plan.routes)||plan.routes.length!==131)throw Error('Unexpected replacement plan');
  if(!Number.isFinite(Date.parse(plan.createdAt))||Date.now()-Date.parse(plan.createdAt)>3600000||Date.parse(plan.createdAt)>Date.now()+120000)throw Error('Stale replacement plan');
  if(new Set(plan.routes.map(r=>r.before.id)).size!==131)throw Error('Duplicate route identity');
  for(const r of plan.routes){
   if(r.before.reviewedBy!=='ROAD_ROUTING_ENGINE'||r.before.verificationStatus!=='ROAD_VALIDATED'||r.beforeHash!==digest(r.before))throw Error('Invalid source snapshot');
-  if(!Number.isFinite(r.durationSec)||r.durationSec<1440||r.durationSec>1800)throw Error('Invalid duration');
+  if(!Number.isFinite(r.durationSec)||r.durationSec<1380||r.durationSec>1620)throw Error('Invalid duration');
   if(!Number.isFinite(Date.parse(r.checkedAt))||Date.now()-Date.parse(r.checkedAt)>3600000||Date.parse(r.checkedAt)>Date.now()+120000)throw Error('Stale provider validation');
   if(r.before._count.skillCoverage||r.before.points.some(p=>p._count.features||p._count.mediaAssets||p.warning||p.imageUrl||p.videoUrl))throw Error('Curated content must not be overwritten');
   if(r.after.length<2||r.after.length>25||r.after.some((p,i)=>p.sequence!==i+1||!Number.isFinite(p.latitude)||!Number.isFinite(p.longitude)||Math.abs(p.latitude)>90||Math.abs(p.longitude)>180||(p.bearing!==null&&!Number.isFinite(p.bearing))))throw Error('Invalid replacement anchors');

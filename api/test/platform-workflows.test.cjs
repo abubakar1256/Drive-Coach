@@ -109,9 +109,9 @@ test("centre info and paid routes use purchased-centre entitlements, not a gener
   assert.equal(centreRouteCatalog(centreCatalogFixture, wrong, true).premiumInfo, null);
   assert.equal((await accessFixture("Diamond", null).centreAccess("u", "centre-a")).premium, true);
 });
-test("public centre route query enforces 24-minute reviewed publication and stable free ordering", async () => {
+test("public centre route query enforces 23-minute reviewed publication and stable free ordering", async () => {
   const service = new ExamCentresService({ examCentre: { findFirst: async args => {
-    assert.equal(args.include.routes.where.durationMin.gte, 24);
+    assert.equal(args.include.routes.where.durationMin.gte, 23);
     assert.equal(args.include.routes.where.status, "PUBLISHED");
     assert.deepEqual(args.include.routes.orderBy, [{ createdAt: "asc" }, { id: "asc" }]);
     return centreCatalogFixture;
@@ -178,7 +178,7 @@ test("only ordered full-route coverage can finish at 100%", async () => {
   const tx = { $queryRawUnsafe: async () => [], practiceSession: { findFirst: async () => session, update: async args => ({ ...session, ...args.data }) }, auditLog: { create: async () => ({}) }, notification: { createMany: async () => ({}) }, routeAssignment: { updateMany: async () => { assignmentCompleted = true; return { count: 1 }; } } };
   const result = await new LearningService({ $transaction: fn => fn(tx) }).updateSession("u", "s", { complete: true }); assert.equal(result.completionPct, 100); assert.equal(result.completionKind, "COMPLETED"); assert.equal(assignmentCompleted, true);
 });
-test("road-loop generator never persists search anchors as road coordinates", async () => { const saved = geometry.map(([longitude, latitude]) => ({ longitude, latitude, name: "Road" })); let count = 0; const service = new PracticeLoopService({ evaluate: async () => { count++; return { valid: true, durationSec: 1800, distanceM: 14000, coordinates: geometry, snappedPoints: saved, issues: [] }; } }); const result = await service.generate(50, 5); assert.equal(count, 2); assert.deepEqual(result.snappedPoints, saved); assert.equal(loopCandidates(50, 5)[0].length, 5); });
+test("road-loop generator never persists search anchors as road coordinates", async () => { const saved = geometry.map(([longitude, latitude]) => ({ longitude, latitude, name: "Road" })); let count = 0; const service = new PracticeLoopService({ evaluate: async () => { count++; return { valid: true, durationSec: 1500, distanceM: 14000, coordinates: geometry, snappedPoints: saved, issues: [] }; } }); const result = await service.generate(50, 5); assert.equal(count, 2); assert.deepEqual(result.snappedPoints, saved); assert.equal(loopCandidates(50, 5)[0].length, 5); });
 test("routing outages stop bounded generation without fake routes", async () => { let calls = 0; await assert.rejects(new PracticeLoopService({ evaluate: async () => { calls++; return { valid: false, issues: ["ROUTING_UNAVAILABLE"] }; } }).generate(50, 5)); assert.equal(calls, 1); });
 test("school history and feedback reject unrelated instructors", async () => { const service = new B2bService({ studentEnrollment: { findFirst: async args => { assert.equal(args.where.instructor.userId, "outsider"); return null; } } }); await assert.rejects(service.studentHistory("outsider", "enrollment"), /enrollment/); await assert.rejects(service.feedback("outsider", "enrollment", { sessionId: "s", body: "x" }), /enrollment/); });
 test("school invoice history is owner-only", async () => { const service = new B2bService({ drivingSchool: { findFirst: async () => null } }); await assert.rejects(service.schoolBilling("outsider", "school"), /owner/); });
@@ -262,7 +262,7 @@ test("starter import publishes checked content once and sends route notice", asy
   const { AdminService } = require("../dist/src/admin/admin.service");
   let saved, notified = false;
   const tx = { $queryRawUnsafe: async sql => { assert.match(sql, /SELECT 1 AS locked FROM pg_advisory_xact_lock/); return [{ locked: 1 }]; }, route: { findUnique: async () => null, create: async args => { saved = args.data; return { id: "new", version: 1, ...args.data }; } }, auditLog: { create: async () => ({}) } };
-  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "ghent-east", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async () => ({ valid: true, durationSec: 1800 }) }, { routePublished: async () => { notified = true; } });
+  const service = new AdminService({ examCentre: { findUnique: async () => ({ slug: "ghent-east", isPublished: true }) }, route: { findUnique: async () => null }, $transaction: fn => fn(tx) }, { requireValid: async () => ({ valid: true, durationSec: 1500 }) }, { routePublished: async () => { notified = true; } });
   await service.importStarterRoute("admin", "centre"); assert.equal(saved.status, "PUBLISHED"); assert.equal(saved.verificationStatus, "ROAD_VALIDATED"); assert.match(saved.sourceLabel, /Shared Ghent/); assert.equal(notified, true);
 });
 

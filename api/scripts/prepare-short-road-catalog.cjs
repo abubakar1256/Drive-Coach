@@ -4,22 +4,59 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { DrivingRouteService } = require('../dist/src/routes/driving-route.service');
 const { PracticeLoopService } = require('../dist/src/routes/practice-loop.service');
+const { durationIssues, MIN_DRIVING_SECONDS, MAX_DRIVING_SECONDS, TARGET_DRIVING_SECONDS } = require('../dist/src/routes/route-quality');
 const { officialCentres } = require('../dist/src/exam-centres/official-centres');
 const { similarRoads } = require('./build-road-catalog.cjs');
 const starter = require('../prisma/data/road-practice-loops.json');
 const extras = require('../prisma/data/road-practice-catalog.json');
+const baseline = require('../prisma/data/road-practice-short-prepared.json');
 
-const inWindow = result => result?.valid === true && Number.isFinite(result.durationSec) && result.durationSec >= 1440 && result.durationSec <= 1800;
+function preparationDirectory() {
+  const root = path.resolve(__dirname, '../../output/chatbot-audit');
+  const dir = path.resolve(process.env.ROUTE_PREPARATION_DIRECTORY || path.join(root, 'short-routes'));
+  if (!dir.startsWith(root + path.sep)) throw Error('Preparation output must stay within task-local audit output');
+  return dir;
+}
+function expectedRoutes() {
+  return [...starter.routes.map(item => ({...item, slot: 1})), ...extras.routes].map(item => {
+    const previous = baseline.routes.find(r => r.centreSlug === item.centreSlug && (r.slot ?? 1) === item.slot);
+    return previous ? {...item, ...previous, slot: item.slot} : item;
+  });
+}
+
+const inWindow = result => result?.valid === true && !durationIssues(result.durationSec).length;
 const identity = item => `${item.centreSlug}:${item.slot ?? 1}`;
 const closedAtMeetingPoint = points => Array.isArray(points) && points.length >= 2 && points[0].latitude === points.at(-1).latitude && points[0].longitude === points.at(-1).longitude;
 
 function shorterCandidates(item) {
-  if (!Number.isFinite(item.durationSec) || item.durationSec <= 1800 || item.points.length < 5) return [];
-  const base = Math.round((item.points.length - 1) * 1620 / item.durationSec);
+  if (!Number.isFinite(item.durationSec) || item.durationSec <= MAX_DRIVING_SECONDS || item.points.length < 5) return [];
+  const base = Math.round((item.points.length - 1) * TARGET_DRIVING_SECONDS / item.durationSec);
   const cuts = [...new Set([base, base + 2, base - 2].map(n => Math.max(2, Math.min(item.points.length - 2, n))))];
   // Reuse actual road anchors, not scaled coordinates. The closing road path is
   // unknown until Directions validates it; a shortcut can still fail the quality gates.
   return cuts.map(cut => [...item.points.slice(0, cut + 1), item.points[0]].map((point, index) => index === 0 || index === cut + 1 ? {...point, bearing: null} : point));
+}
+
+function shortcutCandidates(item) {
+  // Remove a contiguous detour from real saved road anchors. Estimated distance
+  // only prioritizes checks; Directions must still validate every saved result.
+  if (!closedAtMeetingPoint(item.points) || !Number.isFinite(item.durationSec) || item.durationSec <= MAX_DRIVING_SECONDS) return [];
+  const {metres} = require('../dist/src/learning/practice-progress');
+  const xy = p => [p.longitude, p.latitude];
+  const points = item.points, total = points.slice(1).reduce((sum,p,i) => sum + metres(xy(points[i]),xy(p)),0);
+  const wanted = total * (1 - TARGET_DRIVING_SECONDS / item.durationSec);
+  const options = [];
+  for (let count = 1; count <= Math.min(6, points.length - 4); count++) {
+    for (let start = 1; start + count < points.length - 1; start++) {
+      const end = start + count;
+      const detour = points.slice(start, end + 1).reduce((sum,p,i) => sum + metres(xy(points[start - 1 + i]),xy(p)),0);
+      const saved = detour - metres(xy(points[start - 1]),xy(points[end]));
+      if (saved < 30) continue;
+      const remaining = [...points.slice(0,start),...points.slice(end)].map((p,i) => ({...p, ...(i === 0 || i === start - 1 || i === start || i === points.length - count - 1 ? {bearing:null} : {})}));
+      options.push({score:Math.abs(saved - wanted),points:remaining});
+    }
+  }
+  return options.sort((a,b) => a.score - b.score).slice(0,20).map(o => o.points);
 }
 
 function validateCompleteBundle(bundle, expected) {
@@ -39,11 +76,13 @@ function validateCompleteBundle(bundle, expected) {
 }
 
 function exportPrepared() {
-  const checkpoint = path.resolve(__dirname, '../../output/chatbot-audit/short-routes/prepared.json');
+  const checkpoint = path.join(preparationDirectory(), 'prepared.json');
   const bundle = JSON.parse(fs.readFileSync(checkpoint, 'utf8'));
-  const expected = [...starter.routes.map(item => ({...item, slot: 1})), ...extras.routes];
+  const expected = expectedRoutes();
   validateCompleteBundle(bundle, expected);
-  const target = path.resolve(__dirname, '../prisma/data/road-practice-short-prepared.json');
+  const dataRoot = path.resolve(__dirname, '../prisma/data');
+  const target = path.resolve(process.env.ROUTE_PREPARATION_EXPORT || path.join(dataRoot, 'road-practice-short-prepared.json'));
+  if (!target.startsWith(dataRoot + path.sep) || !target.endsWith('.json')) throw Error('Export must be a JSON data asset within api/prisma/data');
   // Generated data asset, not application seeding. Refuse to overwrite an
   // existing reviewed export; importing/replacing live rows is a separate step.
   fs.writeFileSync(target, JSON.stringify({...bundle, routes: [...bundle.routes].sort((a, b) => a.centreSlug.localeCompare(b.centreSlug) || a.slot - b.slot)}, null, 2) + '\n', {flag: 'wx'});
@@ -53,13 +92,14 @@ function exportPrepared() {
 async function main() {
   const maxRequests = Number(process.argv[2] ?? 256);
   const shortenOnly = process.argv[3] === 'shorten';
+  const simplifyOnly = process.argv[3] === 'simplify';
   if (!Number.isInteger(maxRequests) || maxRequests < 1 || maxRequests > 512) throw Error('Request budget must be 1–512');
-  const output = path.resolve(__dirname, '../../output/chatbot-audit/short-routes');
+  const output = preparationDirectory();
   fs.mkdirSync(output, {recursive: true});
   const checkpoint = path.join(output, 'prepared.json');
   // Keep the last prepared data recoverable if the next provider check fails.
   if (fs.existsSync(checkpoint)) fs.copyFileSync(checkpoint, path.join(output, `prepared-before-${Date.now()}.json`));
-  const expected = [...starter.routes.map(item => ({...item, slot: 1})), ...extras.routes];
+  const expected = expectedRoutes();
   const prepared = [], geometries = new Map();
   const previous = fs.existsSync(checkpoint) ? JSON.parse(fs.readFileSync(checkpoint, 'utf8')) : {};
   const prior = previous.routes ?? [];
@@ -88,7 +128,7 @@ async function main() {
   const known = new Map(expected.map(item => [identity(item), item]));
   const save = () => {
     const missing = expected.filter(item => !prepared.some(route => identity(route) === identity(item))).map(item => ({centreSlug: item.centreSlug, slot: item.slot}));
-    const report = {status: missing.length ? 'PARTIAL_NOT_FOR_PUBLICATION' : 'PREPARED_REQUIRES_IMPORT_REVALIDATION', instructorApproved: false, disclaimer: 'Road-network practice, not official examiner routes. Nothing has been published by this script.', minSeconds: 1440, maxSeconds: 1800, preparedAt: new Date().toISOString(), requests, maxRequests, stopReason, nextSearchRound, nextCentreIndex, issueCounts, routes: prepared, pending: missing};
+    const report = {status: missing.length ? 'PARTIAL_NOT_FOR_PUBLICATION' : 'PREPARED_REQUIRES_IMPORT_REVALIDATION', instructorApproved: false, disclaimer: 'Road-network practice, not official examiner routes. Nothing has been published by this script.', minSeconds: MIN_DRIVING_SECONDS, maxSeconds: MAX_DRIVING_SECONDS, preparedAt: new Date().toISOString(), requests, maxRequests, stopReason, nextSearchRound, nextCentreIndex, nextShortcutRound: previous.nextShortcutRound ?? 0, issueCounts, routes: prepared, pending: missing};
     fs.writeFileSync(`${checkpoint}.tmp`, JSON.stringify(report, null, 2) + '\n');
     fs.renameSync(`${checkpoint}.tmp`, checkpoint);
     return report;
@@ -107,29 +147,31 @@ async function main() {
   }
   try {
     // Revalidate existing short routes and prior checkpoints; never trust rounded labels.
-    const candidates = [...prior.filter(item => known.has(identity(item))), ...expected.filter(item => item.durationSec >= 1440 && item.durationSec <= 1800)];
+    const candidates = [...prior.filter(item => known.has(identity(item))), ...expected.filter(item => !durationIssues(item.durationSec).length)];
     for (const item of candidates) {
       if (stopReason) break;
       if (prepared.some(route => identity(route) === identity(item))) continue;
       const result = await driving.evaluate(item.points);
       await accept({...known.get(identity(item)), ...item}, result, 'retained');
     }
-    if (shortenOnly) {
+    if (shortenOnly || simplifyOnly) {
       // One candidate per missing route before trying alternatives. All data is
       // fresh checked; no existing duration is relabelled or scaled.
-      for (let round = 0; round < 3 && !stopReason; round++) {
+      const first = simplifyOnly ? previous.nextShortcutRound ?? 0 : 0;
+      for (let round = first; round < (simplifyOnly ? 20 : 3) && !stopReason; round++) {
         for (const item of expected) {
           if (stopReason) break;
           if (prepared.some(route => identity(route) === identity(item))) continue;
-          const candidate = shorterCandidates(item)[round];
+          const candidate = (simplifyOnly ? shortcutCandidates(item) : shorterCandidates(item))[round];
           if (!candidate) continue;
           const result = await driving.evaluate(candidate);
           await accept({...item, points: candidate}, result, 'shortened');
         }
+        if (simplifyOnly && !stopReason) previous.nextShortcutRound = round + 1;
       }
     }
     // One missing slot per centre per round; longer centres cannot consume the whole budget first.
-    for (let round = startRound; !shortenOnly && round < startRound + 14 && !stopReason; round++) {
+    for (let round = startRound; !shortenOnly && !simplifyOnly && round < startRound + 14 && !stopReason; round++) {
       for (let centreIndex = round === startRound ? startCentre : 0; centreIndex < officialCentres.length; centreIndex++) {
         if (stopReason) break;
         const centre = officialCentres[centreIndex];
@@ -151,7 +193,7 @@ async function main() {
     console.log(JSON.stringify({type: 'summary', ready: prepared.length, pending: report.pending.length, requests, maxRequests, stopReason, issueCounts, checkpoint}));
   }
 }
-module.exports = {inWindow, identity, shorterCandidates, validateCompleteBundle};
+module.exports = {inWindow, identity, shorterCandidates, shortcutCandidates, validateCompleteBundle};
 if (require.main === module) {
   if (process.argv[2] === '--export-prepared') {
     try { exportPrepared(); } catch (error) { console.error(`Export refused: ${error.message}`); process.exitCode = 1; }

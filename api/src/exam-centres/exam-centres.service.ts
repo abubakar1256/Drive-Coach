@@ -5,28 +5,30 @@ import { officialCentres } from "./official-centres";
 import { RouteAccessService } from "../routes/route-access.service";
 import { publishedRoutePolicy, publishedRouteOrder } from "../routes/published-route-policy";
 import { premiumCentreInfo } from "./premium-centre-info";
+import { publicFoundation, OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
 
 const fallbackCentres = officialCentres.map((centre) => ({ ...centre, routes: 0 }));
 
-type CatalogCentre = Pick<ExamCentre, "name" | "city" | "region"> & { routes: Array<Route & { points: RoutePoint[]; _count?: { points: number } }> };
+type CatalogCentre = Pick<ExamCentre, "name" | "city" | "region"> & { routes: Array<Route & { points: RoutePoint[]; _count?: { points: number }; foundationReady?: boolean }> };
 
 export function centreRouteCatalog<T extends CatalogCentre>(centre: T, entitlement: { premium: boolean; plan: string; expiresAt?: Date | null; trial?: { available: boolean; active: boolean; routeId: string | null; expiresAt: Date | null } } = { premium: false, plan: "Free" }, signedIn = false) {
   return { ...centre,
     access: { ...entitlement, signedIn },
     premiumInfo: entitlement.premium ? premiumCentreInfo(centre) : null,
     routes: centre.routes.map((route, index) => ({
-      ...route, label: `Route ${String.fromCharCode(65 + index)}`,
-      isFree: Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id), canAccess: entitlement.premium || Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id),
-      canStartTrial: signedIn && Boolean(entitlement.trial?.available),
+      ...route, foundation: publicFoundation(route.foundation), label: `Route ${String.fromCharCode(65 + index)}`,
+      needsReview: route.foundationReady === false,
+      isFree: Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id), canAccess: route.foundationReady !== false && (entitlement.premium || Boolean(entitlement.trial?.active && entitlement.trial.routeId === route.id)),
+      canStartTrial: route.foundationReady !== false && signedIn && Boolean(entitlement.trial?.available),
       pointCount: route._count?.points ?? route.points.length,
-      points: entitlement.premium || (entitlement.trial?.active && entitlement.trial.routeId === route.id) ? route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [],
+      points: route.foundationReady !== false && (entitlement.premium || (entitlement.trial?.active && entitlement.trial.routeId === route.id)) ? route.points.map((point) => ({ ...point, imageUrl: null, videoUrl: null })) : [],
     })),
   };
 }
 
 @Injectable()
 export class ExamCentresService {
-  constructor(private readonly prisma: PrismaService, private readonly routeAccess: RouteAccessService) {}
+  constructor(private readonly prisma: PrismaService, private readonly routeAccess: RouteAccessService, private readonly foundation: OfficialRouteFoundationService) {}
 
   async onModuleInit() {
     try {
@@ -58,6 +60,12 @@ export class ExamCentresService {
       return fallback ? { ...fallback, routes: [], access: { premium: false, plan: "Free", signedIn: false }, premiumInfo: null } : null;
     }
     if (!centre) return null;
+    for (const route of centre.routes) {
+      if (!route.foundation) continue;
+      const points = await this.prisma.routePoint.findMany({ where: { routeId: route.id }, orderBy: { sequence: "asc" } });
+      try { await this.foundation.validateSnapshot(route, points); }
+      catch { Object.assign(route, { foundationReady: false }); }
+    }
     const entitlement = userId ? await this.routeAccess.centreAccess(userId, centre.id) : { premium: false, plan: "Free" };
     return centreRouteCatalog(centre, entitlement, Boolean(userId));
   }

@@ -102,6 +102,7 @@ model ExamCentre {
   routes      Route[]
   subscriptions Subscription[]
   officialPassagePoints OfficialPassagePoint[]
+  departure CentreDeparture?
 }
 
 model Route {
@@ -116,6 +117,7 @@ model Route {
   reviewedBy  String?
   sourceLabel String?
   sourceUrl   String?
+  foundation Json?
   verificationStatus String @default("UNVERIFIED")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -149,6 +151,9 @@ model OfficialPassagePoint {
   sourceLabel        String
   sourceUrl          String
   sourceRevision     String?
+  sourceFingerprint  String?
+  sourceCheckedAt    DateTime?
+  duplicateOfSequence Int?
   latitude           Float?
   longitude          Float?
   verificationStatus String   @default("PENDING_REVIEW")
@@ -161,6 +166,20 @@ model OfficialPassagePoint {
 
   @@unique([centreId, sequence])
   @@index([centreId, verificationStatus])
+}
+
+model CentreDeparture {
+  centreId String @id
+  latitude Float
+  longitude Float
+  label String
+  sourceUrl String
+  notes String
+  verificationStatus String @default("PENDING_REVIEW")
+  reviewedBy String?
+  reviewedAt DateTime?
+  version Int @default(1)
+  centre ExamCentre @relation(fields: [centreId], references: [id], onDelete: Cascade)
 }
 
 model RoutePoint {

@@ -25,9 +25,9 @@ test("simple closed loop is allowed", () => assert.deepEqual(geometryIssues(squa
 test("figure-eight crossing is rejected", () => assert.deepEqual(geometryIssues([[0, 0], [2, 2], [0, 2], [2, 0]]), ["SELF_CROSSING"]));
 test("revisited junction/road is rejected", () => assert.deepEqual(geometryIssues([[0, 0], [1, 0], [1, 1], [1, 0], [2, 0]]), ["REVISITED_ROAD"]));
 test("overlapping road with different geometry vertices is rejected", () => assert.deepEqual(geometryIssues([[0, 0], [4, 0], [4, 1], [3, 1], [3, 0], [1, 0]]), ["BACKTRACKING"]));
-test("ten-minute route cannot pass a 24-minute label", async () => { provider(600); const result = await new DrivingRouteService().evaluate(points); assert.equal(result.valid, false); assert.equal(result.durationSec, 600); assert.ok(result.issues.includes("UNDER_24_MINUTES")); });
+test("ten-minute route cannot pass a 24-minute label", async () => { provider(600); const result = await new DrivingRouteService().evaluate(points); assert.equal(result.valid, false); assert.equal(result.durationSec, 600); assert.ok(result.issues.includes("UNDER_23_MINUTES")); });
 test("exactly 24 driving minutes passes, cached by full point order", async () => { provider(); const service = new DrivingRouteService(); const result = await service.evaluate(points); assert.equal(result.valid, true); assert.deepEqual(result.coordinates, square); global.fetch = () => { throw Error("must use cache"); }; assert.deepEqual(await service.evaluate(points), result); });
-test("23 minutes 59 seconds fails rather than rounding to 24", async () => { provider(1439); assert.equal((await new DrivingRouteService().evaluate(points)).valid, false); });
+test("22 minutes 59 seconds fails rather than rounding to 23", async () => { provider(1379); assert.equal((await new DrivingRouteService().evaluate(points)).valid, false); });
 test("changing waypoint order cannot reuse an earlier valid result", async () => { provider(); const service = new DrivingRouteService(); assert.equal((await service.evaluate(points)).valid, true); provider(600); assert.equal((await service.evaluate([...points].reverse())).valid, false); });
 test("malformed provider geometry fails closed", async () => { provider(1800, [[5, 50], [NaN, 51]]); assert.deepEqual((await new DrivingRouteService().evaluate(points)).issues, ["INVALID_ROUTING_RESPONSE"]); });
 test("U-turn is rejected even on a long route", async () => { provider(1800, square, "uturn"); assert.ok((await new DrivingRouteService().evaluate(points)).issues.includes("U_TURN")); });
@@ -37,8 +37,8 @@ test("invalid waypoint counts and coordinates are rejected", async () => { const
 test("publication cannot bypass road validation", async () => {
   let saved = false;
   const prisma = { route: { findUnique: async () => ({ id: "r", verificationStatus: "VERIFIED", reviewedBy: "admin", sourceLabel: "Reviewed", version: 1 }), update: async () => { saved = true; } }, routePoint: { findMany: async () => points } };
-  const service = new AdminService(prisma, { requireValid: async () => { throw Error("UNDER_24_MINUTES"); } });
-  await assert.rejects(service.updateRoute("r", { status: "PUBLISHED", durationMin: 24 }), /UNDER_24/); assert.equal(saved, false);
+  const service = new AdminService(prisma, { requireValid: async () => { throw Error("UNDER_23_MINUTES"); } });
+  await assert.rejects(service.updateRoute("r", { status: "PUBLISHED", durationMin: 24 }), /UNDER_23/); assert.equal(saved, false);
   await assert.rejects(service.createRoute({ status: "PUBLISHED" }), /draft/);
 });
 test("practice cannot start through direct API with an invalid route", async () => {

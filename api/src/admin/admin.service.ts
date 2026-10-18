@@ -9,14 +9,14 @@ import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { DrivingRouteService } from "../routes/driving-route.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { PracticeLoopService } from "../routes/practice-loop.service";
-import roadBundle from "../../prisma/data/road-practice-loops.json";
-import catalogBundle from "../../prisma/data/road-practice-catalog.json";
+import catalogBundle from "../../prisma/data/road-practice-phase-two-prepared.json";
+import { OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
 
 type CatalogRoute = { centreSlug: string; slot: number; points: Array<{ latitude: number; longitude: number; bearing?: number | null }> };
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly notifications: NotificationsService, private readonly loops: PracticeLoopService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly notifications: NotificationsService, private readonly loops: PracticeLoopService, private readonly foundation: OfficialRouteFoundationService) {}
 
   listCentres() {
     return this.prisma.examCentre.findMany({
@@ -44,18 +44,8 @@ export class AdminService {
     });
   }
 
-  async updateOfficialPassagePoint(id: string, dto: UpdateOfficialPassagePointDto) {
-    const current = await this.prisma.officialPassagePoint.findUnique({ where: { id }, select: { id: true, latitude: true, longitude: true, verificationStatus: true, verifiedAt: true } });
-    if (!current) throw new NotFoundException("Official passage point not found");
-    const nextStatus = dto.verificationStatus ?? current.verificationStatus;
-    const isVerified = nextStatus === "VERIFIED";
-    if (isVerified && ((dto.latitude ?? current.latitude) === null || (dto.longitude ?? current.longitude) === null)) {
-      throw new BadRequestException("Latitude and longitude are required before verification");
-    }
-    return this.prisma.officialPassagePoint.update({
-      where: { id },
-      data: { ...dto, verificationStatus: nextStatus, verifiedAt: isVerified ? (current.verifiedAt ?? new Date()) : null },
-    });
+  async updateOfficialPassagePoint(id: string, dto: UpdateOfficialPassagePointDto, actorId: string) {
+    return this.foundation.reviewPassage(actorId, id, dto);
   }
 
   listRoutes() {
@@ -135,7 +125,7 @@ export class AdminService {
   }
 
   preparedRoadCatalog() {
-    const routes = catalogBundle.routes as CatalogRoute[];
+    const routes = (catalogBundle.routes as CatalogRoute[]).filter(r => r.slot > 1);
     return Array.from(new Set(routes.map(r => r.centreSlug))).map(centreSlug => ({ centreSlug, slots: routes.filter(r => r.centreSlug === centreSlug).map(r => r.slot) }));
   }
 
@@ -145,13 +135,13 @@ export class AdminService {
     // Legacy Ghent East is a second directory entry for the nearby Ghent area.
     const sourceSlug = centre.slug === "ghent-east" ? "sint-denijs-westrem" : centre.slug;
     if (!Number.isInteger(slot) || slot < 1 || slot > 7) throw new BadRequestException("Route slot must be 1–7");
-    const item = slot === 1 ? roadBundle.routes.find(r => r.centreSlug === sourceSlug) : (catalogBundle.routes as CatalogRoute[]).find(r => r.centreSlug === sourceSlug && r.slot === slot);
+    const item = (catalogBundle.routes as CatalogRoute[]).find(r => r.centreSlug === sourceSlug && r.slot === slot);
     if (!item) throw new NotFoundException("No checked starter route for this centre");
     const slug = `${centre.slug}-road-practice-loop-${String(slot).padStart(2, "0")}`;
     const existing = await this.prisma.route.findUnique({ where: { slug } });
     if (existing) return { ...existing, preserved: true };
     const checked = await this.driving.requireValid(item.points);
-    if (checked.durationSec! > 3600) throw new BadRequestException("Starter loop exceeds 60 minutes");
+    if (checked.durationSec! > 1620 || checked.durationSec! < 1380) throw new BadRequestException("Starter loop must pass fresh 25 ±2 minute validation; update this route's waypoints before import");
     const route = await this.prisma.$transaction(async tx => {
       await tx.$queryRawUnsafe("SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtext($1))", slug);
       const found = await tx.route.findUnique({ where: { slug } });
@@ -206,9 +196,14 @@ export class AdminService {
       if (!reviewed || (!actorId && !current.reviewedBy)) throw new BadRequestException("Confirm instructor/content review before publishing");
       const points = await this.prisma.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
       const result = await this.driving.requireValid(points);
+      if (current.foundation) await this.foundation.validateSnapshot(current, points);
       dto.durationMin = Math.ceil(result.durationSec! / 60);
     }
     const updated = await this.prisma.$transaction(async tx => {
+      if (dto.status === "PUBLISHED" && current.foundation) {
+        const points = await tx.routePoint.findMany({ where: { routeId: id }, orderBy: { sequence: "asc" } });
+        await this.foundation.validateSnapshot(current, points, tx, true);
+      }
       const changed = await tx.route.updateMany({ where: { id, version: current.version }, data: { ...dto, verifiedAt: reviewed ? new Date() : null, reviewedBy: reviewed ? actorId ?? current.reviewedBy : null, version: { increment: 1 } } });
       if (!changed.count) throw new BadRequestException("Route changed during review; refresh and validate again");
       return tx.route.findUniqueOrThrow({ where: { id }, include: { points: { orderBy: { sequence: "asc" } } } });

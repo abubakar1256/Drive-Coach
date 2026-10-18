@@ -1,5 +1,11 @@
 export type Coordinate = [number, number];
-export const MIN_DRIVING_SECONDS = 24 * 60;
+export const MIN_DRIVING_SECONDS = 23 * 60;
+export const TARGET_DRIVING_SECONDS = 25 * 60;
+export const MAX_DRIVING_SECONDS = 27 * 60;
+export function durationIssues(seconds: number | null) {
+  if (!Number.isFinite(seconds) || seconds === null || seconds <= 0) return ["INVALID_DURATION"];
+  return seconds < MIN_DRIVING_SECONDS ? ["UNDER_23_MINUTES"] : seconds > MAX_DRIVING_SECONDS ? ["OVER_27_MINUTES"] : [];
+}
 
 const key = (p: Coordinate) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`;
 const cross = (a: Coordinate, b: Coordinate, c: Coordinate) =>
