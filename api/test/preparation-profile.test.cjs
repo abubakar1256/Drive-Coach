@@ -107,3 +107,8 @@ test('clearing and recreating a profile cannot revive an old tab revision',async
  await assert.rejects(f.service.clear('learner-a',{ownerId:'learner-a',version:old.version,revision:old.revision}),/profile changed/);
  assert.equal((await f.service.get('learner-a')).age,25);
 });
+
+test('account-owned after-drive checklist feeds reported focus without exporting notes or snapshot coordinates',async()=>{
+ const f=fixture();f.db.practiceSession={findFirst:async({where})=>{assert.equal(where.userId,'learner-a');return {routeSnapshot:{geometry:[[5,50]],coachingReview:{source:'instructor_reported',ratings:{roundabouts:'good',priority:'practice',speed_choice:'not_assessed'},notes:'PRIVATE_MANUAL_NOTES',savedAt:new Date().toISOString()}}};}};
+ const p=await f.service.get('learner-a');assert.deepEqual(p.focus.items.map(i=>i.code),['priority']);assert.deepEqual(p.focus.items[0].basis,['INSTRUCTOR_REPORTED']);assert.doesNotMatch(JSON.stringify(p),/PRIVATE_MANUAL_NOTES|"geometry":|"latitude":/);
+});

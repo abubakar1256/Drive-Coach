@@ -8,6 +8,7 @@ import PartnershipPanel from "./PartnershipPanel";
 import SchoolLearningPanel from "./SchoolLearningPanel";
 import ReminderSettings from "./ReminderSettings";
 import PreparationProfilePanel from "./PreparationProfilePanel";
+import PersonalizedPracticePanel from "./PersonalizedPracticePanel";
 import { useLocaleMessages } from "../../lib/useLocale";
 import { useCurrentLocale, useSiteCopy } from "../../lib/useLocale";
 import { authFetch, loginRedirectPath, SessionExpiredError } from "../../lib/clientSession";
@@ -64,6 +65,7 @@ export default function DashboardPanel() {
       <div><strong>{data.stats.averageProgress}%</strong><span>{copy.averageProgress}</span></div>
     </div>
     <PreparationProfilePanel />
+    <PersonalizedPracticePanel />
     <div className="dashboard-grid">
       <section className="dashboard-card recommendation-card"><div className="dashboard-card-title"><div><span className="small-label">{copy.yourNextFocus.toUpperCase()}</span><h2>{dashboardCopy.smallHabits}</h2></div><span className="dashboard-icon">✦</span></div><div className="recommendation-list">{data.recommendations.map((item) => <article key={item.skill}><span>→</span><div><strong>{item.skill}</strong><p>{item.message}</p></div></article>)}</div></section>
       <section className="dashboard-card subscription-dashboard-card"><span className="small-label">{dashboardCopy.access}</span><h2>{planState === "ready" ? currentPlan : "—"}</h2><p>{planState !== "ready" ? (locale === "nl" ? "Je toegang controleren…" : "Checking your access…") : currentPlan !== "Free" ? dashboardCopy.premiumActive : dashboardCopy.freeActive}</p><Link className="button button-small" href={planState === "ready" && currentPlan === "Free" ? "/#pricing" : "/account"}>{planState === "ready" && currentPlan === "Free" ? dashboardCopy.viewPlans : dashboardCopy.manageAccount} <span>↗</span></Link></section>

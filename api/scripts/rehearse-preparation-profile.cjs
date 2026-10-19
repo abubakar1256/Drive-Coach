@@ -21,6 +21,7 @@ async function main(){
   const url=new URL('postgresql://127.0.0.1:15441/preparation_restore');url.username=env.PGUSER;url.password=password;db=new PrismaClient({datasourceUrl:url.toString(),log:[]});
   const before=await fingerprints(db),migration=path.resolve(__dirname,'../prisma/migrations/0019_private_preparation_profile/migration.sql');
   run('psql',['-X','-v','ON_ERROR_STOP=1','-q','-f',migration]);
+  run('psql',['-X','-v','ON_ERROR_STOP=1','-q','-f',path.resolve(__dirname,'../prisma/migrations/0020_private_personalized_practice/migration.sql')]);
   const afterMigration=await fingerprints(db);for(const table of Object.keys(before))assert.equal(afterMigration[table],before[table],'Migration changed '+table);
   assert.equal(await db.preparationProfile.count(),0,'No legacy profiles may be backfilled');
   const prefix='phase3_test_'+Date.now(),a=prefix+'_a',b=prefix+'_b';

@@ -12,7 +12,7 @@ function harness(){
  const states=[],refs=[],calls=[],watches=[],cleared=[],tracking=[],positions=[];let cursor=0,refCursor=0;
  const Dialog=()=>null;
  const oldWindow=global.window,oldNavigator=Object.getOwnPropertyDescriptor(global,'navigator');
- global.window={sessionStorage:{getItem:()=> 'fixture-token'}};
+ global.window={location:{search:''},sessionStorage:{getItem:()=> 'fixture-token'}};
  Object.defineProperty(global,'navigator',{configurable:true,value:{geolocation:{watchPosition:(ok,error)=>{watches.push({ok,error});return watches.length;},clearWatch:id=>cleared.push(id)}}});
  const filename=path.resolve(__dirname,'../app/routes/PracticeControls.tsx'),loaded=new Module(filename,module);loaded.paths=module.paths;
  const mocks={
@@ -20,7 +20,7 @@ function harness(){
   'next/navigation':{useRouter:()=>({push:()=>{}})},
   'next/link':{__esModule:true,default:props=>React.createElement('a',props)},
   './DrivePreparation':{__esModule:true,default:()=>null},
-  '../../lib/clientSession':{authFetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>url.endsWith('/track')?{completionPct:23}:{id:'test-session',completionPct:0}};}},
+  '../../lib/clientSession':{authFetch:async(url,options)=>{calls.push({url,options});return {ok:true,json:async()=>url.endsWith('/track')?{completionPct:23}:{id:'test-session',routeId:'route-a',completionPct:0}};}},
   '../../lib/i18n':{isLocale:()=>true},
   '../../lib/useLocale':{useSiteCopy:()=>({route:{startPractice:'Start practice',completePractice:'Complete practice',enableGps:'Enable optional GPS tracking',stopGps:'Stop GPS tracking',gpsEnabled:'GPS tracking enabled',locationUnsupported:'GPS not supported'}})},
   '../../lib/route-progression':{confirmedRouteCompletion:()=>false},

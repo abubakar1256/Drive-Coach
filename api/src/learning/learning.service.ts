@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException, Optional } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { CreatePracticeSessionDto, CreateReflectionDto, UpdatePracticeSessionDto, SaveDriveReviewDto } from "./dto/learning.dto";
@@ -9,12 +9,15 @@ import { snapshotDistance, trackProgress, type PracticeSnapshot } from "./practi
 import type { Prisma } from "@prisma/client";
 import { BillingService } from "../billing/billing.service";
 import { buildDriveReport, gpsObservation, reviewItems } from "./drive-report";
+import { PersonalizedPracticeService } from "./personalized-practice.service";
+import { coverageFingerprint } from "./personalization-policy";
+import { durationIssues, geometryIssues } from "../routes/route-quality";
 
 type Row = Record<string, any>;
 
 @Injectable()
 export class LearningService {
-  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService, private readonly billing: BillingService) {}
+  constructor(private readonly prisma: PrismaService, private readonly driving: DrivingRouteService, private readonly routeAccess: RouteAccessService, private readonly billing: BillingService, @Optional() private readonly personalized?: PersonalizedPracticeService) {}
 
   private query<T extends Row = Row>(sql: string, ...values: unknown[]) {
     return this.prisma.$queryRawUnsafe<T[]>(sql, ...values);
@@ -102,7 +105,7 @@ export class LearningService {
     const weaknessRows = await this.query('SELECT uwh."occurrenceCount", uwh."lastSeenAt", w."code", w."label", ds."code" AS "skillCode", ds."name" AS "skillName" FROM "UserWeaknessHistory" uwh JOIN "Weakness" w ON w."id" = uwh."weaknessId" JOIN "DrivingSkill" ds ON ds."id" = w."skillId" WHERE uwh."userId" = $1 AND w."active" = true ORDER BY uwh."occurrenceCount" DESC, uwh."lastSeenAt" DESC LIMIT 8', userId);
     const focus = weaknessRows[0] ? { skill: weaknessRows[0].skillName, skillCode: weaknessRows[0].skillCode, message: `Based on your recent practice, focus on ${weaknessRows[0].label.toLowerCase()} before your next drive.` } : { skill: "Start with a reflection", skillCode: null, message: "Complete a practice reflection to build your personal Drive Coach plan." };
     const recommendationRows = await this.query('SELECT r."id", r."slug", r."name", r."durationMin", c."name" AS "centreName", COALESCE(SUM(CASE WHEN uwh."id" IS NOT NULL THEN rsc."coverageWeight" * (1 + LEAST(uwh."occurrenceCount", 5)) ELSE 0 END), 0)::int AS "score", COALESCE(ARRAY_AGG(DISTINCT ds."code") FILTER (WHERE uwh."id" IS NOT NULL), ARRAY[]::text[]) AS "matchedSkills" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RouteSkillCoverage" rsc ON rsc."routeId" = r."id" AND rsc."verified" = true LEFT JOIN "DrivingSkill" ds ON ds."id" = rsc."skillId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."userId" = $1 AND uwh."weaknessId" IN (SELECT w2."id" FROM "Weakness" w2 WHERE w2."skillId" = ds."id") WHERE r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true AND ($2::text IS NULL OR r."id" <> $2) GROUP BY r."id", c."id" ORDER BY "score" DESC, r."name" ASC LIMIT 3', userId, routeId ?? null);
-    const recommendations = recommendationRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, score: row.score, matchedSkills: row.matchedSkills ?? [], reason: row.score > 0 ? `${row.name} covers your recent focus: ${(row.matchedSkills ?? []).join(", ")}.` : `${row.name} is an approved route available for continued practice.` }));
+    let recommendations: Row[] = recommendationRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, durationMin: row.durationMin, centreName: row.centreName, score: row.score, matchedSkills: row.matchedSkills ?? [], reason: row.score > 0 ? `${row.name} covers your recent focus: ${(row.matchedSkills ?? []).join(", ")}.` : `${row.name} is a published practice option; current access must be checked.` }));
     const tipLimit = coachingMode === "LIGHT" ? 3 : coachingMode === "INTENSIVE" ? 8 : 5;
     const tips = await this.query(`SELECT DISTINCT ON (vt."id") vt."code", vt."voiceTextEn", vt."voiceTextNl", vt."skillId", ds."code" AS "skillCode", ds."name" AS "skillName", COALESCE(uwh."occurrenceCount", 0)::int AS "occurrenceCount" FROM "VerifiedTip" vt JOIN "DrivingSkill" ds ON ds."id" = vt."skillId" LEFT JOIN "WeaknessTip" wt ON wt."tipId" = vt."id" LEFT JOIN "Weakness" w ON w."id" = wt."weaknessId" LEFT JOIN "UserWeaknessHistory" uwh ON uwh."weaknessId" = w."id" AND uwh."userId" = $1 WHERE vt."verified" = true AND vt."adminApproved" = true ORDER BY vt."id", "occurrenceCount" DESC, vt."priority" DESC LIMIT ${tipLimit}`, userId);
     let route: Row | null = null;
@@ -113,8 +116,12 @@ export class LearningService {
     const rideRows = await this.query<{ completedRides: number }>('SELECT COUNT(*)::int AS "completedRides" FROM "PracticeSession" WHERE "userId" = $1 AND "completionKind" = \'COMPLETED\'', userId);
     const completedRides = rideRows[0]?.completedRides ?? 0;
     const practicePlan = { completedRides, ready: completedRides >= 5, message: completedRides >= 5 ? "Your recent rides are enough to keep a focused practice plan." : `${5 - completedRides} more completed ride${5 - completedRides === 1 ? "" : "s"} will make the plan more reliable.`, priorities: weaknessRows.slice(0, 3).map((weakness) => ({ code: weakness.code, label: weakness.label, occurrences: weakness.occurrenceCount, skill: weakness.skillName })) };
-    for (const recommendation of recommendations) {
-      await this.prisma.$executeRawUnsafe('INSERT INTO "RouteRecommendation" ("id", "userId", "routeId", "score", "reason", "focusSkillCode") VALUES ($1,$2,$3,$4,$5,$6)', randomUUID(), userId, recommendation.id, recommendation.score, recommendation.reason, focus.skillCode);
+    if(this.personalized){
+      if(routeId)await this.routeAccess.requireAccess(userId,routeId);
+      const plan=await this.personalized.recommendations(userId);
+      recommendations=plan.routes.filter(r=>r.unlocked&&r.id!==routeId).slice(0,3).map(r=>({...r,matchedSkills:r.matched.map(m=>m.code)}));
+      // Reading a coach is not a recommendation-write job or a paid-voice bypass.
+      if(!(await this.billing.entitlements(userId)).features.aiChat)tips.splice(0,tips.length);
     }
     return { mode: coachingMode, focus, route, weaknesses: weaknessRows, tips, recommendations, practicePlan, safety: "Drive Coach only uses user reflections plus verified route and tip data. It does not change official routes, invent traffic rules or make pass/fail decisions." };
   }
@@ -135,6 +142,12 @@ export class LearningService {
   }
 
   async routeRecommendation(userId: string, routeId: string) {
+    if (this.personalized) {
+      const selected=await this.routeAccess.requireAccess(userId,routeId);
+      const plan=await this.personalized.recommendations(userId,selected.route.centreId);
+      const next=plan.routes.find(r=>r.id!==routeId&&r.unlocked);
+      return {mode:"evidence-based-preparation",focus:{skill:plan.focus.items[0]?.label??"General preparation",message:plan.focus.pacing},route:next?{...next,pointCount:null}:null,reason:next?.reason??"No alternative accessible reviewed route is currently available. Check your centre catalogue without changing your trial.",safety:plan.safety};
+    }
     const selected = await this.query('SELECT r."id", r."centreId", r."name", c."name" AS "centreName" FROM "Route" r JOIN "ExamCentre" c ON c."id" = r."centreId" WHERE r."id" = $1 AND r."status" = \'PUBLISHED\' AND r."verificationStatus" IN (\'VERIFIED\', \'ROAD_VALIDATED\') AND r."reviewedBy" IS NOT NULL AND c."isPublished" = true', routeId);
     if (!selected[0]) throw new NotFoundException("Published route not found");
     const reflections = await this.query('SELECT sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."difficultyCategories", sr."difficultyDetails", sr."instructorCategories" FROM "SelfReflection" sr JOIN "PracticeSession" ps ON ps."id" = sr."sessionId" WHERE sr."userId" = $1 ORDER BY sr."createdAt" DESC LIMIT 1', userId);
@@ -152,7 +165,7 @@ export class LearningService {
     const access = await this.routeAccess.requireAccess(userId, dto.routeId);
     const points = await this.prisma.routePoint.findMany({ where: { routeId: dto.routeId }, orderBy: { sequence: "asc" } });
     const driving = await this.driving.requireValid(points);
-    const snapshot: PracticeSnapshot = { geometry: driving.coordinates, points: points.map(p => [p.longitude, p.latitude]), distanceM: snapshotDistance(driving.coordinates) };
+    const snapshot = { geometry: driving.coordinates, points: points.map(p => [p.longitude, p.latitude]) as [number,number][], distanceM: snapshotDistance(driving.coordinates), durationSec:driving.durationSec, routeVersion:access.route.version, routeFingerprint:coverageFingerprint({...access.route,points}) };
     if (snapshot.distanceM <= 0) throw new BadRequestException("Driving geometry unavailable");
     const session = await this.prisma.$transaction(async tx => {
       await tx.$executeRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", `practice:${userId}:${dto.routeId}`);
@@ -162,6 +175,24 @@ export class LearningService {
     });
     await this.audit(userId, "PRACTICE_STARTED", "PracticeSession", session.id);
     return { ...session, route: access.route };
+  }
+
+  async repeatSession(userId:string,id:string,expectedRouteId?:string) {
+    const previous=await this.prisma.practiceSession.findFirst({where:{id,userId}});
+    if(!previous?.completedAt)throw new NotFoundException("Ended practice session not found");
+    if(expectedRouteId&&expectedRouteId!==previous.routeId)throw new ConflictException("The saved session belongs to another route. Open its matching route page.");
+    const access=await this.routeAccess.requireAccess(userId,previous.routeId);
+    const points=await this.prisma.routePoint.findMany({where:{routeId:previous.routeId},orderBy:{sequence:"asc"}});
+    const old=previous.routeSnapshot as any;
+    if(!old||!Array.isArray(old.geometry)||durationIssues(old.durationSec).length||geometryIssues(old.geometry).length||old.routeVersion!==access.route.version||old.routeFingerprint!==coverageFingerprint({...access.route,points}))throw new ConflictException("This saved version needs a fresh check, or predates versioned practice. Open the current route to start a newly checked session; your old report is preserved.");
+    const {coachingReview,...snapshot}=old;
+    return this.prisma.$transaction(async tx=>{
+      await tx.$executeRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))",`practice:${userId}:${previous.routeId}`);
+      if(await tx.practiceSession.findFirst({where:{userId,routeId:previous.routeId,completedAt:null}}))throw new ConflictException("End the active practice for this route before repeating a saved drive");
+      const session=await tx.practiceSession.create({data:{userId,routeId:previous.routeId,routeSnapshot:snapshot}});
+      await tx.auditLog.create({data:{userId,action:"PRACTICE_REPEATED_SAME_VERSION",entity:"PracticeSession",entityId:session.id,metadata:{sourceSessionId:id,routeVersion:old.routeVersion}}});
+      return {...session,route:access.route};
+    });
   }
 
   async updateSession(userId: string, id: string, dto: UpdatePracticeSessionDto) {

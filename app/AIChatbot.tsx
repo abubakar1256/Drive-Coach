@@ -31,6 +31,7 @@ export default function AIChatbot() {
   const copy = useSiteCopy();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [sharePreparation, setSharePreparation] = useState(false);
   const { access, checkAccess } = useAIChatAccess(open);
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ export default function AIChatbot() {
       ++conversationVersion.current;
       pendingRequest.current?.abort();
       setMessages((current) => current.filter((message) => message.kind === "welcome"));
-      setDraft(""); setErrorCode(null); setLoading(false);
+      setDraft(""); setErrorCode(null); setLoading(false); setSharePreparation(false);
     };
     window.addEventListener("routepilot-auth-change", authChanged);
     return () => { ++conversationVersion.current; window.removeEventListener("routepilot-auth-change", authChanged); pendingRequest.current?.abort(); };
@@ -92,7 +93,7 @@ export default function AIChatbot() {
       const options: RequestInit = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: buildChatHistory(nextMessages), context: getPageContext() }),
+        body: JSON.stringify({ messages: buildChatHistory(nextMessages), context: { ...getPageContext(), sharePreparation } }),
         signal: controller.signal,
       };
       const response = await authFetch(`${API}/ai/chat`, options);
@@ -139,6 +140,8 @@ export default function AIChatbot() {
             {loading && <div className="ai-chat-message ai-chat-message-assistant ai-chat-typing" role="status" aria-label={copy.chatbot.thinking}><span className="ai-chat-bubble"><i /><i /><i /></span></div>}
             {errorCode && <div className="ai-chat-error" role="alert">{errorText}<small>{copy.chatbot.retryHint}</small></div>}
           </div>
+          <label className="ai-preparation-consent"><input type="checkbox" checked={sharePreparation} onChange={e=>setSharePreparation(e.target.checked)} /> Share my chosen level & reported focus with AI for this chat. No age, town or GPS.</label>
+          <button className="ai-new-conversation" type="button" onClick={()=>{conversationVersion.current++;pendingRequest.current?.abort();setMessages([{role:"assistant",content:copy.chatbot.welcome,kind:"welcome"}]);setDraft("");setLoading(false);setErrorCode(null);setSharePreparation(false);}}>New conversation · clear local context</button>
           <form className="ai-chat-form" onSubmit={sendMessage}><textarea ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={copy.chatbot.placeholder} rows={2} maxLength={1200} aria-label={copy.chatbot.messageLabel} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }} /><button type="submit" disabled={loading || !draft.trim()} aria-label={errorCode ? copy.chatbot.retry : copy.chatbot.send}>{errorCode ? "↻" : "↗"}</button></form></>
             : <AIChatAccessGate status={access.status} copy={copy.chatbot} loginHref={`/auth/login?next=${encodeURIComponent(pathname ?? "/")}`} onRetry={() => void checkAccess()} onNavigate={() => setOpen(false)} />}
           <p className="ai-chat-disclaimer">{copy.chatbot.disclaimer}</p>

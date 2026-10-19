@@ -85,6 +85,9 @@ model User {
   routeRecommendations RouteRecommendation[]
   routeTrial RouteTrial?
   preparationProfile PreparationProfile?
+  hometownRoutes HometownRoute[]
+  hometownSessions HometownSession[]
+  preparationGenerations PreparationGeneration[]
 }
 
 model ExamCentre {
@@ -123,6 +126,59 @@ model PreparationProfile {
   @@index([centreId])
 }
 
+// Private practice is deliberately separate from the public Route catalogue.
+model HometownRoute {
+  id String @id @default(uuid())
+  userId String
+  sourceCentreId String
+  placeId String
+  placeName String
+  level String
+  focusCodes String[]
+  snapshot Json
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions HometownSession[]
+  @@unique([id, userId])
+  @@index([userId, createdAt])
+}
+
+model HometownSession {
+  id String @id @default(uuid())
+  userId String
+  routeId String
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+  completionPct Int @default(0)
+  progressM Float @default(0)
+  visitedPoints Int @default(0)
+  completionKind String @default("TRACKING")
+  lastSampleAt DateTime?
+  reflection Json?
+  reflectedAt DateTime?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  route HometownRoute @relation(fields: [routeId, userId], references: [id, userId], onDelete: Cascade)
+  @@index([userId, startedAt])
+}
+
+model PreparationGeneration {
+  id String @id @default(uuid())
+  userId String
+  requestKey String
+  state String @default("PENDING")
+  resultId String?
+  createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([userId, requestKey])
+  @@index([userId, createdAt])
+}
+
+model PreparationRoutingBudget {
+  bucket String @id
+  reserved Int @default(0)
+}
+
 model Route {
   id          String      @id @default(cuid())
   centreId    String
@@ -147,6 +203,20 @@ model Route {
   recommendations RouteRecommendation[]
   assignments RouteAssignment[]
   trials RouteTrial[]
+  preparationCoverage PreparationCoverage?
+}
+
+model PreparationCoverage {
+  routeId String @id
+  routeVersion Int
+  fingerprint String
+  skills String[]
+  complexity String
+  sourceUrl String
+  notes String
+  reviewedAt DateTime @default(now())
+  reviewedBy String
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
 }
 
 model RouteTrial {

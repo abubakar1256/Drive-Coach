@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('profile UI is optional, labels reported focus and keeps plan/centre rights separate',()=>{
  const source=read('app/dashboard/PreparationProfilePanel.tsx');
- for(const copy of ['Private · Optional','Age','town/area','does not move a Basic purchase','Hometown route generation is not enabled yet','not GPS-confirmed mistakes','Instructor-reported','Self-reported'])assert.ok(source.includes(copy),copy);
+ for(const copy of ['Private · Optional','Age','town/area','does not move a Basic purchase','Select the matching place below','not GPS-confirmed mistakes','Instructor-reported','Self-reported'])assert.ok(source.includes(copy),copy);
  assert.match(source,/<fieldset/);assert.match(source,/type="radio"/);assert.match(source,/maxLength=\{80\}/);
  assert.equal(source.includes('navigator.geolocation'),false);assert.equal(source.includes('localStorage'),false);
 });

@@ -7,6 +7,9 @@ import { RoutesModule } from "../routes/routes.module";
 import { BillingModule } from "../billing/billing.module";
 import { PreparationController } from "./preparation.controller";
 import { PreparationService } from "./preparation.service";
+import { PersonalizedPracticeService } from "./personalized-practice.service";
+import { PersonalizationController } from "./personalization.controller";
+import { PreparationCoverageController } from "./preparation-coverage.controller";
 
-@Module({ imports: [PrismaModule, AuthModule, RoutesModule, BillingModule], controllers: [LearningController, PreparationController], providers: [LearningService, PreparationService] })
+@Module({ imports: [PrismaModule, AuthModule, RoutesModule, BillingModule], controllers: [LearningController, PreparationController, PersonalizationController, PreparationCoverageController], providers: [LearningService, PreparationService, PersonalizedPracticeService], exports:[PreparationService,PersonalizedPracticeService] })
 export class LearningModule {}

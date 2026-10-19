@@ -4,6 +4,7 @@ import { AiChatService } from "./ai-chat.service";
 import { AuthModule } from "../auth/auth.module";
 import { RoutesModule } from "../routes/routes.module";
 import { BillingModule } from "../billing/billing.module";
+import { LearningModule } from "../learning/learning.module";
 
-@Module({ imports: [AuthModule, RoutesModule, BillingModule], controllers: [AiChatController], providers: [AiChatService] })
+@Module({ imports: [AuthModule, RoutesModule, BillingModule, LearningModule], controllers: [AiChatController], providers: [AiChatService] })
 export class AiChatModule {}

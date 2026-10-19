@@ -16,6 +16,7 @@ api/dist/
 docx-review/
 output/chatbot-audit/
 output/db-backups/
+output/phase-three-places/
 *.dump
 *.log
 logs/

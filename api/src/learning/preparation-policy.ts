@@ -9,6 +9,11 @@ const focusAreas = [
   ["lanes", "Lane choice", "Review the lane-choice situations you reported with your instructor."],
   ["observation", "Observation", "Discuss the observation checks you want to practise more consistently."],
   ["parking", "Manoeuvres", "Agree on a safe, suitable place to practise the manoeuvres you reported."],
+  ["vulnerable", "Vulnerable road users", "Discuss the situations involving pedestrians and cyclists that you reported."],
+  ["merging", "Merging", "Review your reported merging situations with your instructor before driving."],
+  ["control", "Vehicle control", "Choose a safe practice goal for the vehicle-control difficulties you reported."],
+  ["signs", "Signs and signals", "Review the signs and signals you found difficult before driving."],
+  ["space", "Space and distance", "Discuss your reported space-management difficulties with your instructor."],
 ] as const;
 export function preparationFocus(level: PreparationLevel, reflection?: ReflectionInput | null, selectionConfirmed = true) {
   if (!preparationLevels.includes(level)) throw new Error("Unknown preparation level");

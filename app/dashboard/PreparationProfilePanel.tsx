@@ -51,7 +51,7 @@ export default function PreparationProfilePanel() {
       if (!response.ok) throw Error(response.status === 409 ? "Your account or profile changed. Reload settings before saving again." : "Check the fields and try again. Use only a town/area name for hometown.");
       if (request !== generation.current) { void load(); return; }
       if (result.ownerId !== owner) throw Error("Account changed. Reload your settings.");
-      show(result); setNotice("Private preferences saved. Your plan, trial and purchased centre are unchanged.");
+      show(result); setNotice("Private preferences saved. Your plan, trial and purchased centre are unchanged."); window.dispatchEvent(new Event("routepilot-preparation-change"));
     } catch (e) { if (request === generation.current) setError(e instanceof SessionExpiredError ? "Sign in again before saving." : e instanceof Error ? e.message : "Could not save preferences."); }
     finally { setBusy(false); }
   }
@@ -60,7 +60,7 @@ export default function PreparationProfilePanel() {
     try {
       const r = await authFetch(`${API}/me/preparation-profile`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ownerId: profile.ownerId, version: profile.version, revision: profile.revision }) });
       if (!r.ok) throw Error(r.status === 409 ? "Your profile changed. Reload before clearing." : "Could not clear your preferences.");
-      if (request === generation.current) { await load(); setNotice("Optional preparation preferences cleared. Your account and access are unchanged."); }
+      if (request === generation.current) { await load(); setNotice("Optional preparation preferences cleared. Your account and access are unchanged."); window.dispatchEvent(new Event("routepilot-preparation-change")); }
     } catch (e) { if (request === generation.current) setError(e instanceof Error ? e.message : "Could not clear preferences."); }
     finally { setBusy(false); }
   }
@@ -72,7 +72,7 @@ export default function PreparationProfilePanel() {
         <label>Preferred name<input autoComplete="given-name" maxLength={80} value={form.preferredName} onChange={e => setForm({ ...form, preferredName: e.target.value })} /></label>
         <label><span className="preparation-field-label">Age <small>(optional)</small></span><input type="number" inputMode="numeric" min={1} max={120} step={1} value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} /><small>Not used to infer ability or decide route access.</small></label>
         <label>Preferred exam centre<select value={form.centreId} onChange={e => setForm({ ...form, centreId: e.target.value })}><option value="">Choose later</option>{profile.centreId && !centres.some(c => c.id === profile.centreId) && <option disabled value={profile.centreId}>{profile.centre?.name ?? "Previous centre"} · unavailable</option>}{centres.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select><small>This does not move a Basic purchase to another centre.</small></label>
-        <label><span className="preparation-field-label">Hometown / area <small>(optional)</small></span><input maxLength={80} autoComplete="off" placeholder="e.g. Leuven — no home address" value={form.homeTown} onChange={e => setForm({ ...form, homeTown: e.target.value })} /><small>Town name only. Hometown route generation is not enabled yet.</small></label>
+        <label><span className="preparation-field-label">Hometown / area <small>(optional)</small></span><input maxLength={80} autoComplete="off" placeholder="e.g. Leuven — no home address" value={form.homeTown} onChange={e => setForm({ ...form, homeTown: e.target.value })} /><small>Town name only. Select the matching place below before generating a private route.</small></label>
       </div>
       <fieldset className="preparation-levels"><legend>Your preparation level</legend><div>{levels.map(level => <label className={form.preferredLevel === level.id ? "is-selected" : ""} key={level.id}><span className="preparation-level-number">{level.number}</span><input type="radio" name="preparation-level" value={level.id} checked={form.preferredLevel === level.id} onChange={() => setForm({ ...form, preferredLevel: level.id })} /><strong>{level.title}</strong><small>{level.description}</small></label>)}</div></fieldset>
       <div className="preparation-focus"><span className="small-label">FROM YOUR SAVED REFLECTION</span><h3>A focus you can explain.</h3><p>{profile.focus.pacing}</p>{profile.focus.items.length ? <ul>{profile.focus.items.map(item => <li key={item.code}><strong>{item.label}</strong><span>{item.basis.map(b => b === "INSTRUCTOR_REPORTED" ? "Instructor-reported" : "Self-reported").join(" + ")}</span><p>{item.prompt}</p></li>)}</ul> : <p>No supported focus recorded yet. Complete a reflection after a drive to build your preparation plan.</p>}<small>These are reported preparation needs, not GPS-confirmed mistakes. Route geometry, duration checks and plan access stay unchanged.</small></div>

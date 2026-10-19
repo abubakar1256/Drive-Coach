@@ -1,8 +1,8 @@
 # Phase 3 — personalised preparation
 
-Started locally on 19 October 2026 after the Phase 2 location release passed backup, restore, production application and public verification. **3A and the pure focus-policy portion of 3B are implemented/tested locally; this is not the full Phase 3 product or a production rollout.** This is the agreed custom phase sequence, not the original generic roadmap headings retained in the Word document.
+Phase 3 implementation: 20 October 2026 (Pakistan time). The agreed custom phase sequence covers private preferences, explainable recommendations, AI grounding and bounded hometown practice. It does not claim field/instructor approval, fixed examiner itineraries, mobile background GPS or new payment products.
 
-## First increment delivered locally
+## Initial profile increment (19 October verification history)
 
 - Additive `0019_private_preparation_profile`: an optional account-owned profile, no legacy backfill and no changes to existing route/billing/trial tables. Preferred name, optional age, centre/town preference and chosen level are private; town input does not request an address or device location.
 - JWT-protected private/no-store GET/PATCH/DELETE endpoints at `/api/v1/me/preparation-profile`. The authenticated actor owns every operation. A body owner binding prevents in-flight account confusion; user-row locking plus version/UUID revision checks prevent stale writes, including after clear/recreate. Audit records contain field names, not age/name/town values.
@@ -12,7 +12,21 @@ Started locally on 19 October 2026 after the Phase 2 location release passed bac
 
 Verification: 269/269 regression tests, API/frontend builds and Prisma validation; a real isolated PostgreSQL archive restore passed additive-migration preservation, owner/version checks, forced late-audit rollback, SQL constraints and account cascade. Browser QA used only a synthetic loopback account: save/reload, level change, unchanged Free access and clear/cancel keyboard focus. Temporary preview servers were stopped. Private production data was not used by the browser fixture.
 
-**Rollout remains pending:** this increment is not pushed/deployed to production. Migration 0019 needs a new matching backup/rehearsal and explicit rollout authorization. Do not infer that a Phase 2 backup/temporary-key approval authorizes a Phase 3 schema rollout. Route-feature coverage/ranking, bounded hometown generation and the remaining acceptance work below are still pending.
+## Completed Phase 3 implementation
+
+- Recommendations use explicit source-backed `PreparationCoverage` reviews tied to an exact route version/point fingerprint. Stale coverage, legacy seed tags and description keywords cannot invent skill matches. Unknown coverage stays unknown. `/admin/preparation` is the review workflow; current database reviewer permission is checked, not only a previously signed role token. No blanket automatic content approval occurs.
+- Recommendations, current route coach and repeat links retain server-side Free / Basic-centre / Premium gates. Listing never claims/renews a trial. A saved public route can be repeated only with current access and the same checked version/fingerprint; changed/legacy routes give an explicit recheck state without rewriting history.
+- The latest account-owned self-reflection, instructor-reported checklist or private hometown reflection supplies labelled focus, never a competence or violation score. Chosen Beginner / Intermediate / Difficult changes preparation pacing and reviewed complexity matching, not road safety or duration constraints.
+- AI context sharing is explicit and off by default. Only chosen level and bounded reported focus codes/basis are exported. No profile name, age, hometown, GPS, raw notes, private route geometry or history is exported by that control. Existing chat entitlement remains enforced on every request. The new-conversation control resets local context and consent; it cannot retract data already sent to a provider.
+- Private hometown generation uses a licensed build-time GeoNames Belgian populated-place gazetteer (12,461 entries), not stored temporary paid geocodes or device GPS. Users explicitly select the exact town and consent while parked. Town/road anchors are search inputs, not confirmed entrances or stopping places.
+- At most **8 Directions evaluations** per generation, database-locked daily/monthly shared reservations, an account cooldown and idempotent request keys. Missing/exhausted owner-approved allowance makes no new provider requests. A failed search never fabricates geometry, time or features. Source-centre paid access and the profile revision are rechecked after generation.
+- Only closed, ordered, connected, non-self-crossing/non-backtracking driving geometry with exact **23–27 minute** measurements passes. The accepted private snapshot is immutable and separate from the public catalogue. Provider-reported roundabout/junction/merge-derived features are labelled, not called instructor-reviewed road facts. Unsupported requested skills remain explicitly unknown.
+- `/hometown/:id` has Mapbox, complete Google Maps links, parked-start/optional browser GPS, permission-denial states, background pause, progress/end/reflection and exact saved-route repeat. No GPS means no guessed completion. Ownership is checked on every private operation; current source-centre paid access gates geometry/GPS. History/end/delete remain available without a route-detail paywall. Private route navigation needs rechecking after 30 days; deletion removes its own sessions/reflections. Profile clearing alone does not delete history. A composite route/owner foreign key enforces isolation in PostgreSQL.
+- Migrations **0019/0020** are additive and do not backfill buyers, mutate public routes, prices, paid grants, trials or historical snapshots. Fresh private backup, matching real restore, forced late rollback, concurrency and protected-table preservation are required before deployment.
+
+Verification and rollout: the scoped backup/deploy approval was received for Phase 3. The final verified deployment/cleanup result is recorded separately after production checks; do not equate a local build or staging rehearsal with live completion. Scope limits: feature coverage requires actual source-backed content review; unsupported matches remain unknown, and a qualifying hometown loop cannot be guaranteed for every town.
+
+Sources: [GeoNames format/licence](https://download.geonames.org/export/dump/readme.txt), [Mapbox Directions](https://docs.mapbox.com/api/navigation/directions/). Gazetteer source URL, retrieval time and archive hash are included in the data asset. Routing budget flags in `api/.env.example` default to zero; only configure them after checking the existing provider allowance, without paid expansion.
 
 ## Scope from the updated requirements
 
@@ -46,4 +60,4 @@ Use the reviewed road-network validation contract: legal driving provider, conne
 - Optional GPS/voice denial, stop/revoke, inaccurate readings and browser background pauses.
 - Full isolated migration/restore/rollback rehearsal before any schema rollout, then API/frontend deployment and a real account-owned end-to-end check.
 
-The first implementation increment is 3A plus a pure, no-provider-call recommendation policy from 3B. The broader hometown generator is not marked complete merely because a profile form exists.
+The delivered Phase 3 implementation includes 3A, source-backed 3B ranking/AI grounding, bounded private 3C generation and 3D test/restore acceptance. It never equates an optional profile form, a matching keyword or a synthetic provider fixture with real road validation. Operational live results follow only after the approved rollout is verified.

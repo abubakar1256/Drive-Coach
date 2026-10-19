@@ -27,6 +27,13 @@ function answerPayload(text = "A complete practice checklist. Finish with a refl
   return { candidates: [{ finishReason, content: { parts: [...extraParts, { text }] } }] };
 }
 
+test('personal preparation sharing is explicit, account-owned and excludes name, age, town, GPS and raw notes',async()=>{
+ let reads=0;const prep={get:async id=>{assert.equal(id,'paid-user');reads++;return {preferredName:'PRIVATE_NAME',age:37,homeTown:'PRIVATE_TOWN',notes:'PRIVATE_NOTES',preferredLevel:'INTERMEDIATE',focus:{levelSource:'USER_CHOICE',items:[{code:'roundabouts',basis:['SELF_REPORTED']}]}};}};
+ const s=new AiChatService(routes,billing,prep);mockProvider(answerPayload());await s.answer(question(),'private-no-sharing','paid-user');assert.equal(reads,0);
+ await s.answer(question({sharePreparation:true}),'private-sharing','paid-user');assert.equal(reads,1);const payload=JSON.stringify(calls.at(-1).body);assert.match(payload,/INTERMEDIATE/);assert.match(payload,/SELF_REPORTED/);assert.doesNotMatch(payload,/PRIVATE_NAME|PRIVATE_TOWN|PRIVATE_NOTES|"age":37/);
+ const denied=new AiChatService(routes,{entitlements:async()=>({features:{aiChat:false}})},prep);await assert.rejects(denied.answer(question({sharePreparation:true}),'free-private','paid-user'));assert.equal(reads,1);
+});
+
 function mockProvider(...replies) {
   global.fetch = async (url, options) => {
     calls.push({ url, options, body: JSON.parse(options.body) });

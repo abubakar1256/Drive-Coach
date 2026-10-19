@@ -18,6 +18,7 @@ export default function AdminPage() {
       <section className="shell admin-shell">
         <div className="admin-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {nl ? "Contentbeheer" : "Content operations"}</p><h1>{nl ? "Routecontrole" : "Route control room"}</h1><p>{nl ? "Beheer gepubliceerde routes en de punten waarop bestuurders moeten letten." : "Manage published routes and the points drivers need to watch."}</p></div><span className="admin-badge">{nl ? "Alleen admin" : "Admin only"}</span></div>
         <AdminRouteEditor />
+        <Link href="/admin/preparation">Review personalized-practice skill coverage →</Link>
         <AdminReports />
         <AdminPlatformTools />
       </section>

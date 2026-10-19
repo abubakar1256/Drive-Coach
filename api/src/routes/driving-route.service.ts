@@ -6,6 +6,7 @@ export type DrivingRoute = {
   valid: boolean; issues: string[]; durationSec: number | null;
   distanceM: number | null; coordinates: Coordinate[];
   snappedPoints?: Array<{ latitude: number; longitude: number; name: string; bearing?: number | null }>;
+  observedFeatures?: string[];
 };
 const invalid = (issue: string): DrivingRoute => ({ valid: false, issues: [issue], durationSec: null, distanceM: null, coordinates: [] });
 
@@ -53,7 +54,10 @@ export class DrivingRouteService {
       // Preserve the exact seconds for the duration-band check, never round a short
       // route into the permitted band before deciding whether it can be practised.
       const snappedPoints = Array.isArray(payload.waypoints) && payload.waypoints.length === count && payload.waypoints.every((p: { location?: unknown[] }) => Array.isArray(p.location) && p.location.length === 2 && p.location.every(Number.isFinite)) ? payload.waypoints.map((p: { location: number[]; name?: string }) => ({ latitude: p.location[1], longitude: p.location[0], name: typeof p.name === "string" ? p.name : "" })) : undefined;
-      return { valid: !issues.length, issues, durationSec: route.duration, distanceM: route.distance, coordinates: geometry, ...(snappedPoints ? { snappedPoints } : {}) };
+      // Provider-reported manoeuvres, not instructor-reviewed hazards/rules.
+      const manoeuvres: string[] = (route.legs ?? []).flatMap((leg: any) => (leg.steps ?? []).map((step: any) => step.maneuver?.type).filter((type: unknown) => typeof type === "string"));
+      const observedFeatures = [...new Set(manoeuvres.flatMap((type: string) => /roundabout|rotary/.test(type) ? ["roundabouts"] : ["turn", "end of road"].includes(type) ? ["junctions"] : type === "merge" ? ["lanes"] : []))];
+      return { valid: !issues.length, issues, durationSec: route.duration, distanceM: route.distance, coordinates: geometry, observedFeatures, ...(snappedPoints ? { snappedPoints } : {}) };
     } catch { return invalid("ROUTING_UNAVAILABLE"); }
   }
 

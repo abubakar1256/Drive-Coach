@@ -5,20 +5,32 @@ import { randomUUID } from "node:crypto";
 import { PrismaService } from "../prisma.service";
 import { PreparationVersionDto, UpdatePreparationDto } from "./dto/preparation.dto";
 import { preparationFocus, type PreparationLevel } from "./preparation-policy";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class PreparationService {
   constructor(private readonly prisma: PrismaService) {}
 
   async get(userId: string) {
-    const [user, profile, reflection] = await Promise.all([
+    const [user, profile, reflection, hometown, checklistSession] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId }, select: { id: true, displayName: true } }),
       this.prisma.preparationProfile.findUnique({ where: { userId }, include: { centre: { select: { id: true, slug: true, name: true } } } }),
-      this.prisma.selfReflection.findFirst({ where: { userId }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], select: { difficultyCategories: true, instructorCategories: true, instructorFeedback: true, flaggedSpeeding: true, missedRightOfWay: true, speedCompliance: true, rightOfWayConfidence: true, roundaboutConfidence: true, laneChangeConfidence: true } }),
+      this.prisma.selfReflection.findFirst({ where: { userId }, orderBy: [{ updatedAt: "desc" }, { id: "desc" }], select: { updatedAt: true, difficultyCategories: true, instructorCategories: true, instructorFeedback: true, flaggedSpeeding: true, missedRightOfWay: true, speedCompliance: true, rightOfWayConfidence: true, roundaboutConfidence: true, laneChangeConfidence: true } }),
+      this.prisma.hometownSession?.findFirst({ where: { userId, reflection: { not: Prisma.DbNull } }, orderBy: [{ reflectedAt: "desc" }, { id: "desc" }], select: { reflection: true } }),
+      this.prisma.practiceSession?.findFirst?.({ where: { userId, completedAt: { not:null }, routeSnapshot: { path:["coachingReview"], not:Prisma.DbNull } }, orderBy:[{updatedAt:"desc"},{id:"desc"}], select:{routeSnapshot:true} }),
     ]);
     if (!user) throw new NotFoundException("Account not found");
     const level = (profile?.preferredLevel ?? "BEGINNER") as PreparationLevel;
-    return { ownerId: userId, version: profile?.version ?? 0, revision: profile?.revision ?? null, saved: Boolean(profile), preferredName: profile?.preferredName ?? user.displayName ?? "", age: profile?.age ?? null, centreId: profile?.centreId ?? null, centre: profile?.centre ?? null, homeTown: profile?.homeTown ?? "", preferredLevel: level, focus: preparationFocus(level, reflection, Boolean(profile)), privacy: "Private optional preparation preferences. Town/area only; no home address, GPS lookup or age-based ability inference. Saving does not change your plan, trial or purchased centre." };
+    const privateReflection = hometown?.reflection as Record<string,any> | null;
+    let latest = privateReflection?.savedAt && (!reflection?.updatedAt || Date.parse(privateReflection.savedAt)>reflection.updatedAt.getTime()) ? privateReflection : reflection;
+    const checklist=(checklistSession?.routeSnapshot as any)?.coachingReview;
+    const latestAt=latest===privateReflection?Date.parse(privateReflection?.savedAt??""):reflection?.updatedAt?.getTime()??0;
+    if(checklist&&["self","instructor_reported"].includes(checklist.source)&&Date.parse(checklist.savedAt)>latestAt){
+      const map:Record<string,string>={mirrors:"observation",blind_spots:"observation",signals:"signs",lane_position:"lanes",junctions:"junctions",roundabouts:"roundabouts",priority:"priority",speed_choice:"speed",following_distance:"space",vulnerable_users:"vulnerable",parking:"parking",vehicle_control:"control"};
+      const needs=[...new Set(Object.entries(checklist.ratings??{}).filter(([key,value])=>map[key]&&value==="practice").map(([key])=>map[key]))];
+      latest={difficultyCategories:checklist.source==="self"?needs:[],instructorFeedback:checklist.source==="instructor_reported",instructorCategories:checklist.source==="instructor_reported"?needs:[]};
+    }
+    return { ownerId: userId, version: profile?.version ?? 0, revision: profile?.revision ?? null, saved: Boolean(profile), preferredName: profile?.preferredName ?? user.displayName ?? "", age: profile?.age ?? null, centreId: profile?.centreId ?? null, centre: profile?.centre ?? null, homeTown: profile?.homeTown ?? "", preferredLevel: level, focus: preparationFocus(level, latest, Boolean(profile)), privacy: "Private optional preparation preferences. Town/area only; no home address, GPS lookup or age-based ability inference. Saving does not change your plan, trial or purchased centre." };
   }
 
   async save(userId: string, dto: UpdatePreparationDto) {
