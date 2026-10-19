@@ -14,6 +14,14 @@ type Proof = { kind: "PUBLISHED_PASSAGE_PRACTICE"; departure: GeoPoint & { versi
 export function reviewedPassage(point: ReviewedPoint) {
   return point.verificationStatus === "VERIFIED" && point.duplicateOfSequence === null && Boolean(point.verifiedBy && point.verifiedAt && point.sourceFingerprint === passageFingerprint(point)) && belgianCoordinate(point);
 }
+export function sourceReviewCounts(source: typeof officialPassageCatalog[number] | null, points: Array<ReviewedPoint & { sequence: number }>) {
+  if (!source) return { eligibleEntryCount: 0, duplicateEntryCount: 0, pendingPointCount: 0, reviewComplete: false };
+  const expected = source.points.map(original => ({ original, current: points.find(p => p.sequence === original.sequence && p.duplicateOfSequence === original.duplicateOfSequence && p.sourceFingerprint === passageFingerprint({ ...original, sourceUrl: source.sourceUrl, sourceRevision: source.sourceRevision }) && p.sourceFingerprint === passageFingerprint(p)) }));
+  const eligible = expected.filter(p => p.original.duplicateOfSequence === null);
+  const reviewed = eligible.filter(p => p.current && reviewedPassage(p.current)).length;
+  const duplicates = expected.filter(p => p.original.duplicateOfSequence !== null);
+  return { eligibleEntryCount: eligible.length, duplicateEntryCount: duplicates.length, pendingPointCount: eligible.length - reviewed, reviewComplete: reviewed === eligible.length && duplicates.every(p => p.current && p.current.verificationStatus !== "VERIFIED") };
+}
 export function publicFoundation(value: unknown) {
   const proof = value as Proof | null;
   return proof?.kind === "PUBLISHED_PASSAGE_PRACTICE" ? { kind: proof.kind, passagePointCount: proof.points?.length ?? 0, officialExamItinerary: false } : null;
@@ -35,7 +43,7 @@ export class OfficialRouteFoundationService {
     const centre = await this.prisma.examCentre.findFirst({ where: { slug, isPublished: true }, select: { id: true } });
     if (!centre) throw new NotFoundException("Centre not found");
     const w = await this.workspace(centre.id);
-    return { source: w.source ? { name: "Autoveiligheid", url: w.source.sourceUrl, centreUrl: w.source.centreSourceUrl, address: w.source.address, revision: w.source.sourceRevision, checkedAt: w.source.sourceCheckedAt, publishedEntries: w.source.points.length } : null, reviewedPointCount: w.readyPointCount, departureReviewed: w.departure?.verificationStatus === "VERIFIED", officialExamItinerary: false, targetMinutes: 25, toleranceMinutes: 2 };
+    return { source: w.source ? { name: "Autoveiligheid", url: w.source.sourceUrl, centreUrl: w.source.centreSourceUrl, address: w.source.address, revision: w.source.sourceRevision, checkedAt: w.source.sourceCheckedAt, publishedEntries: w.source.points.length } : null, ...sourceReviewCounts(w.source, w.points as Array<ReviewedPoint & { sequence: number }>), reviewedPointCount: w.readyPointCount, departureReviewed: w.departure?.verificationStatus === "VERIFIED", officialExamItinerary: false, targetMinutes: 25, toleranceMinutes: 2 };
   }
 
   async importSource(actorId: string, centreId: string) {
