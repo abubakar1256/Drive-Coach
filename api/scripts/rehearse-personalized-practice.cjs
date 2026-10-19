@@ -7,6 +7,7 @@ const {PersonalizedPracticeService}=require('../dist/src/learning/personalized-p
 const {RouteAccessService}=require('../dist/src/routes/route-access.service');
 const {snapshotDistance}=require('../dist/src/learning/practice-progress');
 const {searchHometowns,hometownPlace}=require('../dist/src/learning/belgian-places');
+const {ExamCentresService}=require('../dist/src/exam-centres/exam-centres.service');
 const {fingerprints}=require('./rehearse-complete-passage-review.cjs');
 const {sha}=require('./prepare-reviewed-passage-release.cjs');
 const root=path.resolve(__dirname,'../../output/db-backups');
@@ -22,9 +23,10 @@ async function main(){
   run('initdb',['-D',data,'-U',env.PGUSER,'--pwfile',pwfile,'--auth-host=scram-sha-256','--auth-local=scram-sha-256','--encoding=UTF8','--locale=C']);run('pg_ctl',['-D',data,'-l',path.join(dir,'server.log'),'-o','-h 127.0.0.1 -p 15442','-w','start']);started=true;
   run('createdb',[env.PGDATABASE]);run('pg_restore',['--exit-on-error','--no-owner','--no-acl','--dbname='+env.PGDATABASE,archive]);
   const url=new URL('postgresql://127.0.0.1:15442/personalized_restore');url.username=env.PGUSER;url.password=password;db=new PrismaClient({datasourceUrl:url.toString(),log:[]});
-  const before=await fingerprints(db),migrations=['0019_private_preparation_profile','0020_private_personalized_practice'].map(name=>path.resolve(__dirname,'../prisma/migrations',name,'migration.sql'));
+  const before=await fingerprints(db),directory=await db.examCentre.findMany({orderBy:{id:'asc'}}),examCentreContentSha256=sha(Buffer.from(JSON.stringify(directory.map(({updatedAt,...r})=>r)))),migrations=['0019_private_preparation_profile','0020_private_personalized_practice'].map(name=>path.resolve(__dirname,'../prisma/migrations',name,'migration.sql'));
   for(const migration of migrations)run('psql',['-X','-v','ON_ERROR_STOP=1','-q','-f',migration]);
   const afterMigration=await fingerprints(db);for(const table of Object.keys(before))assert.equal(afterMigration[table],before[table],'Migration changed '+table);
+  await new ExamCentresService(db,{},{}).onModuleInit();assert.equal((await fingerprints(db)).ExamCentre,before.ExamCentre,'Startup must not rewrite existing directory rows or timestamps');
   assert.equal(await db.hometownRoute.count(),0);assert.equal(await db.preparationCoverage.count(),0);
   const prefix='TEST_PRIVATE_PHASE3_'+crypto.randomUUID(),a=prefix+'_a',b=prefix+'_b',c=prefix+'_c',centre=await db.examCentre.findFirst({where:{isPublished:true}}),plan=await db.plan.findFirst({where:{tier:'Basic',isActive:true}});assert.ok(centre&&plan);
   for(const id of [a,b,c])await db.user.create({data:{id,email:id+'@example.invalid',passwordHash:'SYNTHETIC NOT A LOGIN',role:'LEARNER'}});
@@ -56,7 +58,7 @@ async function main(){
   await db.subscription.updateMany({where:{userId:a},data:{status:'CANCELLED'}});await assert.rejects(service.getRoute(a,route.id),/active Basic/);
   const afterEnd=await service.end(a,s.id,{ownerId:a,parked:true});assert.ok(!('route'in afterEnd));await service.remove(a,route.id,{ownerId:a,parked:true});assert.equal(await db.hometownSession.count({where:{userId:a}}),0);
   const bRoute=await db.hometownRoute.findFirst();assert.ok(bRoute);await db.user.delete({where:{id:bRoute.userId}});assert.equal(await db.hometownRoute.count(),0);
-  const receipt={createdAt:new Date().toISOString(),archiveSha256:sha(fs.readFileSync(archive)),migrations:migrations.map(p=>({name:path.basename(path.dirname(p)),sha256:sha(fs.readFileSync(p))})),fullRestorePassed:true,additiveMigrationPreservedAllTables:true,noBackfill:true,realBasicAndFreeAccessPassed:true,ownerIsolationPassed:true,immutableRepeatPassed:true,noGpsDoesNotComplete:true,privateReflectionPassed:true,crossReplicaBudgetReservationPassed:true,lateAuditRollbackPassed:true,expiredAccessRedactionPassed:true,deleteAndAccountCascadePassed:true,protectedTablesUnchanged:true,externalProviderCalls:0,productionChanged:false};
+  const receipt={createdAt:new Date().toISOString(),archiveSha256:sha(fs.readFileSync(archive)),examCentreContentSha256,startupPreservesDirectory:true,migrations:migrations.map(p=>({name:path.basename(path.dirname(p)),sha256:sha(Buffer.from(fs.readFileSync(p,'utf8').replace(/\r\n/g,'\n')))})),fullRestorePassed:true,additiveMigrationPreservedAllTables:true,noBackfill:true,realBasicAndFreeAccessPassed:true,ownerIsolationPassed:true,immutableRepeatPassed:true,noGpsDoesNotComplete:true,privateReflectionPassed:true,crossReplicaBudgetReservationPassed:true,lateAuditRollbackPassed:true,expiredAccessRedactionPassed:true,deleteAndAccountCascadePassed:true,protectedTablesUnchanged:true,externalProviderCalls:0,productionChanged:false};
   const output=path.join(root,'personalized-practice-rehearsal-'+Date.now()+'.json');fs.writeFileSync(output,JSON.stringify(receipt,null,2),{flag:'wx',mode:0o600});console.log(JSON.stringify({receipt:output,...receipt}));
  }finally{
   keys.forEach((k,i)=>old[i]===undefined?delete process.env[k]:process.env[k]=old[i]);if(db)await db.$disconnect();if(started)run('pg_ctl',['-D',data,'-m','fast','-w','stop']);if(fs.existsSync(pwfile))fs.unlinkSync(pwfile);

@@ -8,19 +8,34 @@ async function main(){
  const url=new URL(process.env.DATABASE_URL||'');if(url.hostname!=='127.0.0.1'||url.port!=='15439')throw Error('Task-only private tunnel required');
  const mode=process.argv[2],file=path.resolve(process.argv[3]||'');if(!file.startsWith(root+path.sep))throw Error('Task output required');
  const db=new PrismaClient({datasourceUrl:url.toString(),log:[]});try{
-  const hashes=await fingerprints(db),migrationFiles=['0019_private_preparation_profile','0020_private_personalized_practice'].map(name=>({name,sha256:sha(fs.readFileSync(path.resolve(__dirname,'../prisma/migrations',name,'migration.sql')))}));
+  // Git checks out CRLF on Windows, while Linux/Prisma use committed LF bytes.
+  // Only line endings are normalized; any SQL content change still fails.
+  const hashes=await fingerprints(db),migrationFiles=['0019_private_preparation_profile','0020_private_personalized_practice'].map(name=>({name,sha256:sha(Buffer.from(fs.readFileSync(path.resolve(__dirname,'../prisma/migrations',name,'migration.sql'),'utf8').replace(/\r\n/g,'\n')))}));
   if(mode==='before'){
    const rehearsal=JSON.parse(fs.readFileSync(process.argv[4],'utf8'));assert.equal(rehearsal.fullRestorePassed,true);assert.equal(rehearsal.lateAuditRollbackPassed,true);assert.deepEqual(rehearsal.migrations,migrationFiles);assert.ok(Date.now()-Date.parse(rehearsal.createdAt)<6*3600_000);
    fs.writeFileSync(file,JSON.stringify({createdAt:new Date().toISOString(),hashes,migrations:migrationFiles,rehearsal:process.argv[4]},null,2),{flag:'wx',mode:0o600});console.log('Phase 3 private pre-deploy table fingerprints saved; no production data changed.');
   }else if(mode==='after'){
    const before=JSON.parse(fs.readFileSync(file,'utf8'));assert.deepEqual(before.migrations,migrationFiles);
+   const originalRehearsal=JSON.parse(fs.readFileSync(before.rehearsal,'utf8'));
+   const directoryEvidence=JSON.parse(fs.readFileSync(process.argv[4]||before.rehearsal,'utf8'));
+   assert.equal(directoryEvidence.archiveSha256,originalRehearsal.archiveSha256);
+   assert.deepEqual(directoryEvidence.migrations,migrationFiles);
+   assert.equal(directoryEvidence.fullRestorePassed,true);
    const changed=Object.keys(before.hashes).filter(table=>table!=='_prisma_migrations'&&before.hashes[table]!==hashes[table]);
-   const migrations=await db.$queryRawUnsafe('SELECT "migration_name", "finished_at", "rolled_back_at" FROM "_prisma_migrations" WHERE "migration_name" IN ($1,$2)',...migrationFiles.map(m=>m.name));
+   const migrations=await db.$queryRawUnsafe('SELECT "migration_name", "checksum", "finished_at", "rolled_back_at" FROM "_prisma_migrations" WHERE "migration_name" IN ($1,$2)',...migrationFiles.map(m=>m.name));
    assert.equal(migrations.filter(m=>m.finished_at&&!m.rolled_back_at).length,2);
+   for(const migration of migrationFiles)assert.equal(migrations.find(m=>m.migration_name===migration.name).checksum,migration.sha256,'Applied SQL differs from the rehearsed committed migration');
    const counts={profiles:await db.preparationProfile.count(),privateRoutes:await db.hometownRoute.count(),coverageReviews:await db.preparationCoverage.count(),publicRoutes:await db.route.count({where:{status:'PUBLISHED'}}),centres:await db.examCentre.count({where:{isPublished:true}})};
-   const receipt={createdAt:new Date().toISOString(),migrationsApplied:true,previousTablesUnchanged:changed.length===0,changedTableNames:changed,counts,productionReadOnly:true};
-   fs.writeFileSync(file.replace(/\.json$/,'.after.json'),JSON.stringify(receipt,null,2),{flag:'wx',mode:0o600});console.log(JSON.stringify(receipt));
-   if(changed.length)throw Error('Concurrent table changes require review; do not silently overwrite or claim unchanged');
+   const operationalChanges=new Set(['RefreshSession','AuditLog','AnalyticsEvent']);
+   const directory=await db.examCentre.findMany({orderBy:{id:'asc'}});
+   const directoryContentUnchanged=directoryEvidence.examCentreContentSha256===sha(Buffer.from(JSON.stringify(directory.map(({updatedAt,...r})=>r))));
+   // Permit only the demonstrated legacy startup timestamp touch, never a
+   // changed directory name, ID, publication state, coordinates or content.
+   if(directoryContentUnchanged)operationalChanges.add('ExamCentre');
+   const unexpected=changed.filter(table=>!operationalChanges.has(table));
+   const receipt={createdAt:new Date().toISOString(),migrationsApplied:true,appliedChecksumsMatchRehearsal:true,directoryContentUnchanged,previousTablesUnchanged:changed.length===0,protectedTablesUnchanged:unexpected.length===0,changedTableNames:changed,unexpectedChangedTableNames:unexpected,counts,productionReadOnly:true};
+   fs.writeFileSync(file.replace(/\.json$/,'.after-'+Date.now()+'.json'),JSON.stringify(receipt,null,2),{flag:'wx',mode:0o600});console.log(JSON.stringify(receipt));
+   if(unexpected.length)throw Error('Concurrent protected-table changes require review; do not overwrite or claim unchanged');
   }else throw Error('Choose before or after');
  }finally{await db.$disconnect();}
 }

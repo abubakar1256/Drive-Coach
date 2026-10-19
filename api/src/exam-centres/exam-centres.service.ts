@@ -33,7 +33,9 @@ export class ExamCentresService {
   async onModuleInit() {
     try {
       await Promise.all(officialCentres.map((centre) => this.prisma.examCentre.upsert({
-        where: { slug: centre.slug }, update: { ...centre, isPublished: true }, create: { ...centre, isPublished: true },
+        // Bootstrap missing directory entries only. A deploy must not rewrite
+        // existing content, publication decisions or its review timestamp.
+        where: { slug: centre.slug }, update: {}, create: { ...centre, isPublished: true },
       })));
     } catch {
       // A static directory remains available during a database outage.

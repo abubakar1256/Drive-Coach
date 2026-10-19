@@ -131,3 +131,8 @@ test('real HTTP endpoints enforce JWT, private no-store, account ownership and c
   f.db.user.findUnique=async()=>({role:'ADMIN'});assert.equal((await req('/admin/preparation-coverage','a','GET',null,'ADMIN')).status,200);
  }finally{await app.close();}
 }));
+
+test('startup bootstraps missing centres but does not overwrite existing directory content or timestamps',async()=>{
+ const {ExamCentresService}=require('../dist/src/exam-centres/exam-centres.service'),calls=[];
+ const service=new ExamCentresService({examCentre:{upsert:async args=>{calls.push(args);assert.deepEqual(args.update,{});return {id:'existing',isPublished:false,name:'Reviewed custom name'};}}},{},{});await service.onModuleInit();assert.equal(calls.length,32);assert.ok(calls.every(c=>c.create.isPublished===true));
+});
