@@ -53,7 +53,9 @@ async function apply(db,bundle,{actorEmail,forceConflict=false}={}){
   for(const c of bundle.centres)results.push({centreSlug:c.slug,reviewed:c.points.filter(p=>p.disposition!=='SOURCE_DUPLICATE').length,duplicateEntries:c.points.filter(p=>p.disposition==='SOURCE_DUPLICATE').length,changed:plans.filter(p=>p.centre===c.slug&&!p.unchanged).length});
   if(plans.some(p=>!p.unchanged))await tx.auditLog.create({data:{userId:actor.id,action:'PHASE_TWO_SOURCE_LOCATIONS_RECONCILED',entity:'OfficialPassagePoint',metadata:{releaseSha256:sha(JSON.stringify(bundle)),remoteReview:true,officialExamItinerary:false,results}}});
   return {results,changed:plans.filter(p=>!p.unchanged).length,existingProofsPreserved:routes.length};
- },{isolationLevel:'Serializable',timeout:120000,maxWait:10000});
+ // Remote SSH latency adds a round trip to each ordinary review/audit call.
+ // Keep one bounded atomic operation; never split into partially applied batches.
+ },{isolationLevel:'Serializable',timeout:300000,maxWait:10000});
 }
 function validateReceipt(receipt,releaseBytes){
  const archive=path.resolve(receipt.archive||'');
