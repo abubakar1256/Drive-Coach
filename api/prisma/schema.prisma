@@ -84,6 +84,7 @@ model User {
   tipDeliveries TipDeliveryHistory[]
   routeRecommendations RouteRecommendation[]
   routeTrial RouteTrial?
+  preparationProfile PreparationProfile?
 }
 
 model ExamCentre {
@@ -103,6 +104,23 @@ model ExamCentre {
   subscriptions Subscription[]
   officialPassagePoints OfficialPassagePoint[]
   departure CentreDeparture?
+  preparationProfiles PreparationProfile[]
+}
+
+model PreparationProfile {
+  userId String @id
+  preferredName String?
+  age Int?
+  centreId String?
+  homeTown String?
+  preferredLevel String @default("BEGINNER")
+  version Int @default(1)
+  revision String @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  centre ExamCentre? @relation(fields: [centreId], references: [id], onDelete: SetNull)
+  @@index([centreId])
 }
 
 model Route {

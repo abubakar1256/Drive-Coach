@@ -1,6 +1,18 @@
 # Phase 3 — personalised preparation
 
-Planning/readiness only. Implementation starts after the complete Phase 2 location release passes fresh backup, restore, production application and public verification. This is the agreed custom phase sequence, not the original generic roadmap headings retained in the Word document.
+Started locally on 19 October 2026 after the Phase 2 location release passed backup, restore, production application and public verification. **3A and the pure focus-policy portion of 3B are implemented/tested locally; this is not the full Phase 3 product or a production rollout.** This is the agreed custom phase sequence, not the original generic roadmap headings retained in the Word document.
+
+## First increment delivered locally
+
+- Additive `0019_private_preparation_profile`: an optional account-owned profile, no legacy backfill and no changes to existing route/billing/trial tables. Preferred name, optional age, centre/town preference and chosen level are private; town input does not request an address or device location.
+- JWT-protected private/no-store GET/PATCH/DELETE endpoints at `/api/v1/me/preparation-profile`. The authenticated actor owns every operation. A body owner binding prevents in-flight account confusion; user-row locking plus version/UUID revision checks prevent stale writes, including after clear/recreate. Audit records contain field names, not age/name/town values.
+- Dashboard form, accessible level choices, optional-profile clearing confirmation with safe cancellation focus, and private reflection-focus cards. Preference selection never moves a Basic purchase or grants route access.
+- Pure `preparationFocus` labels self-reported and instructor-reported inputs, ignores unknown categories, distinguishes an unselected default from a user choice, and never infers competence from age or GPS. All levels retain the same route validation/time/access contract. No routing or AI provider is called.
+- Privacy disclosure updated in the existing English/Dutch copy. Clearing removes active optional preferences, not practice history, purchases or the registered account name; backups follow the existing retention process.
+
+Verification: 269/269 regression tests, API/frontend builds and Prisma validation; a real isolated PostgreSQL archive restore passed additive-migration preservation, owner/version checks, forced late-audit rollback, SQL constraints and account cascade. Browser QA used only a synthetic loopback account: save/reload, level change, unchanged Free access and clear/cancel keyboard focus. Temporary preview servers were stopped. Private production data was not used by the browser fixture.
+
+**Rollout remains pending:** this increment is not pushed/deployed to production. Migration 0019 needs a new matching backup/rehearsal and explicit rollout authorization. Do not infer that a Phase 2 backup/temporary-key approval authorizes a Phase 3 schema rollout. Route-feature coverage/ranking, bounded hometown generation and the remaining acceptance work below are still pending.
 
 ## Scope from the updated requirements
 

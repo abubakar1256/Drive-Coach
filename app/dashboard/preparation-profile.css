@@ -1,0 +1,39 @@
+.preparation-profile { background: linear-gradient(135deg, #f3faf5, #fff 65%); border: 1px solid #d5e7dc; margin: 24px 0; }
+.preparation-profile-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 28px; }
+.preparation-profile-heading h2 { margin: 9px 0 12px; font-size: clamp(25px, 3vw, 36px); letter-spacing: -1.2px; }
+.preparation-profile-heading p { max-width: 650px; margin: 0; color: #657e76; line-height: 1.7; }
+.preparation-private { flex-shrink: 0; padding: 8px 13px; background: #e4f4e9; color: #0c715a; border: 1px solid #cce4d5; border-radius: 30px; font-size: 12px; font-weight: 700; }
+.preparation-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.preparation-fields label { display: flex; flex-direction: column; gap: 9px; font-weight: 650; font-size: 14px; color: #29463e; }
+.preparation-fields .preparation-field-label { font-size: 14px; color: #29463e; font-weight: 650; }
+.preparation-field-label > small { color: #6c807a; font-weight: 400; }
+.preparation-fields input, .preparation-fields select { width: 100%; min-width: 0; min-height: 48px; border: 1px solid #cddfd5; background: #fff; border-radius: 12px; padding: 12px 14px; font: inherit; color: #153b30; }
+.preparation-fields input:focus-visible, .preparation-fields select:focus-visible, .preparation-profile button:focus-visible { outline: 3px solid #82c8ad; outline-offset: 3px; }
+.preparation-fields small { font-weight: 400; color: #6c807a; line-height: 1.5; font-size: 12px; }
+.preparation-levels { border: 0; padding: 0; margin: 28px 0; min-width: 0; }
+.preparation-levels legend { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+.preparation-levels > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.preparation-levels label { cursor: pointer; position: relative; border: 1px solid #dae6df; background: #fff; border-radius: 16px; padding: 18px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.preparation-levels .is-selected { border-color: #198769; background: #eaf7ef; box-shadow: 0 0 0 1px #198769; }
+.preparation-levels label:focus-within { outline: 3px solid #9dcfb9; outline-offset: 3px; }
+.preparation-levels input { accent-color: #13785e; width: 17px; height: 17px; margin-left: auto; }
+.preparation-levels strong, .preparation-levels small { width: 100%; }
+.preparation-levels strong { font-size: 17px; }
+.preparation-levels small { line-height: 1.6; color: #607c70; }
+.preparation-level-number { color: #39846c; font: 600 12px ui-monospace, monospace; letter-spacing: 1px; }
+.preparation-focus { background: #f5f8f5; border: 1px solid #e0e9e2; border-radius: 16px; padding: 22px; margin-bottom: 22px; }
+.preparation-focus h3 { margin: 8px 0; font-size: 21px; }
+.preparation-focus p, .preparation-focus > small { color: #647b70; line-height: 1.7; }
+.preparation-focus ul { padding: 0; margin: 18px 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.preparation-focus li { border-radius: 12px; border: 1px solid #dbe6de; padding: 16px; background: #fff; }
+.preparation-focus li > span { display: block; color: #268466; font-size: 11px; margin-top: 8px; }
+.preparation-focus li p { font-size: 13px; margin-bottom: 0; }
+.preparation-actions { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.preparation-actions > button:not(.button), .preparation-clear button { border: 1px solid #d6e4da; padding: 11px 14px; color: #306650; background: #fff; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; }
+.preparation-profile button:disabled { opacity: .6; cursor: wait; }
+.preparation-error, .preparation-notice { border-radius: 10px; padding: 14px 16px; line-height: 1.6; margin: 18px 0 0; }
+.preparation-error { background: #fff0e9; color: #a44631; }
+.preparation-notice { background: #e8f6ed; color: #166447; }
+.preparation-clear { margin-top: 20px; border: 1px solid #e0d8c9; background: #fff9ed; border-radius: 12px; padding: 20px; }
+.preparation-clear button { margin: 8px 12px 0 0; }
+@media (max-width: 700px) { .preparation-profile-heading { flex-direction: column; gap: 14px; } .preparation-fields, .preparation-levels > div, .preparation-focus ul { grid-template-columns: 1fr; } .preparation-actions > button { width: 100%; justify-content: center; } }
