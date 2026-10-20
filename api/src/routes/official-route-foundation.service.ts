@@ -3,7 +3,8 @@ import { createHash } from "node:crypto";
 import type { Prisma, Route } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { DrivingRouteService } from "./driving-route.service";
-import { officialPassageCatalog, passageFingerprint } from "../exam-centres/official-passage-catalog";
+import { passageFingerprint } from "../exam-centres/official-passage-catalog";
+import { currentPassageSource, passageSourceCatalog, sourceCurrent, type PassageSource } from "../exam-centres/passage-source-catalog";
 import { belgianCoordinate, coordinate, orderedCoverageIssues, passageShapeIssues, type GeoPoint, type RouteAnchor } from "./foundation-quality";
 import { metres } from "../learning/practice-progress";
 import { durationIssues } from "./route-quality";
@@ -14,7 +15,7 @@ type Proof = { kind: "PUBLISHED_PASSAGE_PRACTICE"; departure: GeoPoint & { versi
 export function reviewedPassage(point: ReviewedPoint) {
   return point.verificationStatus === "VERIFIED" && point.duplicateOfSequence === null && Boolean(point.verifiedBy && point.verifiedAt && point.sourceFingerprint === passageFingerprint(point)) && belgianCoordinate(point);
 }
-export function sourceReviewCounts(source: typeof officialPassageCatalog[number] | null, points: Array<ReviewedPoint & { sequence: number }>) {
+export function sourceReviewCounts(source: PassageSource | null, points: Array<ReviewedPoint & { sequence: number }>) {
   if (!source) return { eligibleEntryCount: 0, duplicateEntryCount: 0, pendingPointCount: 0, reviewComplete: false };
   const expected = source.points.map(original => ({ original, current: points.find(p => p.sequence === original.sequence && p.duplicateOfSequence === original.duplicateOfSequence && p.sourceFingerprint === passageFingerprint({ ...original, sourceUrl: source.sourceUrl, sourceRevision: source.sourceRevision }) && p.sourceFingerprint === passageFingerprint(p)) }));
   const eligible = expected.filter(p => p.original.duplicateOfSequence === null);
@@ -34,7 +35,7 @@ export class OfficialRouteFoundationService {
   async workspace(centreId: string) {
     const centre = await this.prisma.examCentre.findUnique({ where: { id: centreId }, include: { departure: true, officialPassagePoints: { orderBy: { sequence: "asc" } } } });
     if (!centre) throw new NotFoundException("Centre not found");
-    const source = officialPassageCatalog.find(s => s.slug === centre.slug) ?? null;
+    const source = currentPassageSource(centre.slug);
     const points = centre.officialPassagePoints;
     return { centreId, centreName: centre.name, source, departure: centre.departure, points, readyPointCount: points.filter(p => reviewedPassage(p as ReviewedPoint)).length, supportedSource: Boolean(source) };
   }
@@ -43,17 +44,17 @@ export class OfficialRouteFoundationService {
     const centre = await this.prisma.examCentre.findFirst({ where: { slug, isPublished: true }, select: { id: true } });
     if (!centre) throw new NotFoundException("Centre not found");
     const w = await this.workspace(centre.id);
-    return { source: w.source ? { name: "Autoveiligheid", url: w.source.sourceUrl, centreUrl: w.source.centreSourceUrl, address: w.source.address, revision: w.source.sourceRevision, checkedAt: w.source.sourceCheckedAt, publishedEntries: w.source.points.length } : null, ...sourceReviewCounts(w.source, w.points as Array<ReviewedPoint & { sequence: number }>), reviewedPointCount: w.readyPointCount, departureReviewed: w.departure?.verificationStatus === "VERIFIED", officialExamItinerary: false, targetMinutes: 25, toleranceMinutes: 2 };
+    return { source: w.source ? { name: w.source.operatorName ?? "Autoveiligheid", url: w.source.sourceUrl, centreUrl: w.source.centreSourceUrl, address: w.source.address, revision: w.source.sourceRevision, checkedAt: w.source.sourceCheckedAt, validUntil: w.source.validUntil ?? null, publishedEntries: w.source.points.length, pointGroupCount: w.source.pointGroups?.length ?? 0, qualification: w.source.qualification ?? null } : null, ...sourceReviewCounts(w.source, w.points as Array<ReviewedPoint & { sequence: number }>), reviewedPointCount: w.readyPointCount, departureReviewed: w.departure?.verificationStatus === "VERIFIED", officialExamItinerary: false, targetMinutes: 25, toleranceMinutes: 2 };
   }
 
   async importSource(actorId: string, centreId: string) {
     const centre = await this.prisma.examCentre.findUnique({ where: { id: centreId } });
-    const source = officialPassageCatalog.find(s => s.slug === centre?.slug);
+    const source = centre ? currentPassageSource(centre.slug) : null;
     if (!source) throw new BadRequestException("No operator source bundle is verified for this centre; do not invent passage points");
     return this.prisma.$transaction(async tx => {
       await tx.$queryRawUnsafe('SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtext($1))', `official-source:${centreId}`);
       for (const point of source.points) {
-        const data = { ...point, sourceUrl: source.sourceUrl, sourceRevision: source.sourceRevision, sourceLabel: "Autoveiligheid published passage point — not mandatory on every exam", sourceCheckedAt: new Date(source.sourceCheckedAt) };
+        const data = { ...point, sourceUrl: source.sourceUrl, sourceRevision: source.sourceRevision, sourceLabel: `${source.operatorName ?? "Autoveiligheid"} published passage point — not mandatory on every exam`, sourceCheckedAt: new Date(source.sourceCheckedAt) };
         const fingerprint = passageFingerprint(data);
         const current = await tx.officialPassagePoint.findUnique({ where: { centreId_sequence: { centreId, sequence: point.sequence } } });
         const sameSource = current?.sourceFingerprint === fingerprint && current.duplicateOfSequence === data.duplicateOfSequence && passageFingerprint(current) === fingerprint;
@@ -74,6 +75,7 @@ export class OfficialRouteFoundationService {
       const location = { latitude: dto.latitude ?? current.latitude, longitude: dto.longitude ?? current.longitude };
       const moved = location.latitude !== current.latitude || location.longitude !== current.longitude;
       const status = dto.verificationStatus ?? (moved ? "PENDING_REVIEW" : current.verificationStatus);
+      if (status === "VERIFIED" && !passageSourceCatalog.some(s => s.sourceUrl === current.sourceUrl && sourceCurrent(s))) throw new BadRequestException("Current operator source required before location review");
       if (status === "VERIFIED" && (current.duplicateOfSequence !== null || !belgianCoordinate(location as GeoPoint) || (dto.notes?.trim().length ?? 0) < 8 || !current.sourceFingerprint || current.sourceFingerprint !== passageFingerprint(current))) throw new BadRequestException("Import the current source, review distinct Belgian coordinates and add review evidence (8+ characters) before verification");
       const updated = await tx.officialPassagePoint.update({ where: { id }, data: { ...dto, verificationStatus: status, verifiedAt: status === "VERIFIED" ? new Date() : null, verifiedBy: status === "VERIFIED" ? actorId : null } });
       await tx.auditLog.create({ data: { userId: actorId, action: "PASSAGE_COORDINATES_REVIEWED", entity: "OfficialPassagePoint", entityId: id, metadata: { before: { latitude: current.latitude, longitude: current.longitude, status: current.verificationStatus }, after: { ...location, status } } } });
@@ -107,6 +109,7 @@ export class OfficialRouteFoundationService {
     if (passageShapeIssues(expected, proof.departure, proof.points).length || points.length !== expected.length || points.some((p, i) => !belgianCoordinate(p) || metres(coordinate(p), coordinate(expected[i])) > 1 || (proof.shape && (p.bearing ?? null) !== (expected[i].bearing ?? null)))) throw new BadRequestException("Route waypoints no longer match the reviewed passage sequence");
     for (const point of proof.points) {
       const source = sources.find(s => s.id === point.id);
+      if (source && !passageSourceCatalog.some(s => s.sourceUrl === source.sourceUrl && sourceCurrent(s))) throw new BadRequestException("Operator source has expired or changed; rebuild after source review");
       if (!source || !reviewedPassage(source as ReviewedPoint) || source.sourceFingerprint !== point.sourceFingerprint || source.latitude !== point.latitude || source.longitude !== point.longitude || source.verifiedAt?.toISOString() !== point.verifiedAt) throw new BadRequestException("Passage-point review changed; rebuild and review this route");
     }
   }

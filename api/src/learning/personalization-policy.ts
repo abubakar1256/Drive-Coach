@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { preparationFocus, type PreparationLevel } from "./preparation-policy";
 import { geometryIssues, durationIssues, type Coordinate } from "../routes/route-quality";
 import { metres, snapshotDistance } from "./practice-progress";
+import { mappedCoverageDetails } from "./mapped-preparation-coverage";
 
 export const focusCodes = ["speed", "priority", "roundabouts", "junctions", "lanes", "observation", "parking", "vulnerable", "merging", "control", "signs", "space"] as const;
 export type FocusCode = typeof focusCodes[number];
@@ -19,7 +20,7 @@ export function rankPreparation(routes: any[], focus: ReturnType<typeof preparat
     const known = coverageCurrent(route), coverage = known ? route.preparationCoverage : null;
     const matched = focus.items.filter(item => coverage?.skills.includes(item.code)).map(item => ({ code: item.code, label: item.label, basis: item.basis }));
     const levelMatched = coverage?.complexity === target;
-    return { route, score: matched.length * 10 + (levelMatched ? 2 : 0), matched, levelMatched: Boolean(levelMatched), coverage: known ? { status: "REVIEWED", complexity: coverage.complexity, reviewedAt: coverage.reviewedAt, sourceUrl: coverage.sourceUrl } : { status: "UNKNOWN", complexity: null, reviewedAt: null, sourceUrl: null }, reason: matched.length ? `Reviewed coverage matches ${matched.map(i => i.label).join(", ")}.` : "No reviewed match is known for your reported focus. This is general practice, not a claimed skill match." };
+    return { route, score: matched.length * 10 + (levelMatched ? 2 : 0), matched, levelMatched: Boolean(levelMatched), coverage: known ? { status: "REVIEWED", complexity: coverage.complexity, details: mappedCoverageDetails(coverage.notes ?? "", coverage.complexity), reviewedAt: coverage.reviewedAt, sourceUrl: coverage.sourceUrl } : { status: "UNKNOWN", complexity: null, details: null, reviewedAt: null, sourceUrl: null }, reason: matched.length ? `Reviewed coverage matches ${matched.map(i => i.label).join(", ")}.` : "No reviewed match is known for your reported focus. This is general practice, not a claimed skill match." };
   }).sort((a, b) => b.score - a.score || a.route.id.localeCompare(b.route.id));
 }
 

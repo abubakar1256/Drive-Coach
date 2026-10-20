@@ -1,0 +1,4116 @@
+{
+  "reviewedAt": "2026-10-19T20:05:01.990Z",
+  "reviewBasis": "Operator-linked Category B PDF pages inspected as text and rendered pages; factual names and original grouping only.",
+  "instructorApproved": false,
+  "sources": [
+    {
+      "slug": "sint-denijs-westrem",
+      "name": "Sint-Denijs-Westrem",
+      "operatorName": "SBAT",
+      "address": "Poortakkerstraat 131, 9051 Sint-Denijs-Westrem",
+      "centreSourceUrl": "https://www.sbat.be/rijbewijs/centra/sint-denijs-westrem",
+      "sourceUrl": "https://www.sbat.be/files/files/file/92.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:53:56.237Z",
+      "sourceSha256": "7022de2771fdff7948cd7937f5bdc131cc1fadbbe85bf10eef62e914e134ea13",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "E40",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Loofblommestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "De Sterre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Bijenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Twaalfapostelenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "St Dionyssiustraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Louis Blériotlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Gladioollaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Beukenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Kikvorsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Kortrijksesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Vaerwyckweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "R4",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Gemeenteplein Sint-Denijs-Westrem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "De Pintelaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Viaduct Kortrijksesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Luchthavenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Gentiaanlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "St Rochusplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Henri Crombezlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Krijzeltand",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Hagedisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Kleinkouterken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde De 3 sleutels",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Timicheg (St Denijslaan - Vaerwijckweg)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Pegoudlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Zwijnaardsestweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Steenaardestraat Beukenlaan (Paardekop)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Buchtenbrug (Sneppebrug)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Adelaarsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "E40/E17",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Cardoen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Poortakkerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Bijenstraat – Kortrijksesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Salamanderstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Galglaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Vaderlandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Hogeheerweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Kerkdreef",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Delebecquelaan",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "eeklo",
+      "name": "Eeklo",
+      "operatorName": "SBAT",
+      "address": "Industrielaan 15, 9900 Eeklo",
+      "centreSourceUrl": "https://www.sbat.be/rijbewijs/centra/eeklo",
+      "sourceUrl": "https://www.sbat.be/files/files/file/93.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:53:56.987Z",
+      "sourceSha256": "d13ee48928dc5cc16c4b46f16bbbeacf9d0477773dd1157ab93ebd79d6465eaa",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Stationstr.-Oostveldstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Kerkstraat - Teirlinckstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Boelare - Kon./Albertstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Kon. Albertstraat - Molenstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "H. Grafstraat-Molenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Leoploldlaan - H. Grafstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Eikelstraat - Molenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Cocquytstraat - Zandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvleuge - Rabautstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Vrombautstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Oostveldstraat - Stationstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Markt - Koning Albertstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Koning Albertstr. - Boelare",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Oostveldstr. - Visstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Raverschootstr. - Kon. albertstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Markt-Kerkstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Boelare - Markt",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Moeie - Tieltsestwg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "K. Van de Woestyneplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Tuinwijkstraat - links Blakstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsestwg. - Ringlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Gentsestwg. - Zuidmoerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Weverstr. - J.F. Willemspl.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Molenstr. - Brugsestwg.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Lippenslaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "J.F. Willemspein(komende van Weverstr)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Lekestraat - Guido Gezellestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Molenstraat - Boelare",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Molenstraat-Eikelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstr. - Raamstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Garenstraat - Stationsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Raamstraat - Kerkstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Expressweg Antwerpen - Kust",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Brug Balgerhoeke",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Plein kaprijke",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Adegem : Staatsbaan - Adegem Dorp",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Korte Moeie - Tieltsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Adegemse Kerkstraat - Staatsbaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Nijverheidskaai -Tieltsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "R43-Leopoldlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Nieuwstraat - Aveschoot",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Kruisken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Brug Raverschootstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Maldegem: Stationstr - 39 Linielaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Maldegem: 39 Linielaan - Markstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Maldegem: Oudstrijdersln - Bogaerdstr",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Schuttershof - Collegestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Molenstraat - D. Goethalsstraat (links)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Leikensweg - Zandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "H. Lippensstraat komende van Boelare",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Celieplas, (Koebrug-Maldegem)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Budswervestraat - Koning Albertlaan (Maldegem)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Industrielaan Ringlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Désire Goethalsstraat -> Molenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan (thv New Alma)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Waarschoot: Schoolstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Waarschoot: Kere -Guido Gezellestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Sportlaan / Burg. Lionel Van Dammelaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Ovonde - richting Delhaize",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Gentsesteenweg - Oude Gentweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 61,
+          "municipality": "Not specified by operator",
+          "junction": "E34",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 62,
+          "municipality": "Not specified by operator",
+          "junction": "rotonde Az Alma R43",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 63,
+          "municipality": "Not specified by operator",
+          "junction": "Vrombautstraat - Vaartstraat (Kaprijke)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 64,
+          "municipality": "Not specified by operator",
+          "junction": "Vaartstraat - N49 (Expressweg)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 65,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Ringlaan (AZ Alma)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 66,
+          "municipality": "Not specified by operator",
+          "junction": "Roze - Rabautstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 67,
+          "municipality": "Not specified by operator",
+          "junction": "Blommekes / Peperstraat (rotonde)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 68,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan - Nieuwendorpe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 69,
+          "municipality": "Not specified by operator",
+          "junction": "Kop van de Vaart",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 70,
+          "municipality": "Not specified by operator",
+          "junction": "Industrielaan - Ringlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 71,
+          "municipality": "Not specified by operator",
+          "junction": "Pastoor de Nevestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 72,
+          "municipality": "Not specified by operator",
+          "junction": "Krekelmuit",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 73,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan-Brugsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 74,
+          "municipality": "Not specified by operator",
+          "junction": "R43 Raverschoot",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 75,
+          "municipality": "Not specified by operator",
+          "junction": "Industrielaan Slachthuisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 76,
+          "municipality": "Not specified by operator",
+          "junction": "Korte Moeie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 77,
+          "municipality": "Not specified by operator",
+          "junction": "Raverschoot",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 78,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsesteenweg Delhaize",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 79,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsesteenweg Leopoldlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 80,
+          "municipality": "Not specified by operator",
+          "junction": "Galgstraat-Raverschootstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 81,
+          "municipality": "Not specified by operator",
+          "junction": "Akkerstraat-Raverschootstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 82,
+          "municipality": "Not specified by operator",
+          "junction": "Blakstraat-Brugsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 83,
+          "municipality": "Not specified by operator",
+          "junction": "Oprit E34",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 84,
+          "municipality": "Not specified by operator",
+          "junction": "Vrombautstraat",
+          "duplicateOfSequence": 10
+        },
+        {
+          "sequence": 85,
+          "municipality": "Not specified by operator",
+          "junction": "Kriekmoerstraat-Vrombautstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 86,
+          "municipality": "Not specified by operator",
+          "junction": "Kunstdal-Brugsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 87,
+          "municipality": "Not specified by operator",
+          "junction": "Schouwburgplaats Maldegem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 88,
+          "municipality": "Not specified by operator",
+          "junction": "Markt-Westeindestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 89,
+          "municipality": "Not specified by operator",
+          "junction": "Krekelmuit-Kunstdal",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 90,
+          "municipality": "Not specified by operator",
+          "junction": "Bocht nieuwendorpe – jachthaven",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 91,
+          "municipality": "Not specified by operator",
+          "junction": "Korte moeie-Mandeweegsken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 92,
+          "municipality": "Not specified by operator",
+          "junction": "Mandeweegsken-Raverschootstraat",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "brakel",
+      "name": "Brakel",
+      "operatorName": "SBAT",
+      "address": "Industrielaan 8, 9660 Brakel",
+      "centreSourceUrl": "https://www.sbat.be/rijbewijs/centra/brakel",
+      "sourceUrl": "https://www.sbat.be/files/files/file/94.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:53:57.302Z",
+      "sourceSha256": "e720fbb4b3d25d63a68bd25adb5ddd3168ec7a6bcd2fd189cfd7253e8076fcb4",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Astridlaan - Oudenaardesestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Geraardsbergen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Hunnegemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Astridlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Felicien Cauwelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Reepstraat - Oudenaardsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Ninovestraat - Nachtegalestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Geraardsbergenstraat - Linde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Barreelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Broeke – Kruisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Eugène Soudansquare (brandweer)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Aimé Delhaye - Wijnstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Industrielaan - Rondweg Brakel",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "D'Hoppe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Zuidstraat - Oude Vesten",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "R8 - Bontestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Faliestraat - Ten Ede",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Watermolenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rondweg – Brusselsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Molenberg – Meierij",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Brakelstraat – Oudenhovestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstraat - Kasteelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Driehoekstraat – Tirse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Watermolenstraat – Beekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Kasteelstraat– Vierschaar",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Vierschaar – Gauwstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Warande",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "erembodegem",
+      "name": "Erembodegem",
+      "operatorName": "SBAT",
+      "address": "Industrielaan 26, 9320 Erembodegem",
+      "centreSourceUrl": "https://www.sbat.be/rijbewijs/centra/erembodegem",
+      "sourceUrl": "https://www.sbat.be/files/files/file/95.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:53:57.609Z",
+      "sourceSha256": "46553e495eeb058a8670711f9751c205c4e142f5fef6fd6250a3d1fad26957db",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt : Geraardsbergsestr. - Parklaan - Diepestraat - L. De Bethunelaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Ninovesteenweg - Steenveldlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Werf - St. Annabrug",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Industrielaan – Ninovesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Nachtegaalstraat - Italiënweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt : Keizerlijke Plaats - Geraardsbergsestr. - Zonnestraat - Korte Zoutstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Watertoren",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Industrielaan – Churchillsteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: N45 – Eigenstraat, Wildebeekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Houtmarkt",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "O.L.Vrouwplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Varkensmarkt",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Denderleeuw Guido Gezellestraat - Post",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde station Erembodegem (Kamiel Walgraefplein)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt : Brusselsestwg. - Hoge Weg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Ninovesteenweg richting Denderleeuw",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Guido Gezellestraat-Koopwarenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Moreelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Groene weg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Burgemeesterplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Koolstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Keppestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "H. Hartlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Hopmarkt",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Gentsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Schoolstraat / Koolstr. - D. Martensstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Molendries",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: P. Corneliskaai - Tramstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Albrechtlaan - Brusselsestwg.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt stwg op Aalst met Villalaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Churchillrotonde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Keppestraat-Burg. De Cocklaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Brug Erembodegem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Dorp Erembodegem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Gedeeltelijke oprit autosnelweg richting Dendermonde komende van Aalst",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Siesegemlaan – Kwalestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Dorpsplein Nieuwerkerken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Geraardsbergsestwg - Churchillstwg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Denderbrug (Erembodegem-Dorp)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Broekstr. - Kerkstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Wilgenstraat – N45 Expressweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "E40",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hogeweg met Denderstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Kapucijnenlaan - L. de Bethunelaan - St. Jobstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Wildebeekstraat - Rijksweg Aalst Ninove",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Kaardeveld - Rooms hof",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Gentsestraat - Kapucijnenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Driehoekstraat – Expressweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Dendermondsestwg. Richting E40",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Boudewijnlaan - Ledebaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: St Kamielstraat - Geraardsbergsestr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt : Gentsesteenweg – Siesegemlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Groeneweg - Ninovesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Afrit Ninove – Geraardsbergen - Aalst",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Afrit Ninove – Geraardsbergen - Geraardsbergsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Dwarsstraat - Geallieerdenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Steenweg (Denderleeuw) – Regentiestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt (Denderleeuw) - Hertstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde “Den Haerinck”",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Siesegemlaan - Merestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 61,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Dorpsstraat - Schoolstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 62,
+          "municipality": "Not specified by operator",
+          "junction": "Geraardsbergsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 63,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Roomshof - Kapellekensbaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 64,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: A. Vandemaelestr. - Ninovestwg.- Groeneweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 65,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Hertstraat - Ninovesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 66,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Vlaanderenstraat - Vrijheidstraat (aan de Bisschop)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 67,
+          "municipality": "Not specified by operator",
+          "junction": "Zeebergbrug",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 68,
+          "municipality": "Not specified by operator",
+          "junction": "Autobusstation - Nijverheidsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 69,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: Hugo Lefèvrestraat - Geraardsbergsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 70,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoezestraat - Schoolstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 71,
+          "municipality": "Not specified by operator",
+          "junction": "Zwarthoekbrug",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 72,
+          "municipality": "Not specified by operator",
+          "junction": "Ninoofsesteenweg Dilbeek",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 73,
+          "municipality": "Not specified by operator",
+          "junction": "Verkeerswisselaar Groot-Bijgaarden",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 74,
+          "municipality": "Not specified by operator",
+          "junction": "E40 afrit “Teralfene Affligem”",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 75,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt: De Vilanderstraat - Brusselsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 76,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Steenweg – Iddergemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 77,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Rijksweg Ninove Aalst – Wildebeekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 78,
+          "municipality": "Not specified by operator",
+          "junction": "D’Aelstraat Denderhoutem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 79,
+          "municipality": "Not specified by operator",
+          "junction": "Beukenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 80,
+          "municipality": "Not specified by operator",
+          "junction": "Papestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 81,
+          "municipality": "Not specified by operator",
+          "junction": "Eikstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 82,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Steenveldlaan – Steenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 83,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Stationsstraat – Denayerstraat – Thontlaan– G.Gezellestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 84,
+          "municipality": "Not specified by operator",
+          "junction": "Nieuwerkerken: Schoolstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 85,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Regentiestraat – Langestraat (Welle)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 86,
+          "municipality": "Not specified by operator",
+          "junction": "Kattestraat (Welle)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 87,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Drieselken (Welle)-Kerkstraat-Broekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 88,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Keppestraat – Rooms-Hofstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 89,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Erembodegemstraat – De Vilanderstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 90,
+          "municipality": "Not specified by operator",
+          "junction": "Gedeeltelijke oprit autosnelweg richting Dendermonde, komende van Ninove",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 91,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde “Houten Hand”",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 92,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoezestraat-Mortelveld",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 93,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt A.De Cockstraat (Denderleeuw) – Middenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 94,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hogeweg – van de Vijverstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 95,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Industrielaan met Euromold",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 96,
+          "municipality": "Not specified by operator",
+          "junction": "K ruispunt Hoogsteenveld met Priester Daenslaan",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "sint-niklaas",
+      "name": "Sint-Niklaas",
+      "operatorName": "SBAT",
+      "address": "Oostjachtpark 8, 9100 Sint-Niklaas",
+      "centreSourceUrl": "https://www.sbat.be/rijbewijs/centra/sint-niklaas",
+      "sourceUrl": "https://www.sbat.be/files/files/file/96.pdf",
+      "sourceRevision": "2025-07-01",
+      "sourceCheckedAt": "2026-10-19T19:53:58.210Z",
+      "sourceSha256": "aaf9cb81a8d425f09c51c848d551f115c6f6b8339b3a2d0f9cdf216c2ed50822",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoogkamerstraat – N16 (Uw Tuin)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Kasteelstraat (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Vrijheidstraat – N16 (oprijden N16 grote baan Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Oprijden N16 richting E17 Vidts",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Gasthuisstraat – Kouterstraat Temse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Leie – Houtkaai Temse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Oprijden N16 richting centrum Vidts",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt N16 – Koningin Astridlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Glycineplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Josephine Charlottelaan – Tereken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Parklaan – Moerlandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Industriepark Noord – Industriepark Noord (Garage Mercedes)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Industriepark Noord – Houten Schoen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunten aan Brugsken",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Hospitaalstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Oprijden E17 richting Gent (oprit gelegen aan N16 richting Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "E17 richting Gent afrit Dendermonde – Hulst",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt N41 – N70",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Industriepark West – Dendermondsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Tereken – Knaptandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunten Don Boscowijk bv. Goudenregenlaan – Tulpenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoge Heerweg – Houten Schoen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Parklaan – N16",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Sint-Amelbergalaan – Rozenlaan (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Edgard Tinelplaats – Cauwerburg (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Sint-Amelbergalaan – Hoogkamerstraat (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Parklaan – Clement Heirmanstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Clement Heirmanstraat – Verbindingsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Sint-Antoniusstraat – Abingdonstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt N41 – Kiemerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt N41 – Heimolenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Gentse Baan – Driegaaienstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoge Heerweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Puitvoetstraat – Prins Alexanderlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Heimolenstraat – Smisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Sint-Amelbergalaan (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Kouterstraat – Vrijheidstraat (Temse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Industriepark West – Hoge Heerweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Tereken – Smisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Knaptandstraat – Sint Antoniusstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hoogkamerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hertenstraat – Industriepark Noord",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hertjen- Hertenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Gouden Regenlaan- Magnolialaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Hertenstraat- De Meulenaerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Tereken – Kapelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Voskenslaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Industriepark-Noord",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Kettermuitstraat/N41",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Industriepark-Noord",
+          "duplicateOfSequence": 48
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Puitvoetstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Alexanderlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Breedstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Chrysantenstraat / Magnolialaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Kapelanielaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "E17",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "N41",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Goudenregenlaan / Boudewijnlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "N41 richting Stekene",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Roskamstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 61,
+          "municipality": "Not specified by operator",
+          "junction": "Steenweg Hulst-Lessen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 62,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt Goudenregenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 63,
+          "municipality": "Not specified by operator",
+          "junction": "Prins Boudewijnlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 64,
+          "municipality": "Not specified by operator",
+          "junction": "Industriepark-Noord",
+          "duplicateOfSequence": 48
+        },
+        {
+          "sequence": 65,
+          "municipality": "Not specified by operator",
+          "junction": "Kruispunt richting centrum",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "asse-mollem",
+      "name": "Asse–Mollem",
+      "operatorName": "AIBV",
+      "address": "Industriezone Z.5 Mollem 81, 1730 Asse-Mollem",
+      "centreSourceUrl": "https://www.aibv.be/nl/examencentrum-asse-mollem",
+      "sourceUrl": "https://www.aibv.be/sites/default/files/uploads/Doorgangspunten%20categorie%20B%20vanaf%2001%2007%202026.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:57:30.266Z",
+      "sourceSha256": "ff2dcd6e22c146a7506cb607f3134e7f7b1406cf85fa4fb3ff8fc08f446328b7",
+      "validUntil": null,
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Kalkoven – Koning Astridstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Koensbore – Putberg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Kattestraat – Steenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Schaapeuzel – Vossestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Opwijksestraat – Verlorenkostbaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Dorp – Dries",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Vaal – Lindenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Rozelaarstraat – Lindendries",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Stevensveld – Heilig Hartlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Velm – Kouter",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Schermershoek – Ichelgemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Miergemstraat – Slagmolenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Gentsesteenweg – Groenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Heuvelstraat – Lepelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Kelestraat – Dendermondsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Stationstraat – Vesten",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Spiegellaan – Peperstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Miergemstraat – Slagmolenlaan",
+          "duplicateOfSequence": 12
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Spiegelstraat – Ilsedestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Parklaan – Pastinakenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Langestraat – Sint Goriksstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "De Limburg Stirumlaan – Maalbeeklaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Dorpstraat – Nieuwelaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Steenweg op Asse – Koolterstraat",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "brugge",
+      "name": "Brugge",
+      "operatorName": "KM",
+      "address": "Consult the linked operator centre page for the current address. This is not a reviewed departure point.",
+      "centreSourceUrl": "https://www.km.be/rijbewijs/examenlocatie/brugge",
+      "sourceUrl": "https://www.km.be/sites/default/files/2026-07/doorgangspunten%201012%20%202026%20-%202027.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:57:05.291Z",
+      "sourceSha256": "82f3b963880f37b0658ae4040296992b2cc9885a523bbe23db44542da142a5bb",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Duivenslagstr. Blankenbergse Dijk",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "St. Pieters Noordstr. Bekeweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Viaduct Waggelwater Kan. Duclosstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve - Blankenbergsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Kluifrotonde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Waggelwaterstraat - Lieven Bauwensstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg St-Pietersmolenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg St-Pietersgroenestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg Karel Ledeganckstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "C,Serweytensplein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Walburga vansteenlandtstr",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "tempelhof / Oostendsestw",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve Hoge Hul",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg Blauwetorenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg Expresweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Tempelhofstr. / Blankenbergsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Sint Pieters",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Scheepsdalelaan / Leopold I laan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsesteenweg / St.Pietersmolenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Oostendesteenweg/St.Pietersmolenstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Kluifrotonde",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve Kolvestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Kerk Sint Pieters",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Scheepsdalelaan Houtkaai",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergse Steenweg St. Pieterskerklaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Palingstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Korte Eriestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Kerk Sint Pieters",
+          "duplicateOfSequence": 23
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Potentestraat Blankenbergsestnw.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Oostendesteenweg Ruddershove",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Tempelhofstr. / Blankenbergsesteenweg",
+          "duplicateOfSequence": 16
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "sint-Pietersnoordstr/ Blankenbergsesteenw.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "St-Pietersgroenestraat/Bl.steenweg.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Veemarkt",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Sint Pietersgroenestraat Vaartstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Pathoekeweg Jacob Van Arteveldestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve/Kolvestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Kolvestraat/Pathoekeweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Pathoekeweg /P.de Halleuxstr",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Blankenbergsestwg Kolvestr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Sint Pieterskerklaan Laconiastr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Steenkaai Rustenburgstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Legeweg - Expresweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve - Hoge Hul",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Noordveldstraat - Zandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde AZ Sint-Jan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Waggelwaterstraat - B-post",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Oprit Bevrijdingslaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Monnikenwerve/kl,Monnikenwerve",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "rotonde Bl. steenweg/B park",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Blauw-Torenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Bl steenweg/Blauwhuisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Tempelhof/Sint- Paulusstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "oostendsestw/gebr, Marreystr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Kolvestraat / Peraltastraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Pathoekeweg (Tesla Center)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Vaartstraat (Velotel Brugge)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "expesweg/Bevrijdingslaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Penitentaircomplex",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Koestraat/Zandstraat",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "oostende",
+      "name": "Oostende",
+      "operatorName": "KM",
+      "address": "Consult the linked operator centre page for the current address. This is not a reviewed departure point.",
+      "centreSourceUrl": "https://www.km.be/rijbewijs/examenlocatie/oostende",
+      "sourceUrl": "https://www.km.be/sites/default/files/2026-07/doorgangspunten%201002%202026%20-2027.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:58:53.585Z",
+      "sourceSha256": "b4db4fbc495c6245b9df4ead256fb6a8b5671a6689f545e4acc8efcd9e367052",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Kasteelstraat/Zandvoordestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Zonnebloemlaan/Zwanenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Kalkoenlaan/Zwanenlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Plantijnstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan/August Vermeylenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Gouwelozestraat/Beekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Ijslandstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstraat/Amandinestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Stationsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Ringlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan/Houtkaai",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan/Prins Albertlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestr./oprit A10 Oostende",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Grintweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordedorpstraat/Graanmolenstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Frère Orbanstraat/Bosweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Vogelzangdreef/Parklaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Leegaardsdijk",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Gistelsesteenweg/Kapittelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Gistelsesteenweg/Grintweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Gistelsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Gistelesteenweg/Klemskerkestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Zilverlaan/Koolmeesstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Elsabethlaan/Seringenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Seringenstraat/Bronstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Stuiverstraat/Bronstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Stuiverstraat/Elisabethlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstraat/Putstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Oudenburgsesteenweg/Biekorfstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Oudenburgsestwg./Vaartblekersstr.",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Gistelsesteenweg/Rietmusstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Pauwenplein/Kievitstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Oprit/Kievitstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Stationsstraat",
+          "duplicateOfSequence": 9
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstraat/Panneputstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Stationsstraat/Oudenburgsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Kerk Zandvoorde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Gistelsesteenweg",
+          "duplicateOfSequence": 21
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Zilverlaan/Stuiverstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Ringlaan/Kreekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Gouwelozestraat/Manitobalaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Verenigde Natieslaan/Bosweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Elisabethlaan/Gistelsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Elisabethlaan/Vogelzangdreef",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Elisabethlaan/Generaal Jungbluthlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Kasteelstraat/Grintweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Zwanenlaan/Klimoplaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Kapittelstraat/Zandvoordedorpstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Ijslandstraat",
+          "duplicateOfSequence": 7
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Kuipweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Kasteelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Koebrugstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "August Vermeylenstraat/Ringlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Elisabethlaan/Gistelsesteenweg",
+          "duplicateOfSequence": 43
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Oudenburgsestw./Prins Albertlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Prinses Elisabethlaan/Staessenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Buurtspoorwegstraat/Nukkerstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "oprit A10 Oostende",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Ver. Natieslaan/Bosweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Zandvoordestraat/Ringlaan",
+          "duplicateOfSequence": 10
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "roeselare",
+      "name": "Roeselare",
+      "operatorName": "KM",
+      "address": "Consult the linked operator centre page for the current address. This is not a reviewed departure point.",
+      "centreSourceUrl": "https://www.km.be/rijbewijs/examenlocatie/roeselare",
+      "sourceUrl": "https://www.km.be/sites/default/files/2026-07/doorgangspunten%201010%202026-2027%20cat%20B.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:58:54.249Z",
+      "sourceSha256": "2be57e56ba9119a102224316e26f49d8951842056813f3b5046a4d3c706df0fb",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Noordlaan Brugsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "A. Willaertstraat H. Verrieststraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Beversesteenweg St. Amandsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Mandellaan Kaaistraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Trakelweg Kolenkaai",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Kachtemsestraat Spanjestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsesteenweg rot R32",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Groenestraat Molenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Westlaan Iepersestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "R 32 Onledegoedstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Marktplaats Ardooie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Roeselaarsestraat R 3 2",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Noordlaan Oude Noordlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Reigerstraat Biezenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Gitsestraat Honzebroekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Beverseaardeweg/ Pater Piresstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Mandellaan/Mandeldreef",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Hammestraat/Fabrieksstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Bruggestraat/R32",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Onledegoedstraat/ Wagenbrugstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Schoolstraat/Onledegoedstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "rot Leopold III-laan Brugsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "rot Rotsestraat Prins Albertstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "rot Mandellaan Beversesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Germain Hoetstraat Batavialaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Kalkenstraat Kleine Kalkenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Mandellaan Ardooiesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Hoogleedsesteenweg/ R32",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Beekstraat/ Hoogleedsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Honzebroekstraat/ Beekstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Infanteriestraat Diksmuidsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Westlaan Diksmuidsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Weststraat Schuttersstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Godshuislaan Stationsdreef",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Prins Albertstraat Spoorweglaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Teerlingstraat Chichoreistraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Schaapbrugstraat / Kolenkaai",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Schaapbrugstraat / Kazanstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Schaapbrugstraat / Mandellaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Spanjestraat/ Sint- Hubrechtstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Bruanestraat/ Koornstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Ardooisesteenweg/ Koornstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Mandellaan Ardooisesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Ardooisesteenweg St.-Jorisstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsesteenweg Rotsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Bolaardstraat Wijnendalestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "St germanuspl H Kruispl",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Jules Lagaelaan Ardooisesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Zwaaikomstraat / Ardooisesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Zwaaikomstraat / Vierwegstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Zwaaikomstraat / Kachtemsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Brugsesteenweg R32",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Beversesteenweg Bevrijdingsstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Polenstraat Leiestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "E 403 Roeselare haven",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Rechtervaartoever Rumbeeksegravier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Graankaai Maïslaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "R 32 Hoogleedsesteenweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Beekstraat Stadenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Smedenstraat Glazeniersstraat",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    },
+    {
+      "slug": "wevelgem",
+      "name": "Wevelgem",
+      "operatorName": "KM",
+      "address": "Consult the linked operator centre page for the current address. This is not a reviewed departure point.",
+      "centreSourceUrl": "https://www.km.be/rijbewijs/examenlocatie/wevelgem",
+      "sourceUrl": "https://www.km.be/sites/default/files/2026-07/doorgangspunten%201013%202026-2027.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T19:58:54.671Z",
+      "sourceSha256": "6ca15c65c2c96d402b9dff880c57d5e166246f955b54ceec180af62c9316215d",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Plaatsweg/Kwameers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Kwadries/Driemasten",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Nekkerplas/Kwadestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Schuttershoflaan/Kerkstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Pastorijweg/H. Verriestlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "A. Rodenbachlaan/Het Putje",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Mellestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Losschaert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Heuleplaats",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Koningin Fabiolastraat/Rijksweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Gullegemstraat/Veldstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Veldstraat/Reutelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Gezellestraat (Moorsele)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Kerk Moorsele",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Vrijestraat/Witte molenstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Europalaan - Pastorijweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Europalaan - Dreef ter Walle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Dorpsplein Gullegem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Oostlaan/Driemasten",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rotonde Gouden Bank",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Bissegemstraat/ Pastorieweg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Steenstraat/ Roeselarestraat (Heule)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Schoolstraat (Heule)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "R8/A19",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Ter Elst",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Bissegemstraat/ Heulsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "R8/A19",
+          "duplicateOfSequence": 24
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Ballingstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Gouden Bank",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Kwadries",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "César Gezellestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Kerk Moorsele",
+          "duplicateOfSequence": 14
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "R8/A19",
+          "duplicateOfSequence": 24
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Drieslaan/Noordlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Drieslaan/Muizelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Rijksweg/Gullegemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "SecretarisVanmarckelaan/ Warandestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Roeselarestraat/Vinkestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Gullegemstraat/Bieststraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Rozenstraat / Sintelooiswinkelstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Overheulestraat (Moorsele)/Ieperstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Ieperstraat (Moorsele)/Ledegemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Muizelstraat/Tuileboomstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Kapelsraat/Nieuwstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Kasteelstraat/Lendeleedsestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Bouwstraat/Bissegemstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Peperstraat (Gul.)/Poststraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Vlaskapelstraat/Heulestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Hondschotestraat/Noordstraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Dorpsplein Gullegem",
+          "duplicateOfSequence": 18
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Beekstraat/Dreef Ter Winkel",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Oude Ieperstraat/Dreef ter Walle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Waterven",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Kortrijksestraat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Rodenbachstraat/Peperstraat (Heule)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "R8/A19",
+          "duplicateOfSequence": 24
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Oude Ieperse weg/Albrecht Rodenbachlaan",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Pijplap",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Heulekouter",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Gulden spoor",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Published names/grouping only. The operator does not supply exact coordinates for these references. Municipality is not inferred from the centre. Not a fixed examiner itinerary or reviewed location/entrance."
+    }
+  ]
+}
