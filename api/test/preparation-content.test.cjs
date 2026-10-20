@@ -31,8 +31,12 @@ test('junction evidence requires two traversed arms and excludes grade-separated
  assert.throws(()=>proposals(driving,{...map,inputIdentity:'changed'}),/identities/);
  assert.equal(clusterCount([centre,{...centre,longitude:5.00101},right],25),2);
 });
-test('operator catalogue preserves ten new source bundles and original groups, never coordinates',()=>{
- assert.equal(passageSourceCatalog.length,16);const newSources=passageSourceCatalog.filter(s=>s.operatorName);assert.equal(newSources.length,10);assert.equal(newSources.reduce((n,s)=>n+s.points.length,0),584);
+test('operator catalogue preserves historical sources and all inspected car-only groups, never coordinates',()=>{
+ assert.equal(passageSourceCatalog.length,30);const newSources=passageSourceCatalog.filter(s=>s.operatorName);assert.equal(newSources.length,24);assert.equal(newSources.reduce((n,s)=>n+s.points.length,0),1070);
+ const historical=require('../prisma/data/supplemental-passage-sources.json').sources,walloon=require('../prisma/data/walloon-passage-sources-2026.json').sources;
+ assert.equal(historical.length,10);assert.equal(historical.reduce((n,s)=>n+s.points.length,0),584);assert.equal(walloon.length,14);assert.equal(walloon.reduce((n,s)=>n+s.points.length,0),486);
+ assert.ok(walloon.every(s=>s.validUntil==='2027-06-30'&&s.sourceRevision==='2026-07-01'&&s.pointGroups.every(g=>g.length===3)));
+ for(const slug of ['liege-wandre','tournai-marquain']){const s=walloon.find(s=>s.slug===slug);assert.equal(s.pointGroupKinds.filter(k=>k==='RURAL').length,8);assert.equal(s.pointGroupKinds.filter(k=>k==='URBAN').length,12);}
  for(const source of newSources){assert.match(source.sourceUrl,/^https:\/\//);assert.match(source.sourceSha256,/^[a-f0-9]{64}$/);assert.ok(source.points.every((p,i)=>p.sequence===i+1&&!('latitude'in p)&&!('longitude'in p)));assert.ok(source.points.every(p=>p.duplicateOfSequence===null||p.duplicateOfSequence<p.sequence));if(source.pointGroups.length)assert.deepEqual(source.pointGroups.flat(),source.points.map(p=>p.sequence));}
  assert.equal(currentPassageSource('not-real'),null);assert.equal(sourceCurrent({validUntil:'2027-06-30'},new Date('2027-06-30T21:59:59Z')),true);assert.equal(sourceCurrent({validUntil:'2027-06-30'},new Date('2027-06-30T22:00:00Z')),false);
  assert.equal(currentPassageSource('brugge',new Date('2027-07-01T00:00:00Z')),null);

@@ -1,0 +1,4015 @@
+{
+  "reviewedAt": "2026-10-20T05:08:03.501Z",
+  "reviewBasis": "Current operator-linked PDFs inspected as complete rendered pages and Category B crops; factual labels/grouping only.",
+  "instructorApproved": false,
+  "sources": [
+    {
+      "slug": "namur-suarlee",
+      "name": "Namur–Suarlée",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1007.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.059Z",
+      "sourceSha256": "b3e0e4a302766174e6c09527f388a1aa89a97d1ca92c6c500e84432a7e9d6f0d",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Gare de Rhisnes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue à Cailloux",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Louvain-La-Neuve",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour N958/N93",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Nivelles",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Joseph Abras",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rond Point Félicien",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Fonds Maréchal",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Sapinette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin de la Plaine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Champs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Mazy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Champs",
+          "duplicateOfSequence": 11
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin de la Paine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Floreffe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue d'Ecolys",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Champs",
+          "duplicateOfSequence": 11
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Pochet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Félicien Deneumoustier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Nivelles",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "N4",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Nouvelle Route de Suarlée",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Square du Souvenir",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Place du Bia bouquet",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "liege-wandre",
+      "name": "Liège–Wandre",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1009.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.095Z",
+      "sourceSha256": "15f7662f2d4b3b9effaad6cc679f53c81b43dd9b22083c1ad94731dd44dc3d43",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Rue de Visé",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Chafnay",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Place Havart",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Visé de Meuse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Pont Barrage",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Rue de Visé",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Visé de Meuse",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Lille-Atlas",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Pont Barrage",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Ile Monsin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point rue Solvay",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Clawenne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "E25",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Visé - Indépendance",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Place d'Elmer",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Visé-Rue Pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Visé-Rue de la colline",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Albert 1er-Pré Wigy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Voye des Cotch",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Charlemagne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Charlemagn/rue de Visé",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Pokietonov",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Visé de Meuse",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Rue de Visé",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de jupille- George Truffaut",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Cité Wauters",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Rue en Bois",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Célestin Demblon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Visé",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Penson",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Chafnay",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Pont Barrage",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Geer",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de l'Indépendance- Rue Pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Charlemagne",
+          "duplicateOfSequence": 22
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Feux Rue de Visé",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point jupille pneu",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Pont de Wandre",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Crucifix",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Louis de Meuse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "E25-Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Basse Campagne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Indépendance- Rue pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Solvay",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Pont Barrage",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "M-Duchatto",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du 3 juin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Louis de Meuse",
+          "duplicateOfSequence": 42
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Francisco Ferrer",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Pont de Wandre",
+          "duplicateOfSequence": 13
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard Albert 1er",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Pré Wigy-Rue Delsupexhe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Pont de Wandre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Pont d'Elmer",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Pont de Wandre",
+          "duplicateOfSequence": 13
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Rue pont de Wandre",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Pont de Wandre",
+          "duplicateOfSequence": 13
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "E25-Wandre",
+          "duplicateOfSequence": 43
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "pointGroupKinds": [
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN"
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "tournai-marquain",
+      "name": "Tournai–Marquain",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1011.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.111Z",
+      "sourceSha256": "299e785e5be3acf2cda669a892196ae524226f5daa34f43ba5ada2c8a79c361b",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "E42 sortie 34",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Lille",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Maire",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Lille",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Maire",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lannoy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Minjean",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de l'Europe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lille",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Terre à Briques",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue François-Joseph Petreinckx",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Tête d'argent",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "E42 sortie 34",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'Escalette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Cygne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Cygne",
+          "duplicateOfSequence": 15
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Quai Notre-Dame",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la lanterne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de l'Europe",
+          "duplicateOfSequence": 8
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard Léopold",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Corriers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la culture",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Jean Cousin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Vauban",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "E42 sortie 34",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Petit Maire",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Quai des Salines",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lannoy",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Lille",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Maire",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Maire",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Quai des Salines",
+          "duplicateOfSequence": 27
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Lille",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Quai Dumon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de l'Europe",
+          "duplicateOfSequence": 8
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard Delewaert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lille",
+          "duplicateOfSequence": 9
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue des frères Rimbaut",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Rogier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lille",
+          "duplicateOfSequence": 9
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Rue St Eleuthère",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Maire",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Lille",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'Yser",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Joseph Hoyois",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Bonne Maison",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Georges Rodenbach",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Rue St Jacques",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lille",
+          "duplicateOfSequence": 9
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'yser",
+          "duplicateOfSequence": 44
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Rue R. Campin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Bouchers Saint-Jacques",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des sœurs noires",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Floc à Brebis",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Saint Eleuthère",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de l'Europe",
+          "duplicateOfSequence": 8
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de Troyes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Lille",
+          "duplicateOfSequence": 9
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Culture",
+          "duplicateOfSequence": 22
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des sports",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "pointGroupKinds": [
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "RURAL",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN",
+        "URBAN"
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "louvain-la-neuve",
+      "name": "Louvain-la-Neuve",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2300521-Circuits-permis-de-conduire-1025.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.125Z",
+      "sourceSha256": "ed43f2a04b43629a2da2dd15f9b562bcce2d2ef0f939bb2be203d06c79e9ac36",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Bosquets",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard de Wallonie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Baudouin 1er",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Cyclotron",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Cercle du Lac",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Place du plat pays",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour planche à voile",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "E411 sortie 9",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "E411 sortie 8a",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin des étoiles",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point des Bruyères (N233)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Pont du Pape (N238)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des bosquets",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point N4 - Rue Laid Burniat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Lenoir",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-Point Monnet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Decathlon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Namur",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Albert Einstein",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Bosquets",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Fond Cattelain",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Rodeuhaie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Baraque",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard du Brabant Wallon",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "marche-en-famenne",
+      "name": "Marche-en-Famenne",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2026/01/2300521-Circuits-permis-de-conduire-1026.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.139Z",
+      "sourceSha256": "3292d4210a0f9eaec70fc8a3f4980aad3898eab989c11f143cfb242e861ba9d2",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Parc industriel",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point rue Espinthe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Victor Libert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de la Toison d'Or",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Luxembourg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rond point chaussée de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rond point de la Pirire",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de France",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Champs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Paradis des Chevaux",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Plovinette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de la Pirire",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point chaussée de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Borchamps",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Tanneurs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Marenne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de l’Ourthe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de France",
+          "duplicateOfSequence": 8
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Rochefort",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Parc Industriel",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Victor Libert",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin Saint-Antoine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Vieille route de Liège",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "huy-tihange",
+      "name": "Huy–Tihange",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1027.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.155Z",
+      "sourceSha256": "273fd9f8d325483a867af7ef1611f6da74940166d12e76ceae02c9c966167400",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Place d’Ampsin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Hasquette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Quai de Lorraine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Pont de l’Europe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Porte des Aveugles",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Gare de Huy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de L’Industrie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Corphalie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Quai de Compiegne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Bons Enfants",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de la Croix-Rouge",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Bastin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Croix Rouge",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Neuve",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Chaussée de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des crépales",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "longs thiers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Av des Ardennes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Poissonrue",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Av des Fossés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Marrais",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d'angleterre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue St Pierre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de la croix rouge",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Neuve",
+          "duplicateOfSequence": 14
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Rond point Ch.de Liège",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Poissonrue",
+          "duplicateOfSequence": 19
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue des Fossés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Ch.de Liège",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "bastogne",
+      "name": "Bastogne",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1028.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.169Z",
+      "sourceSha256": "5d80bbe4f08f0d0f5171f2f6eb664ad603be7df388defd9a8da56487b8658314",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des abattoirs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Marche",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Échangeur N4",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Place Mac Auliffe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Route d'arlon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Fagne d'hi",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Route d'Assenois",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Échangeur E25",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Marche",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du vivier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des remparts",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du fortin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Porte de Trèves",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point terrain de foot",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Place Mac Auliffe",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "N4 (pont d'Assenois)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Route d'Houffalize",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Houffalize",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la citadelle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la pépinière",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Delperdange",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Sablon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin de Musy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Laroche",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "eupen-lontzen",
+      "name": "Eupen–Lontzen",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1029.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.186Z",
+      "sourceSha256": "236594d3e069e34265b5166d0bc6920f8f4bb2a47818b15a06e3758fae317385",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Ernest Solvay",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Herbesthalerstrasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Vervierstrasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Reine Astrid",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Mitoyenne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Tivolistrasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Minerai",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "chemin des Tilleuls",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "E40 sortie 38 bis",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Norethstrasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Hookstrasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Nispert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Jean-Jacques Dony Strasse",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin des tilleuls",
+          "duplicateOfSequence": 8
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Levée de limbourg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Mitoyenne",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Saint Paul",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'Ecole",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Dolhain",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des écoles",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la fontaine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Nereth",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Heggen",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Mermer",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "lobbes",
+      "name": "Lobbes",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1030.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.200Z",
+      "sourceSha256": "75d27cb5c83e087afbf7a88470f462e81c3a5178c340e925ef2fbb491f791443",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin vert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d'Anderlues",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Moustier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Viviers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Thuin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d'Anderlues",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Viviers",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Georges Marcelle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Wauters",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Route pour automobile",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Place paul Pastur",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Route des fusillés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Binche",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Lobbes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des bonniers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Charleroi",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d'Anderlues",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Viviers",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'Abbaye",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Waibes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue T'Serstevens",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Viviers",
+          "duplicateOfSequence": 4
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Château",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Vanériau",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "mons-cuesmes",
+      "name": "Mons–Cuesmes",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1031.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.217Z",
+      "sourceSha256": "1c4fe6f17c231f08a46e261052e369166fa0c6ff5c6234f536601ef0fc6d6af5",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Poire d’Or (Renault)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Hector Delanois",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point De Gaulle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Bld Albert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Flandres",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sandrinettes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Grand route",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Av Leo Collard",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Place Waroquier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sandrinettes",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Chisaire",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Juifs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Wilson",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Plan Incliné",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Cuesmes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "R5 (Jemappes)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "R5 (Cuesmes)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Framaries",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Troubiot",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "place de Cuesmes",
+          "duplicateOfSequence": 15
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Grande Barre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Grand Route (feu)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin de l'Inquiètude",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue des Bassins",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Emile Vandervelde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Place des Chasseurs à Pied",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard Elisabeth (Baïonnette)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Pavillon (Van Gogh)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l'Etang Derbaix",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Grand Courant",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "J Wauters",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue d’Hyon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Licorne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sandrinettes",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Place des Chasseurs à Pied",
+          "duplicateOfSequence": 26
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue des Frères Orban",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Poire d'Or",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Sucrerie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue des Bassins",
+          "duplicateOfSequence": 24
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Ferrer (Lampe mineur)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Liberté",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sandrinettes",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Place Louise",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Adolphe Pecher",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Ring - Dolez",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Grand Route (feu)",
+          "duplicateOfSequence": 22
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Ring Sainctelette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Place de Flandres",
+          "duplicateOfSequence": 5
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Grand Route",
+          "duplicateOfSequence": 7
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Raoul Godfroid",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Av De Gaulle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sandrinettes",
+          "duplicateOfSequence": 6
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Digues de Cuesmes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Hyon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Poire d’or",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Jemappes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "Rue bertaimont",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Poire d'Or",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de L'Epargne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Boulevard Dolez (machine à eau)",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "arlon-weyler",
+      "name": "Arlon–Weyler",
+      "operatorName": "Autosécurité",
+      "address": "Consult the current operator centre directory. This document does not verify an entrance or legal stopping place.",
+      "centreSourceUrl": "https://www.autosecurite.be/fr/permis-de-conduire/brochures-videos/",
+      "sourceUrl": "https://www.autosecurite.be/uploads/2025/07/2500611-Circuits-permis-de-conduire-1032.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-20T05:05:14.233Z",
+      "sourceSha256": "8f0ecfbeb3ac7086e67402fc5ae4aa3d99c50673a883d72e52bad08352e85bd5",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Rue Neufchateau",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Place de l'Yser",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point des fusillés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Église Saint Martin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Reuter",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de la gare",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Place Schalbert",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Place des chasseurs ardennais",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Av. Nothomb",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des déportés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Clairefontaine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "R Goffaux",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Quartien Galdenberg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Neufchateau",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour de Stockem",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Av. Patton",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Galgenberg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Molitor",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Posterie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Fusillés",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Av. Franck",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Léon Castihon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Saint Dié",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la semois",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "braine-le-comte",
+      "name": "Braine-le-Comte",
+      "operatorName": "AIBV",
+      "address": "Av. du Marouset 103, 7090 Braine-le-Comte",
+      "centreSourceUrl": "https://www.aibv.be/nl/node/160",
+      "sourceUrl": "https://www.aibv.be/sites/default/files/uploads/Points%20de%20passage%202026-2027%20-%20Braine-le-Comte.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T20:13:48.461Z",
+      "sourceSha256": "b7185c865eebd03ac4d3f10d66fa6eaa363a4e8d8c9bd2422dde26d48d49e889",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rue E. Heuchon (Pont l’Incluse)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Place R. Branquart / Rue H. Denis",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Grand Place",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue du Marouset / Rue Houssière",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d’Ecaussinnes / Avenue Alix de Namur",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Rue E. Heuchon (Pont l’Incluse)",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Edouard Etienne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Bruxelles / Rue Martyrs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Mons / Rue d’Horrues",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Cerisiers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Mons",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin des Dames",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Vieille Chaussée / Place des Postes",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin du Pont",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Place R. Branquart / Rue H. Denis",
+          "duplicateOfSequence": 2
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Chemin des Dames",
+          "duplicateOfSequence": 12
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Brainette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Place Branquart / Rue de la Station",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Square de la Liberté",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Grand Place",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Postes / Rue de l’Enseignement",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Nord",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Latérale",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Rue d’Italie / Rue Neuve",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "charleroi-couillet",
+      "name": "Charleroi–Couillet",
+      "operatorName": "AIBV",
+      "address": "Rue du Lion Belge 7, 6010 Couillet",
+      "centreSourceUrl": "https://www.aibv.be/nl/node/160",
+      "sourceUrl": "https://www.aibv.be/sites/default/files/uploads/Points%20de%20passage%202026-2027%20-%20Couillet.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T20:13:47.417Z",
+      "sourceSha256": "f899a689351accc9be0de38c476afe5faf06fcaa4538cc23cd508d68789002c0",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de Couillet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Rue des Cayats / Rue de la Tombe",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Quatre Bras de Couillet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Rue de l’Energie / Babotterie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de Couillet",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour R. des Cayats / R. Grande Chenevière",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Quatre Bras de Couillet",
+          "duplicateOfSequence": 3
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Sortie R3 Marcinelle centre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Jules Destrée (Marcinelle)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Rue de Couillet (Tout pour l’enfant)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du vieux Moulin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Sabatier",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Piscine Solvay",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point « TIBI »",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "« Stop » Montignies-sur-Sambre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Fond Boulet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Tienne Bricout",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Florian Montagne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Villers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Armée Française",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour R. du Vieux Moulin / R. du Temple",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Hiercheuse / Temple",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Francs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue P. Pastur",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 25,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Vandervelde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 26,
+          "municipality": "Not specified by operator",
+          "junction": "Grand-Place Marcinelle",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 27,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Villette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 28,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Mascaux",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 29,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Meunier / Rue de l’Orphelinat",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 30,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Tombe (Marcinelle)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 31,
+          "municipality": "Not specified by operator",
+          "junction": "Place de l’Eglise - Couillet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 32,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Delhaize - Bouffioulx",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 33,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Pont de Sambre - Châtelet",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 34,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point N576",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 35,
+          "municipality": "Not specified by operator",
+          "junction": "Accès R3 via N576",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 36,
+          "municipality": "Not specified by operator",
+          "junction": "Cimetière Rue de Villers",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 37,
+          "municipality": "Not specified by operator",
+          "junction": "Mr Bricolage",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 38,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour en Y (école Notre-Dame)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 39,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Sapins",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 40,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Rue de Châtelet / Rue Grimard",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 41,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Rue de Gilly / Rue Vandervelde",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 42,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Cora",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 43,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue Meurée (Ets Paulus)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 44,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-Point gare Charleroi",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 45,
+          "municipality": "Not specified by operator",
+          "junction": "Pont Sambre - Route Philippeville",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 46,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée Solvay - Montignies-sur-Sambre",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 47,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point Decathlon",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 48,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de Montigny - Châtelineau",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 49,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Albert Goffin",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 50,
+          "municipality": "Not specified by operator",
+          "junction": "« Stop » Route de Philippeville",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 51,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour Avenue Meurée / Rue Villette",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 52,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du Congo",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 53,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Quatre Vents",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 54,
+          "municipality": "Not specified by operator",
+          "junction": "Rond-point de Couillet",
+          "duplicateOfSequence": 1
+        },
+        {
+          "sequence": 55,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Philippeville (Photographe Delalieux)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 56,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Fougères / Rue Hublinbu",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 57,
+          "municipality": "Not specified by operator",
+          "junction": "A503 Sortie Marcinelle Villette (R. des Hiercheuses)",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 58,
+          "municipality": "Not specified by operator",
+          "junction": "Rd. Rue Closière",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 59,
+          "municipality": "Not specified by operator",
+          "junction": "Carrefour P. Pastur / Rue du Beau-site",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 60,
+          "municipality": "Not specified by operator",
+          "junction": "Feux Rue Jules Bordet",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ],
+        [
+          25,
+          26,
+          27
+        ],
+        [
+          28,
+          29,
+          30
+        ],
+        [
+          31,
+          32,
+          33
+        ],
+        [
+          34,
+          35,
+          36
+        ],
+        [
+          37,
+          38,
+          39
+        ],
+        [
+          40,
+          41,
+          42
+        ],
+        [
+          43,
+          44,
+          45
+        ],
+        [
+          46,
+          47,
+          48
+        ],
+        [
+          49,
+          50,
+          51
+        ],
+        [
+          52,
+          53,
+          54
+        ],
+        [
+          55,
+          56,
+          57
+        ],
+        [
+          58,
+          59,
+          60
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    },
+    {
+      "slug": "couvin-mariembourg",
+      "name": "Couvin–Mariembourg",
+      "operatorName": "AIBV",
+      "address": "Rue Duc Saint Simon 17, 5660 Mariembourg",
+      "centreSourceUrl": "https://www.aibv.be/nl/node/160",
+      "sourceUrl": "https://www.aibv.be/sites/default/files/uploads/Points%20de%20passage%202026-2027%20-%20Mariembourg.pdf",
+      "sourceRevision": "2026-07-01",
+      "sourceCheckedAt": "2026-10-19T20:13:48.925Z",
+      "sourceSha256": "d919a9f00257b0f271e3fbc9a9c84ebae773571a87219bfa2991ec783c93baaa",
+      "validUntil": "2027-06-30",
+      "points": [
+        {
+          "sequence": 1,
+          "municipality": "Not specified by operator",
+          "junction": "Nismes Rue de la Station",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 2,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Bassidaine",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 3,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Pierre Bosseau",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 4,
+          "municipality": "Not specified by operator",
+          "junction": "Frasnes Rue du Monument",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 5,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Longue Haie",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 6,
+          "municipality": "Not specified by operator",
+          "junction": "Sortie N5 Mariembourg",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 7,
+          "municipality": "Not specified by operator",
+          "junction": "Roly Rue Jardin-des-Olives",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 8,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de France",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 9,
+          "municipality": "Not specified by operator",
+          "junction": "Chaussée de Philippeville",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 10,
+          "municipality": "Not specified by operator",
+          "junction": "Couvin route Charlemagne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 11,
+          "municipality": "Not specified by operator",
+          "junction": "Avenue de la Libération",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 12,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de la Justice",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 13,
+          "municipality": "Not specified by operator",
+          "junction": "Pesche Avenue de la Libération",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 14,
+          "municipality": "Not specified by operator",
+          "junction": "Route de Pesche",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 15,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Moreau",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 16,
+          "municipality": "Not specified by operator",
+          "junction": "Mariembourg Rue de France",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 17,
+          "municipality": "Not specified by operator",
+          "junction": "Rue de l’Empereur",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 18,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Petit Tienne",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 19,
+          "municipality": "Not specified by operator",
+          "junction": "Petigny Rue des Fontaines",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 20,
+          "municipality": "Not specified by operator",
+          "junction": "Rue des Monts",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 21,
+          "municipality": "Not specified by operator",
+          "junction": "Rue Général de Monge",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 22,
+          "municipality": "Not specified by operator",
+          "junction": "Couvin Place des Mayeurs",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 23,
+          "municipality": "Not specified by operator",
+          "junction": "Rue du pont du Roy",
+          "duplicateOfSequence": null
+        },
+        {
+          "sequence": 24,
+          "municipality": "Not specified by operator",
+          "junction": "Faubourg de la ville",
+          "duplicateOfSequence": null
+        }
+      ],
+      "pointGroups": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ],
+        [
+          13,
+          14,
+          15
+        ],
+        [
+          16,
+          17,
+          18
+        ],
+        [
+          19,
+          20,
+          21
+        ],
+        [
+          22,
+          23,
+          24
+        ]
+      ],
+      "qualification": "Category B table only; other licence-category columns are excluded. Original three-point groups and printed names are retained. These are not complete timed itineraries, coordinates, legal stopping permissions or mandatory points on every exam; order may change with local conditions. Municipality is not guessed."
+    }
+  ]
+}
