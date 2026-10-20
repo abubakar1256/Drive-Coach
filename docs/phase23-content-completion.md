@@ -103,3 +103,24 @@ for the new source names, remaining operator-source coverage and checked loops
 grounded in those reviews. Phase 3 cannot honestly promise matches for skills with
 no reviewed evidence, or a successful hometown loop in every town. Failures stay
 unavailable rather than fabricating a route or charging for extra searches.
+
+## Confirmed live rollout
+
+Commit `6fc0fcd` deployed successfully to both API and frontend on 20 October
+2026. The approved atomic content transaction completed at 04:53 UTC. Read-only
+private checks confirmed 33 centres, 137 published routes and **137 current,
+fingerprint-matched coverage reviews**, 16 bundled operator sources, 584 new
+pending-only names (567 non-duplicate), all 153 previous reviewed locations and
+Anderlecht Route B version 4 (23.8094 measured minutes).
+
+Public smoke checks across all 33 centres confirmed guest redaction of all 137
+routes, paid-point protection, private endpoint guards, preserved Alken review
+status and clearly pending Brugge coordinates. Stored catalogue durations are
+24–27 minutes. The signed-in dashboard displayed the new map evidence details
+and retained Premium access, without changing the user's profile or generating
+a private route. This read-only account check is not a real-world GPS drive test.
+
+The task-only Railway SSH identity was revoked and Railway confirmed no registered
+SSH keys remain. Only that identity's two generated key files were deleted. The
+full backup, source evidence, screenshot and rehearsal/publication/revocation
+receipts remain private in ignored local output.
