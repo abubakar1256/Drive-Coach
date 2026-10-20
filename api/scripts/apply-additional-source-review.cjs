@@ -8,6 +8,7 @@ const {OfficialRouteFoundationService}=require('../dist/src/routes/official-rout
 const {belgianCoordinate}=require('../dist/src/routes/foundation-quality');
 const {decisions,sha,root}=require('./prepare-additional-source-review.cjs');
 const backupRoot=path.resolve(__dirname,'../../output/db-backups');
+const implementationSha256=()=>sha(fs.readFileSync(__filename));
 function validate(bundle){
   if(bundle.kind!=='ADDITIONAL_OPERATOR_SOURCE_REVIEW_V1'||bundle.officialExamItinerary!==false||bundle.instructorApproved!==false||bundle.sourceCatalogueSha256!==sha(JSON.stringify(passageSourceCatalog))||!Number.isFinite(Date.parse(bundle.reviewedAt))||Date.now()-Date.parse(bundle.reviewedAt)>86400000||Date.parse(bundle.reviewedAt)>Date.now()+60000)throw Error('Current explicitly reviewed release required');
   const expected=require('../prisma/data/walloon-passage-sources-2026.json').sources;
@@ -39,15 +40,26 @@ async function apply(db,bundle,{actorEmail,forceConflict=false}={}){
       if(existing.length){if(existing.length!==source.points.length||existing.some((p,i)=>p.sourceFingerprint!==manifest.fingerprints[i]||passageFingerprint(p)!==manifest.fingerprints[i]))throw Error('Existing source must not be overwritten');}
       else{await tx.officialPassagePoint.createMany({data:source.points.map((p,i)=>({...p,centreId:centre.id,sourceUrl:source.sourceUrl,sourceRevision:source.sourceRevision,sourceLabel:`${source.operatorName} published passage point — not mandatory on every exam`,sourceCheckedAt:new Date(source.sourceCheckedAt),sourceFingerprint:manifest.fingerprints[i]}))});imported+=source.points.length;}
     }
-    for(const r of bundle.rows){
-      const centre=await tx.examCentre.findUnique({where:{slug:r.slug},select:{id:true}});if(!centre)throw Error('Review centre unavailable');
-      const p=await tx.officialPassagePoint.findUnique({where:{centreId_sequence:{centreId:centre.id,sequence:r.sequence}}});if(!p)throw Error('Reviewed source row missing');
-      await tx.$queryRawUnsafe('SELECT "id" FROM "OfficialPassagePoint" WHERE "id"=$1 FOR UPDATE',p.id);
-      const fresh=await tx.officialPassagePoint.findUnique({where:{id:p.id}});
+    // Lock/check the whole fixed set in batches. Hundreds of serial SSH round
+    // trips exhausted the production deadline; do not weaken the transaction or
+    // split publication into partially committed per-centre writes.
+    const reviewCentres=await tx.examCentre.findMany({where:{slug:{in:Object.keys(decisions)}},select:{id:true,slug:true}});
+    const sourceRows=await tx.officialPassagePoint.findMany({where:{centreId:{in:reviewCentres.map(c=>c.id)}}});
+    const targets=bundle.rows.map(r=>{const centre=reviewCentres.find(c=>c.slug===r.slug),p=sourceRows.find(p=>p.centreId===centre?.id&&p.sequence===r.sequence);if(!p)throw Error('Reviewed source row missing');return {r,id:p.id};});
+    await tx.$queryRawUnsafe('SELECT "id" FROM "OfficialPassagePoint" WHERE "id"=ANY($1::text[]) ORDER BY "id" FOR UPDATE',targets.map(p=>p.id));
+    const freshRows=await tx.officialPassagePoint.findMany({where:{id:{in:targets.map(p=>p.id)}}}),updates=[];
+    for(const {r,id} of targets){
+      const fresh=freshRows.find(p=>p.id===id);
       if(!fresh||fresh.sourceFingerprint!==r.sourceFingerprint||passageFingerprint(fresh)!==r.sourceFingerprint||fresh.duplicateOfSequence!==null)throw Error('Review source fingerprint changed');
       if(fresh.verificationStatus==='VERIFIED'&&fresh.latitude===r.latitude&&fresh.longitude===r.longitude&&fresh.notes===r.notes&&fresh.verifiedAt&&fresh.verifiedBy)continue;
       if(fresh.verificationStatus!=='PENDING_REVIEW'||fresh.latitude!==null||fresh.longitude!==null||fresh.verifiedAt!==null||fresh.verifiedBy!==null)throw Error('Existing review must not be overwritten');
-      await foundation.reviewPassage(actor.id,p.id,{latitude:r.latitude,longitude:r.longitude,notes:r.notes,verificationStatus:'VERIFIED'});reviewed++;
+      updates.push({id,latitude:r.latitude,longitude:r.longitude,notes:r.notes});
+    }
+    if(updates.length){
+      const changed=await tx.$executeRawUnsafe('UPDATE "OfficialPassagePoint" p SET "latitude"=r.latitude,"longitude"=r.longitude,"notes"=r.notes,"verificationStatus"=\'VERIFIED\',"verifiedAt"=NOW(),"verifiedBy"=$2,"updatedAt"=NOW() FROM jsonb_to_recordset($1::jsonb) AS r(id text,latitude double precision,longitude double precision,notes text) WHERE p."id"=r.id',JSON.stringify(updates),actor.id);
+      if(changed!==updates.length)throw Error('Atomic review update count changed');
+      await tx.auditLog.createMany({data:updates.map(r=>({userId:actor.id,action:'PASSAGE_COORDINATES_REVIEWED',entity:'OfficialPassagePoint',entityId:r.id,metadata:{before:{latitude:null,longitude:null,status:'PENDING_REVIEW'},after:{latitude:r.latitude,longitude:r.longitude,status:'VERIFIED'}}}))});
+      reviewed=updates.length;
     }
     const routes=(await tx.route.findMany({include:{points:{orderBy:{sequence:'asc'}}}})).filter(r=>r.foundation);
     for(const route of routes)await foundation.validateSnapshot(route,route.points,tx,true);
@@ -58,7 +70,7 @@ async function apply(db,bundle,{actorEmail,forceConflict=false}={}){
 }
 function validateReceipt(receipt,bytes){
   const archive=path.resolve(receipt.archive||''),age=Date.now()-Date.parse(receipt.createdAt);
-  if(!receipt.fullRestorePassed||!receipt.rollbackPassed||!receipt.protectedTablesUnchanged||!receipt.existingSourcesPreserved||!receipt.idempotent||receipt.releaseSha256!==sha(bytes)||!Number.isFinite(age)||age< -60000||age>7200000||!archive.startsWith(backupRoot+path.sep)||!archive.endsWith('.dump')||Date.now()-fs.statSync(archive).mtimeMs>7200000||sha(fs.readFileSync(archive))!==receipt.archiveSha256||fs.readFileSync(archive+'.sha256','utf8').trim()!==receipt.archiveSha256)throw Error('Recent matching private restore/rollback rehearsal required');
+  if(receipt.implementationSha256!==implementationSha256()||!receipt.fullRestorePassed||!receipt.rollbackPassed||!receipt.protectedTablesUnchanged||!receipt.existingSourcesPreserved||!receipt.idempotent||receipt.releaseSha256!==sha(bytes)||!Number.isFinite(age)||age< -60000||age>7200000||!archive.startsWith(backupRoot+path.sep)||!archive.endsWith('.dump')||Date.now()-fs.statSync(archive).mtimeMs>7200000||sha(fs.readFileSync(archive))!==receipt.archiveSha256||fs.readFileSync(archive+'.sha256','utf8').trim()!==receipt.archiveSha256)throw Error('Recent matching private restore/rollback rehearsal required');
 }
 async function main(){
   const url=new URL(process.env.DATABASE_URL||''),file=path.resolve(process.argv[3]||''),receiptFile=path.resolve(process.argv[4]||'');
@@ -67,5 +79,5 @@ async function main(){
   const bundle=JSON.parse(bytes),db=new PrismaClient({log:[]});
   try{const result=await apply(db,bundle,{actorEmail:process.env.PHASE_TWO_ACTOR_EMAIL}),receipt={createdAt:new Date().toISOString(),releaseSha256:sha(bytes),...result},out=path.join(backupRoot,`additional-source-production-${Date.now()}.json`);fs.writeFileSync(out,JSON.stringify(receipt,null,2),{flag:'wx',mode:0o600});console.log(JSON.stringify({receipt:out,...receipt}));}finally{await db.$disconnect();}
 }
-module.exports={validate,apply,validateReceipt};
-if(require.main===module)main().catch(()=>{console.error('Additional source release stopped. Inspect audit; sensitive details omitted.');process.exitCode=1;});
+module.exports={validate,apply,validateReceipt,implementationSha256};
+if(require.main===module)main().catch(error=>{console.error(JSON.stringify({stopped:true,code:/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code||'')?error.code:error.name,transactionTimeout:/expired transaction|transaction.*timeout|transaction.*closed/i.test(error.message||''),sensitiveDetailsOmitted:true}));process.exitCode=1;});

@@ -89,3 +89,35 @@ not an independently confirmed second official Gent exam centre; no user/history
 identities are merged or deleted. Clear operator/instructor evidence is still
 needed for ambiguous locations, legal departures and remaining source-grounded
 23–27-minute loops. Do not fabricate or mark these items complete to close a phase.
+
+## Confirmed production increment
+
+Source catalogue commit `375a83a` deployed successfully to API and frontend.
+The first serial private publication attempt stopped without committing: the
+read-only check still found exactly 740 source rows, 153 reviewed locations and
+zero additional-release audits. No partial import was accepted. Batching the
+fixed row locks/checks, parameterized updates and per-row audits removes hundreds
+of private round trips without relaxing any review or transaction boundary.
+
+A new private PostgreSQL 18 archive from 05:34 UTC passed full restore, forced
+late rollback, protected-table/source-identity preservation and exact idempotency.
+The production gate is bound to both release bytes and rehearsed implementation
+hash. At **05:35:48 UTC on 20 October 2026**, the atomic release committed 486 new
+source names and 117 selected remote location reviews. Existing six foundation
+proofs remained valid; no route/departure/account/financial records were updated.
+
+Independent read-only private and public checks confirmed **30 source bundles,
+1,226 printed rows, 270 reviewed entries, 93 excluded duplicate rows, 863 pending
+non-duplicate references and six fully location-reviewed source bundles**. All
+33 directory entries and 137 published routes/current coverage fingerprints remain.
+Guest route-point redaction and private endpoint guards passed. Browser QA on
+Brugge showed 11 reviewed entries, 46 pending entries, three excluded duplicates
+and an explicitly pending departure. This is not a completed all-centre foundation.
+
+The exact temporary SSH identity was revoked, and only its generated private/public
+key pair was deleted. The private archives, verified relay host pin and dated
+rehearsal/publication/verification/revocation receipts remain in ignored output.
+No task database listener remains. No paid upgrade, public database exposure,
+additional Mapbox generation or alteration of the user's access plan occurred.
+The existing Mapbox console allowance was observed at 7,582/10,000 Directions
+requests; this observation is not an authorization for paid expansion.

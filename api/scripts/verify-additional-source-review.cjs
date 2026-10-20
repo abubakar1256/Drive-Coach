@@ -14,6 +14,9 @@ async function main(){
   const bytes=fs.readFileSync(file),bundle=JSON.parse(bytes);validate(bundle);
   const db=new PrismaClient({log:[]});
   try{
+    if(process.argv[3]==='--inspect-rollback'){
+      console.log(JSON.stringify({productionReadOnly:true,sourceRows:await db.officialPassagePoint.count(),reviewedLocations:await db.officialPassagePoint.count({where:{verificationStatus:'VERIFIED'}}),releaseAuditRows:await db.auditLog.count({where:{action:'ADDITIONAL_OPERATOR_SOURCES_REVIEWED'}})}));return;
+    }
     const foundation=new OfficialRouteFoundationService(db,{}),centres=await db.examCentre.findMany({include:{officialPassagePoints:true}});
     const results=passageSourceCatalog.map(s=>{const c=centres.find(c=>c.slug===s.slug);if(!c||c.officialPassagePoints.length!==s.points.length)throw Error('Source row count changed');return {slug:s.slug,...sourceReviewCounts(s,c.officialPassagePoints)};});
     for(const r of bundle.rows){const p=centres.find(c=>c.slug===r.slug)?.officialPassagePoints.find(p=>p.sequence===r.sequence);if(!p||p.verificationStatus!=='VERIFIED'||p.latitude!==r.latitude||p.longitude!==r.longitude||p.notes!==r.notes||!p.verifiedAt||!p.verifiedBy)throw Error('Reviewed row mismatch');}

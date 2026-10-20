@@ -1,7 +1,7 @@
 // Fresh isolated private-archive restore; no live database connection is used.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
 const {PrismaClient}=require('@prisma/client');
-const {apply,validate}=require('./apply-additional-source-review.cjs');
+const {apply,validate,implementationSha256}=require('./apply-additional-source-review.cjs');
 const {sha,root:releaseRoot}=require('./prepare-additional-source-review.cjs');
 const {fingerprints}=require('./rehearse-complete-passage-review.cjs');
 const root=path.resolve(__dirname,'../../output/db-backups');
@@ -35,7 +35,7 @@ async function rehearse(archive,file){
     if(result.imported!==486||result.reviewed!==117)throw Error('Unexpected release count');
     const again=await apply(db,bundle,{actorEmail:process.env.PHASE_TWO_ACTOR_EMAIL});
     if(again.imported||again.reviewed||sha(JSON.stringify(after))!==sha(JSON.stringify(await fingerprints(db))))throw Error('Idempotency failed');
-    const receipt={createdAt:new Date().toISOString(),archive,archiveSha256,releaseSha256:sha(bytes),fullRestorePassed:true,rollbackPassed:true,protectedTablesUnchanged:true,existingSourcesPreserved:true,idempotent:true,...result};
+    const receipt={createdAt:new Date().toISOString(),archive,archiveSha256,releaseSha256:sha(bytes),implementationSha256:implementationSha256(),fullRestorePassed:true,rollbackPassed:true,protectedTablesUnchanged:true,existingSourcesPreserved:true,idempotent:true,...result};
     const output=path.join(root,`additional-source-rehearsal-${Date.now()}.json`);fs.writeFileSync(output,JSON.stringify(receipt,null,2),{flag:'wx',mode:0o600});console.log(JSON.stringify({receipt:output,...receipt}));return receipt;
   }finally{
     if(db)await db.$disconnect();
