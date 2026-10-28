@@ -9,6 +9,16 @@ function hasCoordinates(point: RoutePointLike): point is RoutePointLike & { lati
     && typeof point.longitude === "number" && Number.isFinite(point.longitude) && Math.abs(point.longitude) <= 180;
 }
 
+// One drive, not a separate route/stop for each shaping anchor.
+export function routeLoopSummary(points: RoutePointLike[], toleranceM = 1) {
+  if (points.length < 3 || !points.every(hasCoordinates)) return { closed: false, direction: null };
+  const first = points[0], last = points[points.length - 1];
+  const separation = Math.hypot((first.latitude-last.latitude)*111320, (first.longitude-last.longitude)*111320*Math.cos(first.latitude*Math.PI/180));
+  const next = points.find(p => Math.hypot(p.latitude-first.latitude,p.longitude-first.longitude) > .00005);
+  const bearing = next ? (Math.atan2((next.longitude-first.longitude)*Math.cos(first.latitude*Math.PI/180),next.latitude-first.latitude)*180/Math.PI+360)%360 : null;
+  return { closed: separation <= toleranceM, direction: bearing === null ? null : ["N","NE","E","SE","S","SW","W","NW"][Math.round(bearing/45)%8] };
+}
+
 export function routeSequence(points: RoutePointLike[]): string {
   return points.map((point) => point.title?.trim()).filter(Boolean).join(" → ");
 }

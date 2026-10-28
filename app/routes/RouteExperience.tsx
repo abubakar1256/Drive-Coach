@@ -11,7 +11,7 @@ import RoutePointMedia from "./RoutePointMedia";
 import RouteTrialAccess from "./RouteTrialAccess";
 import DriveCoachVoice from "./DriveCoachVoice";
 import { useSiteCopy, useCurrentLocale } from "../../lib/useLocale";
-import { googleMapsRouteSections, routeSequence } from "../../lib/route-utils";
+import { googleMapsRouteSections, routeSequence, routeLoopSummary } from "../../lib/route-utils";
 import GoogleMapsLinks from "./GoogleMapsLinks";
 import type { RouteStep } from "../../lib/route-progression";
 import { localizeText } from "../../lib/localizeContent";
@@ -67,6 +67,7 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
   const googleMapsSections = accessMode === "full" && driving?.valid ? googleMapsRouteSections(activeCentre.routePoints) : [];
   const selectedPoint = activeCentre.routePoints[Math.min(selectedIndex, Math.max(activeCentre.routePoints.length - 1, 0))] ?? activeCentre.routePoints[0];
   const hasMapboxToken = Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
+  const closedLoop = routeLoopSummary(activeCentre.routePoints).closed;
   function handlePositionUpdate(position: GeolocationPosition) {
     const coordinate: [number, number] = [position.coords.longitude, position.coords.latitude];
     setLivePosition(coordinate);
@@ -79,7 +80,12 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
   }
 
   return <div className="route-workspace"><div className="route-access-summary"><p className="route-meta">{nl ? "Bereid je voor. Rijd bewust. Reflecteer." : "Prepare with purpose. Drive with confidence."}</p><span className="route-access-pill">{accessMode === "full" ? `${routeLabel} · ${nl ? "Ontgrendeld" : "Unlocked"}` : copy.route.preview}</span></div>
-    <div className="route-overview-metrics"><div><span>{nl ? "GESCHATTE RIJTIJD" : "ESTIMATED DRIVE"}</span><strong>{driving?.valid ? Math.ceil(driving.durationSec! / 60) : "—"}<small> min</small></strong></div><div><span>{nl ? "AFSTAND OVER DE WEG" : "ROAD DISTANCE"}</span><strong>{driving?.valid ? (driving.distanceM! / 1000).toFixed(1) : "—"}<small> km</small></strong></div><div><span>{accessMode === "full" ? (nl ? "ROUTEPUNTEN" : "ROUTE POINTS") : (nl ? "PREVIEWPUNTEN" : "PREVIEW POINTS")}</span><strong>{activeCentre.routePoints.length}<small> {nl ? "punten" : "points"}</small></strong></div><div><span>{nl ? "PRAKTIJKMODUS" : "PRACTICE MODE"}</span><strong className="route-mode-text">{tracking ? (nl ? "Live GPS" : "Live GPS") : (nl ? "Voorbereiden" : "Preparation")}</strong><small>{nl ? "Veilig geparkeerd instellen" : "Set up while safely parked"}</small></div></div>
+    <div className="route-overview-metrics">
+      <div><span>{nl ? "GESCHATTE RIJTIJD" : "ESTIMATED DRIVE"}</span><strong>{driving?.valid ? Math.ceil(driving.durationSec! / 60) : "—"}<small> min</small></strong></div>
+      <div><span>{nl ? "AFSTAND OVER DE WEG" : "ROAD DISTANCE"}</span><strong>{driving?.valid ? (driving.distanceM! / 1000).toFixed(1) : "—"}<small> km</small></strong></div>
+      <div><span>{nl ? "OEFENROUTE" : "PRACTICE ROUTE"}</span><strong className="route-mode-text">{accessMode === "full" && driving?.valid && closedLoop ? (nl ? "1 volledige ronde" : "1 complete loop") : (nl ? "Routeoverzicht" : "Route preview")}</strong><small>{accessMode === "full" ? `${activeCentre.routePoints.length} ${nl ? "vormpunten · geen aparte routes" : "shaping points · not separate routes"}` : (nl ? "Toegang vereist" : "Route access required")}</small></div>
+      <div><span>{nl ? "PRAKTIJKMODUS" : "PRACTICE MODE"}</span><strong className="route-mode-text">{tracking ? "Live GPS" : (nl ? "Voorbereiden" : "Preparation")}</strong><small>{nl ? "Veilig geparkeerd instellen" : "Set up while safely parked"}</small></div>
+    </div>
     <details className="route-sequence-panel"><summary><span><span className="small-label">{copy.route.sequence}</span><strong>{nl ? "Bekijk de routevolgorde" : "Explore the route sequence"}</strong></span><span aria-hidden="true">＋</span></summary><p>{localizeText(routeSequence(activeCentre.routePoints), nl ? "nl" : "en") || copy.route.unlockText}</p></details>
     <div className="route-detail-layout" data-chat-route={routeSlug} data-chat-point={selectedPoint?.id}>
     <div className="route-detail-map"><div className="route-map-topbar"><div><span className="route-map-dot" /><strong>{routeLabel}</strong><span>{nl ? "Interactieve routekaart" : "Interactive route map"}</span></div><a href="#practice-controls">{nl ? "Oefenrit instellen" : "Set up practice"} ↗</a></div>{hasMapboxToken ? <MapboxRouteMap key={routeSlug} centre={activeCentre} selectedIndex={selectedIndex} onSelect={setSelectedIndex} livePosition={livePosition} liveTrack={liveTrack} tracking={tracking} /> : <div className="route-map route-map-tall"><p role="status">{nl ? "Kaart niet beschikbaar. Geen rijroute weergegeven zonder kaartconfiguratie." : "Map unavailable. No driving route is displayed without map configuration."}</p></div>}<div className="route-map-inspector"><span className="route-inspector-index">{String(selectedIndex + 1).padStart(2, "0")}</span><div><span className="small-label">{nl ? "GESELECTEERD ROUTEPUNT" : "SELECTED ROUTE POINT"}</span><strong>{selectedPoint?.title ?? (nl ? "Routeoverzicht" : "Route overview")}</strong></div><span>{activeCentre.routePoints.length ? selectedIndex + 1 : 0} / {activeCentre.routePoints.length}</span></div><p className="route-map-safety">{nl ? "Volg de verkeersborden en de weg voor je. Dit is een oefenroute, geen officiële examenroute." : "Follow current signs and the road ahead. This is a practice route, not an official exam route."}</p></div>

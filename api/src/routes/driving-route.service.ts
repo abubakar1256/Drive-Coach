@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { Coordinate, geometryIssues, durationIssues } from "./route-quality";
+import { Coordinate, geometryIssues, durationIssues, loopClosureIssues } from "./route-quality";
 
 type Point = { latitude: number; longitude: number; bearing?: number | null };
 export type DrivingRoute = {
@@ -17,6 +17,7 @@ export class DrivingRouteService {
   async evaluate(points: Point[], snapRadiusM = 50): Promise<DrivingRoute> {
     if (points.length < 2 || points.length > 25) return invalid("WAYPOINT_COUNT");
     if (points.some(p => !Number.isFinite(p.latitude) || !Number.isFinite(p.longitude) || Math.abs(p.latitude) > 90 || Math.abs(p.longitude) > 180)) return invalid("INVALID_COORDINATES");
+    if (loopClosureIssues(points.map(p => [p.longitude, p.latitude])).length) return invalid("OPEN_ROUTE");
     const token = process.env.MAPBOX_DIRECTIONS_TOKEN ?? process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
     if (!token) return invalid("ROUTING_NOT_CONFIGURED");
     const coordinates = points.map(p => `${p.longitude},${p.latitude}`).join(";");
@@ -49,6 +50,9 @@ export class DrivingRouteService {
       if (!Array.isArray(geometry) || geometry.length < 2 || geometry.length > 12000 || geometry.some((p: unknown) => !Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite) || Math.abs(p[0]) > 180 || Math.abs(p[1]) > 90)
           || !Number.isFinite(route.duration) || route.duration <= 0 || !Number.isFinite(route.distance) || route.distance <= 0) return invalid("INVALID_ROUTING_RESPONSE");
       const issues = geometryIssues(geometry);
+      // Provider snapping may offset the endpoint slightly; never draw an
+      // invented closing line or call a drive to another place a full round.
+      issues.push(...loopClosureIssues(geometry, 25));
       issues.push(...durationIssues(route.duration));
       if (route.legs?.some((leg: { steps?: Array<{ maneuver?: { modifier?: string } }> }) => leg.steps?.some(step => step.maneuver?.modifier === "uturn"))) issues.push("U_TURN");
       // Preserve the exact seconds for the duration-band check, never round a short

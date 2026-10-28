@@ -12,6 +12,16 @@ const originalPublic = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 afterEach(() => { global.fetch = originalFetch; for (const [name, value] of [["MAPBOX_DIRECTIONS_TOKEN", originalToken], ["NEXT_PUBLIC_MAPBOX_TOKEN", originalPublic]]) { if (value === undefined) delete process.env[name]; else process.env[name] = value; } });
 const square = [[5, 50], [5.01, 50], [5.01, 50.01], [5, 50.01], [5, 50]];
 const points = square.map(([longitude, latitude]) => ({ longitude, latitude }));
+test('an open saved route is rejected before any provider request',async()=>{
+  process.env.MAPBOX_DIRECTIONS_TOKEN='test-only';
+  global.fetch=()=>{throw Error('No routing spend for an open route');};
+  assert.deepEqual((await new DrivingRouteService().evaluate(points.slice(0,-1))).issues,['OPEN_ROUTE']);
+});
+test('a provider response ending elsewhere cannot qualify as a closed practice loop',async()=>{
+  provider(1500,[[5,50],[5.01,50],[5.01,50.01],[5,50.01]]);
+  const result=await new DrivingRouteService().evaluate(points);
+  assert.equal(result.valid,false);assert.ok(result.issues.includes('OPEN_ROUTE'));
+});
 function provider(duration = 1440, geometry = square, modifier) {
   process.env.MAPBOX_DIRECTIONS_TOKEN = "test-only";
   global.fetch = async (url) => {

@@ -9,6 +9,13 @@ const loaded = new Module(filename, module);
 loaded._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, filename);
 const { googleMapsRouteUrl, googleMapsNavigationUrl, googleMapsRouteSections, googleMapsSectionRange } = loaded.exports;
 const points = Array.from({ length: 5 }, (_, i) => ({ latitude: 50 + i / 100, longitude: 5 + i / 100 }));
+test('one loop has the same start/finish and an ordered initial direction, not 25 routes',()=>{
+  const route=[{latitude:50,longitude:5},{latitude:50.01,longitude:5},{latitude:50.01,longitude:5.01},{latitude:50,longitude:5}];
+  assert.deepEqual(loaded.exports.routeLoopSummary(route),{closed:true,direction:'N'});
+  assert.equal(loaded.exports.routeLoopSummary(route.slice(0,-1)).closed,false);
+  assert.equal(loaded.exports.routeLoopSummary([...route.slice(0,-1),{latitude:50.0002,longitude:5}]).closed,false);
+  assert.equal(loaded.exports.routeLoopSummary([{latitude:50,longitude:5},{}]).closed,false);
+});
 test('navigation percentages cover 0–100 with shared boundaries, not GPS completion', () => {
   for (const count of [2,5,6,9,25,60]) {
     const sections=googleMapsRouteSections(Array.from({length:count},(_,i)=>({latitude:50+i/1000,longitude:5})));
@@ -64,6 +71,18 @@ test("Long route UI exposes every section and the Google Maps action", () => {
   assert.match(html, /points 21–25/);
   assert.match(html, /safely parked/);
   assert.match(html, /full checked route stays on the Mapbox map/);
+  assert.match(html,/ONE CONTINUOUS PRACTICE ROUTE/);
+  assert.match(html,/<details class="google-handoff-details">/);
+  assert.doesNotMatch(html,/navigation-section-rail|aria-pressed/);
+});
+
+test('a closed Google hand-off chain finishes at its original start without dropping any leg',()=>{
+  const route=[...points,...points.slice(0,-1).reverse(),points[0]];
+  const sections=googleMapsRouteSections(route),html=renderGoogleLinks('en',sections);
+  assert.equal(new URL(sections[0].url).searchParams.get('origin'),new URL(sections.at(-1).url).searchParams.get('destination'));
+  assert.match(html,/finish at the same starting point/);
+  assert.match(html,/No points are omitted/);
+  assert.equal(sections.at(-1).lastPoint,route.length);
 });
 test("Dutch and navigation links use localized labels and navigation URLs", () => {
   const sections = googleMapsRouteSections(points);

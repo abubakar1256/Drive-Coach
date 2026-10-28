@@ -2,6 +2,12 @@ export type Coordinate = [number, number];
 export const MIN_DRIVING_SECONDS = 23 * 60;
 export const TARGET_DRIVING_SECONDS = 25 * 60;
 export const MAX_DRIVING_SECONDS = 27 * 60;
+export function loopClosureIssues(points: Coordinate[], toleranceM = 1) {
+  if (points.length < 3) return ["OPEN_ROUTE"];
+  const a = points[0], b = points[points.length - 1], scale = Math.cos((a[1]+b[1])*Math.PI/360);
+  const distance = Math.hypot((a[0]-b[0])*scale,a[1]-b[1])*Math.PI/180*6371000;
+  return Number.isFinite(distance) && distance <= toleranceM ? [] : ["OPEN_ROUTE"];
+}
 export function durationIssues(seconds: number | null) {
   if (!Number.isFinite(seconds) || seconds === null || seconds <= 0) return ["INVALID_DURATION"];
   return seconds < MIN_DRIVING_SECONDS ? ["UNDER_23_MINUTES"] : seconds > MAX_DRIVING_SECONDS ? ["OVER_27_MINUTES"] : [];

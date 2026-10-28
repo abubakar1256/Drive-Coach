@@ -25,3 +25,8 @@
 .route-access-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
 .route-access-summary .route-meta { margin: 0; }
 .reference-route-actions { flex-wrap: wrap; gap: 10px; }
+.continuous-route-line { display:flex; align-items:center; gap:10px; color:#17785e; font-size:21px; }
+.continuous-route-line i { height:4px; flex:1; background:#17785e; border-radius:8px; }
+.google-handoff-details { border:1px solid #d9e8df; border-radius:12px; padding:12px; }
+.google-handoff-details summary { cursor:pointer; color:#176c52; font-size:12px; font-weight:700; }
+.google-handoff-details[open] > :not(summary) { margin-top:12px; }

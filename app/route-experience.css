@@ -63,3 +63,11 @@
   .reflection-choice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .reflection-option-grid { grid-template-columns: 1fr; }
 }
+.mapbox-loop-key { position:absolute; z-index:2; left:16px; top:16px; max-width:calc(100% - 90px); display:grid; gap:6px; padding:12px 14px; background:rgba(255,255,255,.97); border:1px solid #cde5d6; border-radius:12px; box-shadow:0 4px 16px #163d321a; color:#163d32; }
+.mapbox-loop-key small { font-size:11px; line-height:1.5; }
+.mapbox-loop-key button { justify-self:start; min-height:32px; padding:5px 10px; border:1px solid #cde5d6; background:#eff8f1; border-radius:7px; color:#176c52; font:inherit; font-size:11px; cursor:pointer; }
+.mapbox-point-marker[hidden] { display:none !important; }
+.mapbox-point-marker > span { display:block; font-size:10px; font-weight:800; color:#fff; }
+.mapbox-point-marker.mapbox-endpoint-marker, .mapbox-point-marker.mapbox-endpoint-marker.is-active { width:auto; height:auto; padding:9px 12px; border-radius:20px; background:#156e58; transform:none; }
+.mapbox-endpoint-marker > span { transform:none; font-size:11px; }
+.mapbox-loop-key button:focus-visible { outline:3px solid #ff8b24; outline-offset:2px; }
