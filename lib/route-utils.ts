@@ -74,7 +74,16 @@ export type GoogleMapsSection = {
   lastPoint: number;
   url: string;
   navigationUrl: string;
+  startPoint: { latitude: number; longitude: number };
 };
+
+// Waze deep links take one destination, not the full ordered practice loop.
+// No live location, account data or API key is included in this outbound URL.
+export function wazeStartNavigationUrl(point?: RoutePointLike | null): string | null {
+  if (!point || !hasCoordinates(point)) return null;
+  const params = new URLSearchParams({ ll: `${point.latitude},${point.longitude}`, navigate: "yes", utm_source: "drivecoach" });
+  return `https://waze.com/ul?${params.toString()}`;
+}
 
 // Waypoint-leg coverage, not distance travelled or recorded practice completion.
 export function googleMapsSectionRange(section: GoogleMapsSection, sections: GoogleMapsSection[]) {
@@ -93,7 +102,7 @@ export function googleMapsRouteSections(points: RoutePointLike[]): GoogleMapsSec
     const url = googleMapsRouteUrl(section);
     const navigationUrl = googleMapsNavigationUrl(section);
     if (!url || !navigationUrl) return [];
-    sections.push({ firstPoint: start + 1, lastPoint: end + 1, url, navigationUrl });
+    sections.push({ firstPoint: start + 1, lastPoint: end + 1, url, navigationUrl, startPoint: { latitude: section[0].latitude!, longitude: section[0].longitude! } });
   }
   return sections;
 }

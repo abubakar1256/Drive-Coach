@@ -31,3 +31,27 @@ plan change, GitHub push or production deployment is part of this local change.
 Verification includes synthetic closed/open route checks, mocked Mapbox marker
 and direction-layer tests, Google hand-off coverage tests, and production builds.
 Mocked rendering tests are not real-device navigation/GPS testing.
+
+## Optional Waze approach navigation
+
+The shared navigation panel now includes **Open in Waze · To start point** for
+an accessible route with validated coordinates. It uses the full route's first
+anchor, not the selected Google Maps section's start. Empty/locked navigation
+data and invalid/missing coordinates produce no Waze destination link.
+
+The HTTPS deep link contains only destination `ll` (latitude,longitude),
+`navigate=yes` and the public `utm_source=drivecoach` identifier. No account,
+access token, browser GPS position, waypoint list or session is sent. No new GPS
+permission or provider request occurs when rendering the button. Opening the
+external app is a deliberate user action; configure navigation while parked.
+
+Waze calculates the approach from the driver's current position to that start.
+It does **not** receive or reproduce the full practice loop. The full checked
+round remains in Mapbox, and browser tracking may pause outside the browser.
+The HTTPS link allows the normal app/web fallback documented by
+[Waze Deep Links](https://developers.google.com/waze/deeplinks); no forced custom
+scheme, app-install detection, paid API or API key is added.
+
+Synthetic URL/rendering tests cover coordinate order, invalid input, fixed start
+across Google section selections, absent/locked data and English/Dutch copy.
+Real-device Waze hand-off/navigation has not been exercised by these tests.
