@@ -6,12 +6,13 @@ import { PrismaService } from "../prisma.service";
 import { PreparationVersionDto, UpdatePreparationDto } from "./dto/preparation.dto";
 import { preparationFocus, type PreparationLevel } from "./preparation-policy";
 import { Prisma } from "@prisma/client";
+import { reportedObservations, reflectionTrends, type ReportedObservation } from "./reflection-trends";
 
 @Injectable()
 export class PreparationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async get(userId: string) {
+  async get(userId: string, includeHistory = false) {
     const [user, profile, reflection, hometown, checklistSession] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId }, select: { id: true, displayName: true } }),
       this.prisma.preparationProfile.findUnique({ where: { userId }, include: { centre: { select: { id: true, slug: true, name: true } } } }),
@@ -30,7 +31,29 @@ export class PreparationService {
       const needs=[...new Set(Object.entries(checklist.ratings??{}).filter(([key,value])=>map[key]&&value==="practice").map(([key])=>map[key]))];
       latest={difficultyCategories:checklist.source==="self"?needs:[],instructorFeedback:checklist.source==="instructor_reported",instructorCategories:checklist.source==="instructor_reported"?needs:[]};
     }
-    return { ownerId: userId, version: profile?.version ?? 0, revision: profile?.revision ?? null, saved: Boolean(profile), preferredName: profile?.preferredName ?? user.displayName ?? "", age: profile?.age ?? null, centreId: profile?.centreId ?? null, centre: profile?.centre ?? null, homeTown: profile?.homeTown ?? "", preferredLevel: level, focus: preparationFocus(level, latest, Boolean(profile)), privacy: "Private optional preparation preferences. Town/area only; no home address, GPS lookup or age-based ability inference. Saving does not change your plan, trial or purchased centre." };
+    const history = includeHistory ? await this.history(userId, level) : null;
+    const currentFocus = preparationFocus(level, latest, Boolean(profile));
+    // Recent repeated reports supplement the latest report. Neither source is an
+    // ability score, and no suggested level can silently alter the user's choice.
+    const focus = history ? { ...currentFocus, items: [...currentFocus.items.map(item => ({ ...item, basis: [...new Set([...item.basis, ...(history.focus.items.find(i => i.code === item.code)?.basis ?? [])])] })), ...history.focus.items.filter(i => !currentFocus.items.some(c => c.code === i.code))], needsReflection: currentFocus.needsReflection && history.focus.needsReflection } : currentFocus;
+    return { ownerId: userId, version: profile?.version ?? 0, revision: profile?.revision ?? null, saved: Boolean(profile), preferredName: profile?.preferredName ?? user.displayName ?? "", age: profile?.age ?? null, centreId: profile?.centreId ?? null, centre: profile?.centre ?? null, homeTown: profile?.homeTown ?? "", preferredLevel: level, focus, ...(history ? { history } : {}), privacy: "Private optional preparation preferences. Town/area only; no home address, GPS lookup or age-based ability inference. Saving does not change your plan, trial or purchased centre." };
+  }
+
+  async history(userId: string, level: PreparationLevel) {
+    const now = new Date(), since = new Date(now.getTime() - 90 * 86400000);
+    const [reflections, checklists, hometown] = await Promise.all([
+      this.prisma.selfReflection.findMany({ where: { userId, session: { completedAt: { not: null }, startedAt: { gte: since } } }, orderBy: [{ session: { startedAt: "desc" } }, { id: "desc" }], take: 30, select: { sessionId: true, updatedAt: true, session: { select: { startedAt: true } }, difficultyCategories: true, instructorFeedback: true, instructorCategories: true, flaggedSpeeding: true, missedRightOfWay: true, speedCompliance: true, rightOfWayConfidence: true, roundaboutConfidence: true, laneChangeConfidence: true } }),
+      this.prisma.practiceSession.findMany({ where: { userId, completedAt: { not: null }, startedAt: { gte: since }, routeSnapshot: { path: ["coachingReview"], not: Prisma.DbNull } }, orderBy: [{ startedAt: "desc" }, { id: "desc" }], take: 30, select: { id: true, startedAt: true, routeSnapshot: true } }),
+      this.prisma.hometownSession.findMany({ where: { userId, completedAt: { not: null }, startedAt: { gte: since }, reflectedAt: { not: null } }, orderBy: [{ startedAt: "desc" }, { id: "desc" }], take: 30, select: { id: true, startedAt: true, reflectedAt: true, reflection: true } }),
+    ]);
+    const observations: ReportedObservation[] = [];
+    for (const r of reflections) observations.push(...reportedObservations(`public:${r.sessionId}`, r.session.startedAt, r.updatedAt, r));
+    for (const r of checklists) {
+      const review = (r.routeSnapshot as any)?.coachingReview;
+      if (review?.savedAt && Number.isFinite(Date.parse(review.savedAt))) observations.push(...reportedObservations(`public:${r.id}`, r.startedAt, review.savedAt, review, true));
+    }
+    for (const r of hometown) if (r.reflectedAt) observations.push(...reportedObservations(`private:${r.id}`, r.startedAt, r.reflectedAt, r.reflection));
+    return reflectionTrends(observations, level, now);
   }
 
   async save(userId: string, dto: UpdatePreparationDto) {

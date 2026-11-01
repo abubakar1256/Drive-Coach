@@ -49,6 +49,16 @@ test('only current source-backed coverage ranks; descriptions and stale seed tag
  r.points[0].latitude+=.0001;assert.equal(coverageCurrent(r),false);const next=rankPreparation([r],focus,'BEGINNER')[0];assert.equal(next.score,0);assert.deepEqual(next.matched,[]);assert.match(next.reason,/No reviewed match/);
  r.preparationCoverage=null;assert.equal(rankPreparation([r],focus,'DIFFICULT')[0].coverage.status,'UNKNOWN');
 });
+
+test('unusable provider candidates cannot spend beyond the reserved eight evaluations',async()=>withBudget(async()=>{
+ const f=fixture(),loops=require('../dist/src/routes/practice-loop.service'),original=loops.loopCandidates;let calls=0;
+ loops.loopCandidates=()=>Array(8).fill(f.driving.snappedPoints);
+ try{
+  f.service.driving={evaluate:async()=>{calls++;return calls<8?{valid:false,issues:['NO_DRIVABLE_ROUTE'],coordinates:[]}:f.driving;}};
+  await assert.rejects(f.service.generate('a',f.dto),/No safe, connected/);
+  assert.equal(calls,8);assert.equal(f.state.routes.length,0);
+ }finally{loops.loopCandidates=original;}
+}));
 test('coverage fingerprint changes on version, point order/coordinates, bearings or reviewed content',()=>{
  const r=publicRoute(),initial=coverageFingerprint(r);for(const change of [{version:2},{points:[{...r.points[0],bearing:90}]},{points:[{...r.points[0],warning:'Changed'}]}])assert.notEqual(coverageFingerprint({...r,...change}),initial);
 });

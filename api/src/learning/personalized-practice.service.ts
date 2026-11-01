@@ -29,7 +29,7 @@ export class PersonalizedPracticeService {
   constructor(private readonly prisma: PrismaService, private readonly preparation: PreparationService, private readonly access: RouteAccessService, private readonly driving: DrivingRouteService) {}
 
   async recommendations(userId: string, sourceCentreId?:string) {
-    const profile=await this.preparation.get(userId);
+    const profile=await this.preparation.get(userId, true);
     const centreId=sourceCentreId??profile.centreId;
     const routes=await this.prisma.route.findMany({where:{...publishedRoutePolicy,durationMin:{gte:23,lte:27},centre:{isPublished:true},...(centreId?{centreId}:{})},include:{centre:{select:{name:true,slug:true}},points:{orderBy:{sequence:"asc"}},preparationCoverage:true},orderBy:{id:"asc"},take:160});
     const ranked=rankPreparation(routes,profile.focus,profile.preferredLevel as PreparationLevel);
@@ -44,7 +44,7 @@ export class PersonalizedPracticeService {
     const history=await this.prisma.practiceSession.findMany({where:{userId},orderBy:{startedAt:"desc"},take:6,select:{id:true,completionKind:true,completedAt:true,route:{select:{name:true,slug:true}},routeSnapshot:true}});
     const past=history.map(s=>({id:s.id,name:s.route.name,slug:s.route.slug,status:s.completionKind,ended:Boolean(s.completedAt),version:(s.routeSnapshot as any)?.routeVersion??null,repeatAvailable:Boolean(s.completedAt&&(s.routeSnapshot as any)?.durationSec),reportHref:`/practice/${s.id}`}));
     const hometownAllowed=Boolean(profile.centreId&&(await this.access.centreAccess(userId,profile.centreId)).premium);
-    return {ownerId:userId,selectedLevel:profile.preferredLevel,focus:profile.focus,centreId:profile.centreId,routes:suggestions.slice(0,6),history:past,hometown:{allowed:hometownAllowed,configured:budgetValue("HOMETOWN_DAILY_REQUEST_BUDGET",1000)>0&&budgetValue("HOMETOWN_MONTHLY_REQUEST_BUDGET",10000)>0,maxRequests:MAX_REQUESTS},safety:"Recommendations are preparation suggestions, not ability scores, guaranteed feature coverage or official examiner itineraries. Unknown coverage stays unknown."};
+    return {ownerId:userId,selectedLevel:profile.preferredLevel,focus:profile.focus,reflectionTrends:profile.history??null,centreId:profile.centreId,routes:suggestions.slice(0,6),history:past,hometown:{allowed:hometownAllowed,configured:budgetValue("HOMETOWN_DAILY_REQUEST_BUDGET",1000)>0&&budgetValue("HOMETOWN_MONTHLY_REQUEST_BUDGET",10000)>0,maxRequests:MAX_REQUESTS},safety:"Recommendations are preparation suggestions, not ability scores, guaranteed feature coverage or official examiner itineraries. Unknown coverage stays unknown."};
   }
 
   private async requirePaid(userId: string, centreId: string) {
@@ -54,7 +54,7 @@ export class PersonalizedPracticeService {
   }
   private async profileBinding(userId: string, dto: HometownGenerationDto) {
     if(dto.ownerId!==userId)throw new ConflictException("Account changed. Reload preparation.");
-    const p=await this.preparation.get(userId);
+    const p=await this.preparation.get(userId, true);
     if(!p.saved||p.version!==dto.version||p.revision!==dto.revision||!p.centreId)throw new ConflictException("Save/reload a profile with a source exam centre before generating.");
     await this.requirePaid(userId,p.centreId);return p;
   }
@@ -89,6 +89,7 @@ export class PersonalizedPracticeService {
         if(!raw.snappedPoints||raw.coordinates.length<4)continue;
         const cycles=raw.valid?[]:simpleRoadCycles(raw.coordinates);
         const points=cycles.length?cycleWaypoints(cycles[0],anchor):removeSharedAccessStem(raw.coordinates,raw.snappedPoints);
+        if(calls>=MAX_REQUESTS)break;
         const checked=await this.driving.evaluate(points);calls++;
         const snapshot=checkedPrivateSnapshot(checked,points,anchor);
         if(!snapshot)continue;
