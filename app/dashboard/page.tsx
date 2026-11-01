@@ -7,6 +7,7 @@ import SiteFooter from "../SiteFooter";
 import { getServerLocale } from "../../lib/serverLocale";
 import { siteCopy } from "../../lib/siteCopy";
 import MobileMenu from "../MobileMenu";
+import PracticeJourney from "./PracticeJourney";
 
 export default function DashboardPage() {
   const copy = siteCopy[getServerLocale()].dashboard;
@@ -21,6 +22,7 @@ export default function DashboardPage() {
       <section className="shell dashboard-shell">
         <div className="dashboard-heading"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.eyebrow}</p><h1>{copy.title}<br /><em>{copy.accent}</em></h1><p>{copy.description}</p></div><Link className="button" href="/centres">{copy.explore} <span>↗</span></Link></div>
         <DashboardPanel />
+        <PracticeJourney />
       </section>
       <SiteFooter />
     </main>

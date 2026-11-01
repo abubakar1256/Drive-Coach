@@ -16,5 +16,5 @@
     "plugins": [{ "name": "next" }]
   },
   "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "api", "api/**", "api/node_modules", "api/dist"]
+  "exclude": ["node_modules", "api", "api/**", "api/node_modules", "api/dist", "output", "output/**"]
 }

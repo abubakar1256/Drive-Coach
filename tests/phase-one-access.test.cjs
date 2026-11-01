@@ -61,7 +61,7 @@ test('route expiry clears the full route, maps, coach state and GPS controls',()
 });
 test('first-party images/videos use authenticated fetch, not bearer tokens in URLs',async()=>{
  const effects=[],calls=[];
- const Media=load('app/routes/RoutePointMedia.tsx',{'react':{...React,useEffect:fn=>effects.push(fn),useState:()=>[null,()=>{}]},'./DrivingIllustration':{__esModule:true,default:()=>null},'../../lib/clientSession':{authFetch:async(...args)=>{calls.push(args);return{ok:false};}}});
+ const Media=load('app/routes/RoutePointMedia.tsx',{'react':{...React,useEffect:fn=>effects.push(fn),useState:()=>[null,()=>{}]},'./RouteMediaRights':{__esModule:true,default:()=>null},'./LearningMedia':{__esModule:true,default:()=>null},'./DrivingIllustration':{__esModule:true,default:()=>null},'../../lib/clientSession':{authFetch:async(...args)=>{calls.push(args);return{ok:false};}}});
  for(const url of ['javascript:alert(1)','https://user:password@example.com/a.png','/api/v1/media/../../secret'])assert.equal(Media.safeMediaUrl(url),null);
  const html=renderToStaticMarkup(React.createElement(Media.default,{point:{title:'Test',imageUrl:'/api/v1/media/asset-123'}}));
  assert.doesNotMatch(html,/src=.*\/api\/v1\/media/);

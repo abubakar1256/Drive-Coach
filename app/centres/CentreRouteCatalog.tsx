@@ -8,6 +8,8 @@ import { authFetch } from "../../lib/clientSession";
 import { routeSequence } from "../../lib/route-utils";
 import { useCurrentLocale, useSiteCopy } from "../../lib/useLocale";
 import { localizeText } from "../../lib/localizeContent";
+import { usePracticeStatus } from "../../lib/usePracticeStatus";
+import PracticeStatusBadge from "../practice/PracticeStatusBadge";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 
@@ -19,6 +21,7 @@ export default function CentreRouteCatalog({ initialCentre }: { initialCentre: A
   const locale = useCurrentLocale();
   const nl = locale === "nl";
   const copy = useSiteCopy().route;
+  const practice = usePracticeStatus(initialCentre.slug);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +92,7 @@ export default function CentreRouteCatalog({ initialCentre }: { initialCentre: A
             <div className="reference-route-main"><div className="reference-route-title"><h3>{label}</h3><span className={`reference-route-badge ${unlocked ? "badge-free" : "badge-locked"}`}>{route.needsReview ? (nl ? "Broncontrole nodig" : "Source review needed") : free ? (nl ? "Proefperiode" : "Trial") : unlocked ? (nl ? "Ontgrendeld" : "Unlocked") : (nl ? "Vergrendeld" : "Locked")}</span></div>
               <p className="reference-route-sequence">{route.needsReview ? (nl ? "Deze route wacht op een nieuwe bron- of vertrekpuntcontrole. Je abonnement blijft ongewijzigd." : "This route is awaiting a new source or departure review. Your plan remains unchanged.") : unlocked ? localizeText(routeSequence(route.points) || route.name, locale) : checking || error ? (nl ? "Je centrumtoegang moet nog worden gecontroleerd." : "Your centre access still needs to be checked.") : (nl ? "Start je eenmalige proefperiode op deze route, of kies Basic voor dit centrum / Premium voor alle centra." : "Start your one-time trial on this route, or choose Basic for this centre / Premium for all centres.")}</p>
               <div className="reference-route-meta"><span>⌁ {route.pointCount ?? route.points.length} {nl ? "punten" : "points"}</span><span>◷ {route.durationMin ? `${route.durationMin} min` : (nl ? "Rijduur te controleren" : "Driving time to be checked")}</span></div>
+              <PracticeStatusBadge item={practice.items.find(item => item.slug === route.slug)} accessible={unlocked && !route.needsReview} />
             </div>
             <div className="reference-route-actions">{route.needsReview ? <button className="route-action route-action-upgrade" disabled>{nl ? "Controle nodig" : "Review needed"}</button> : unlocked ? <><Link className="route-action route-action-maps" href={`/routes/${route.slug}#google-maps`}>{copy.openGoogle} ↗</Link><Link className="route-action route-action-primary" href={`/routes/${route.slug}`}>{copy.viewRoute} →</Link></> : checking || error ? <button className="route-action route-action-upgrade" disabled>{nl ? "Toegang controleren" : "Check access"}</button> : <Link className="route-action route-action-upgrade" href={`/routes/${route.slug}`}>{route.canStartTrial ? (nl ? "Probeer 24 uur" : "Try for 24 hours") : (nl ? "Bekijk toegang" : "View access")} →</Link>}</div>
           </article>;

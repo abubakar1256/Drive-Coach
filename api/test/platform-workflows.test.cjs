@@ -242,7 +242,7 @@ test("database media upload stores bytes and audit atomically without local file
     let asset, audited = false;
     const prisma = { routePoint: { findUnique: async () => ({ id: "point" }) }, $transaction: async fn => fn({ mediaAsset: { create: async args => { asset = args.data; return asset; } }, auditLog: { create: async () => { audited = true; } } }) };
     const bytes = Buffer.from([137,80,78,71,13,10,26,10,0]);
-    const result = await new MediaService(prisma).uploadFile("u", "point", { buffer: bytes, originalname: "test.png", mimetype: "image/png", size: bytes.length });
+    const result = await new MediaService(prisma).uploadFile("u", "point", { buffer: bytes, originalname: "test.png", mimetype: "image/png", size: bytes.length }, { rightsType:"OWNED",rightsHolder:"Test fixture",licenseName:"Original synthetic image",permissionConfirmed:true });
     assert.equal(result.provider, "database"); assert.deepEqual(asset.dataBytes, bytes); assert.equal(audited, true);
     const reader = new MediaService({ user: { findUnique: async () => ({ role: "LEARNER" }) }, $queryRawUnsafe: async () => [{ storageKey: asset.storageKey, publicUrl: asset.publicUrl, mimeType: asset.mimeType }], mediaAsset: { findUnique: async () => ({ routePoint: { routeId: "r" }, dataBytes: bytes }) } }, { requireAccess: async (user, route) => { assert.equal(user, "u"); assert.equal(route, "r"); return { premium: true }; } });
     assert.deepEqual((await reader.file("u", asset.id)).buffer, bytes);

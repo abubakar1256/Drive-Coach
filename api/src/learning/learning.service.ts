@@ -12,6 +12,7 @@ import { buildDriveReport, gpsObservation, reviewItems } from "./drive-report";
 import { PersonalizedPracticeService } from "./personalized-practice.service";
 import { coverageFingerprint } from "./personalization-policy";
 import { durationIssues, geometryIssues } from "../routes/route-quality";
+import { sessionReviews, withoutSessionFeedback } from "./session-reviews";
 
 type Row = Record<string, any>;
 
@@ -24,18 +25,19 @@ export class LearningService {
   }
 
   async dashboard(userId: string) {
-    const [userRows, favoriteRows, sessionRows, subscription] = await Promise.all([
+    const [userRows, favoriteRows, sessionRows, subscription, statRows] = await Promise.all([
       this.query('SELECT "id", "email", "displayName", "role", "createdAt" FROM "User" WHERE "id" = $1', userId),
       this.query('SELECT f."id", f."createdAt", r."id" AS "routeId", r."slug", r."name", r."durationMin", c."slug" AS "centreSlug", c."name" AS "centreName", c."city", COUNT(rp."id")::int AS "pointCount" FROM "Favorite" f JOIN "Route" r ON r."id" = f."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "RoutePoint" rp ON rp."routeId" = r."id" WHERE f."userId" = $1 GROUP BY f."id", r."id", c."id" ORDER BY f."createdAt" DESC LIMIT 6', userId),
       this.query('SELECT ps."id", ps."routeId", ps."startedAt", ps."completedAt", ps."completionKind", ps."durationSec", ps."completionPct", ps."notes", r."slug", r."name", c."name" AS "centreName", sr."speedCompliance", sr."rightOfWayConfidence", sr."roundaboutConfidence", sr."laneChangeConfidence", sr."observedSpeedKph", sr."speedLimitKph", sr."flaggedSpeeding", sr."missedRightOfWay", sr."overallFeeling", sr."difficultyCategories", sr."difficultyDetails", sr."instructorFeedback", sr."instructorCategories", sr."instructorNotes" FROM "PracticeSession" ps JOIN "Route" r ON r."id" = ps."routeId" JOIN "ExamCentre" c ON c."id" = r."centreId" LEFT JOIN "SelfReflection" sr ON sr."sessionId" = ps."id" WHERE ps."userId" = $1 ORDER BY ps."createdAt" DESC LIMIT 8', userId),
       this.billing.subscription(userId),
+      this.query('SELECT COUNT(*)::int AS "sessionCount", COUNT(*) FILTER (WHERE "completedAt" IS NOT NULL AND "completionKind" = \'COMPLETED\')::int AS "completedSessions", ROUND(COALESCE(AVG("completionPct"),0))::int AS "averageProgress", (SELECT COUNT(*)::int FROM "Favorite" WHERE "userId"=$1) AS "favoriteCount" FROM "PracticeSession" WHERE "userId"=$1', userId),
     ]);
     if (!userRows[0]) throw new NotFoundException("User not found");
     const sessions = sessionRows.map((row) => this.sessionShape(row));
     const completed = sessions.filter((session) => session.completionKind === "COMPLETED").length;
     const averageProgress = sessions.length ? Math.round(sessions.reduce((sum, session) => sum + session.completionPct, 0) / sessions.length) : 0;
     const reflection = sessionRows.find((row) => row.speedCompliance !== null || row.rightOfWayConfidence !== null || row.roundaboutConfidence !== null || row.laneChangeConfidence !== null || row.observedSpeedKph !== null || row.speedLimitKph !== null || row.flaggedSpeeding || row.missedRightOfWay);
-    return { user: userRows[0], subscription, stats: { favoriteCount: favoriteRows.length, sessionCount: sessions.length, completedSessions: completed, averageProgress }, favorites: favoriteRows, sessions, recommendations: this.recommendations(reflection) };
+    return { user: userRows[0], subscription, stats: statRows[0] ?? { favoriteCount: favoriteRows.length, sessionCount: sessions.length, completedSessions: completed, averageProgress }, favorites: favoriteRows, sessions, recommendations: this.recommendations(reflection) };
   }
 
   async listFavorites(userId: string) {
@@ -71,10 +73,41 @@ export class LearningService {
     catch (error) { if (error instanceof ForbiddenException || error instanceof NotFoundException) routeVisible = false; else throw error; }
     const report = buildDriveReport(session, samples.slice(0, 20000));
     // A historical practice report is not a back door to an expired paid route.
-    return { id, route: session.route, ...report, geometry: routeVisible ? report.geometry : [], routeVisible, truncated };
+    const reflection = await this.prisma.selfReflection?.findUnique?.({ where: { sessionId: id }, select: { overallFeeling: true, difficultyCategories: true, instructorFeedback: true, instructorCategories: true, instructorNotes: true, notes: true, updatedAt: true } });
+    return { id, route: session.route, ...report, reflection: reflection ?? null, geometry: routeVisible ? report.geometry : [], routeVisible, truncated };
+  }
+
+  async practiceStatus(userId: string, centreSlug?: string, routeId?: string) {
+    if ([centreSlug, routeId].some(v => v !== undefined && (typeof v !== "string" || !/^[a-zA-Z0-9_-]{1,100}$/.test(v)))) throw new BadRequestException("Invalid route or centre reference");
+    const items = await this.query(`WITH owned AS (
+      SELECT ps."routeId", COUNT(*)::int AS "attempts",
+        COUNT(*) FILTER (WHERE ps."completedAt" IS NOT NULL AND ps."completionKind"='COMPLETED')::int AS "completedDrives"
+      FROM "PracticeSession" ps WHERE ps."userId"=$1 GROUP BY ps."routeId"
+    ) SELECT o.*, r."slug", r."name", latest."id" AS "sessionId", latest."startedAt", latest."completedAt", latest."completionKind", latest."completionPct",
+      active."id" AS "activeSessionId", EXISTS(SELECT 1 FROM "SelfReflection" sr WHERE sr."sessionId"=latest."id" AND sr."userId"=$1) AS "hasReflection",
+      (latest."routeSnapshot"->'coachingReview' IS NOT NULL) AS "hasChecklist"
+      FROM owned o JOIN "Route" r ON r."id"=o."routeId" JOIN "ExamCentre" c ON c."id"=r."centreId"
+      JOIN LATERAL (SELECT ps.* FROM "PracticeSession" ps WHERE ps."routeId"=o."routeId" AND ps."userId"=$1 ORDER BY ps."startedAt" DESC, ps."id" DESC LIMIT 1) latest ON true
+      LEFT JOIN LATERAL (SELECT ps."id" FROM "PracticeSession" ps WHERE ps."routeId"=o."routeId" AND ps."userId"=$1 AND ps."completedAt" IS NULL ORDER BY ps."startedAt" DESC, ps."id" DESC LIMIT 1) active ON true
+      WHERE ($2::text IS NULL OR c."slug"=$2) AND ($3::text IS NULL OR r."id"=$3)
+      ORDER BY latest."startedAt" DESC, r."id" LIMIT 200`, userId, centreSlug ?? null, routeId ?? null);
+    return { ownerId: userId, items, limitation: "Completed means server-confirmed route following, not assessed driving ability. History never grants route access." };
+  }
+
+  async sessionState(userId: string, id: string) {
+    const session = await this.prisma.practiceSession.findFirst({ where: { id, userId } });
+    if (!session) throw new NotFoundException("Practice session not found");
+    if (session.completedAt) return { id, routeId: session.routeId, completedAt: session.completedAt, completionKind: session.completionKind, completionPct: session.completionPct, reportHref: `/practice/${id}` };
+    const access = await this.routeAccess.requireAccess(userId, session.routeId);
+    const points = await this.prisma.routePoint.findMany({ where: { routeId: session.routeId }, orderBy: { sequence: "asc" } });
+    const s = session.routeSnapshot as any;
+    if (!s || !Array.isArray(s.geometry) || !Array.isArray(s.points) || s.routeVersion !== access.route.version || s.routeFingerprint !== coverageFingerprint({ ...access.route, points }) || durationIssues(s.durationSec).length || geometryIssues(s.geometry).length) throw new ConflictException("This active session uses an older route version. End it and keep its report before starting the current route.");
+    return { id, routeId: session.routeId, startedAt: session.startedAt, completedAt: null, completionKind: session.completionKind, completionPct: session.completionPct, routeSnapshot: withoutSessionFeedback(s) };
   }
 
   async saveDriveReview(userId: string, id: string, dto: SaveDriveReviewDto) {
+    if (dto.parked === false) throw new BadRequestException("Complete your review only while safely parked");
+    if (!["self", "instructor_reported"].includes(dto.source) || typeof dto.notes !== "string" || dto.notes.length > 2000) throw new BadRequestException("Invalid checklist source or notes");
     if (!dto.ratings || Object.keys(dto.ratings).length > reviewItems.length || Object.entries(dto.ratings).some(([key, value]) => !reviewItems.includes(key as typeof reviewItems[number]) || !["good", "practice", "not_assessed"].includes(value))) throw new BadRequestException("Invalid checklist ratings");
     return this.prisma.$transaction(async tx => {
       await tx.$queryRawUnsafe('SELECT "id" FROM "PracticeSession" WHERE "id" = $1 AND "userId" = $2 FOR UPDATE', id, userId);
@@ -83,10 +116,16 @@ export class LearningService {
       if (!session.completedAt) throw new BadRequestException("End practice before completing your review while safely parked");
       if (!session.routeSnapshot) throw new BadRequestException("Legacy session has no route snapshot");
       const snapshot = session.routeSnapshot as unknown as Record<string, Prisma.InputJsonValue>;
+      const reviews = sessionReviews(snapshot);
+      const previous = reviews.find(r => r.source === dto.source);
+      if ((previous?.savedAt && dto.expectedSavedAt === undefined) || (dto.expectedSavedAt !== undefined && (previous?.savedAt ?? null) !== dto.expectedSavedAt)) throw new ConflictException("This feedback changed in another tab. Reload the report before saving; your edits have not replaced it.");
+      const previousAt = Date.parse(previous?.savedAt ?? "");
+      const review = { source: dto.source, ratings: { ...dto.ratings }, notes: dto.notes, savedAt: new Date(Math.max(Date.now(), Number.isFinite(previousAt) ? previousAt + 1 : 0)).toISOString() };
+      const coachingReviews = Object.fromEntries([...reviews.filter(r => r.source !== dto.source), review].map(r => [r.source, r]));
       // Additive session metadata; preserve the immutable route geometry and unrelated reflection.
-      await tx.practiceSession.update({ where: { id }, data: { routeSnapshot: { ...snapshot, coachingReview: { source: dto.source, ratings: { ...dto.ratings }, notes: dto.notes, savedAt: new Date().toISOString() } } } });
+      await tx.practiceSession.update({ where: { id }, data: { routeSnapshot: { ...snapshot, coachingReview: review, coachingReviews } as Prisma.InputJsonValue } });
       await tx.auditLog.create({ data: { userId, action: "DRIVE_REVIEW_SAVED", entity: "PracticeSession", entityId: id, metadata: { source: dto.source } } });
-      return { success: true };
+      return { success: true, review, reviews: Object.values(coachingReviews) };
     });
   }
 
@@ -170,7 +209,11 @@ export class LearningService {
     const session = await this.prisma.$transaction(async tx => {
       await tx.$executeRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))", `practice:${userId}:${dto.routeId}`);
       const existing = await tx.practiceSession.findFirst({ where: { userId, routeId: dto.routeId, completedAt: null,  }, orderBy: { startedAt: "desc" } });
-      if (existing?.routeSnapshot) return existing;
+      if (existing) {
+        const saved = existing.routeSnapshot as any;
+        if (!saved || !Array.isArray(saved.geometry) || !Array.isArray(saved.points) || saved.routeVersion !== snapshot.routeVersion || saved.routeFingerprint !== snapshot.routeFingerprint || durationIssues(saved.durationSec).length || geometryIssues(saved.geometry).length) throw new ConflictException("End the old active session and preserve its report before starting this checked route version");
+        return existing;
+      }
       return tx.practiceSession.create({ data: { userId, routeId: dto.routeId, routeSnapshot: snapshot as unknown as Prisma.InputJsonValue } });
     });
     await this.audit(userId, "PRACTICE_STARTED", "PracticeSession", session.id);
@@ -185,7 +228,7 @@ export class LearningService {
     const points=await this.prisma.routePoint.findMany({where:{routeId:previous.routeId},orderBy:{sequence:"asc"}});
     const old=previous.routeSnapshot as any;
     if(!old||!Array.isArray(old.geometry)||durationIssues(old.durationSec).length||geometryIssues(old.geometry).length||old.routeVersion!==access.route.version||old.routeFingerprint!==coverageFingerprint({...access.route,points}))throw new ConflictException("This saved version needs a fresh check, or predates versioned practice. Open the current route to start a newly checked session; your old report is preserved.");
-    const {coachingReview,...snapshot}=old;
+    const snapshot = withoutSessionFeedback(old);
     return this.prisma.$transaction(async tx=>{
       await tx.$executeRawUnsafe("SELECT pg_advisory_xact_lock(hashtext($1))",`practice:${userId}:${previous.routeId}`);
       if(await tx.practiceSession.findFirst({where:{userId,routeId:previous.routeId,completedAt:null}}))throw new ConflictException("End the active practice for this route before repeating a saved drive");

@@ -6,6 +6,7 @@ import { PrismaService } from "../prisma.service";
 import { UploadMediaDto } from "./dto/media.dto";
 import { validMediaSignature } from "./media-signature";
 import { RouteAccessService } from "../routes/route-access.service";
+import { checkedMediaRights, type MediaRights } from "./media-rights";
 
 const MIME_EXTENSIONS: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm" };
 const MAX_BYTES = 15 * 1024 * 1024;
@@ -18,14 +19,16 @@ export class MediaService {
     const encoded = dto.dataBase64.replace(/^data:[^;]+;base64,/, "");
     if (!/^[A-Za-z0-9+/]*={0,2}$/.test(encoded)) throw new BadRequestException("Invalid base64 media data");
     const buffer = Buffer.from(encoded, "base64");
-    return this.persist(userId, dto.routePointId, buffer, dto.originalName, dto.mimeType);
+    return this.persist(userId, dto.routePointId, buffer, dto.originalName, dto.mimeType, dto);
   }
 
-  uploadFile(userId: string, routePointId: string, file: { buffer: Buffer; originalname: string; mimetype: string; size: number }) {
-    return this.persist(userId, routePointId, file.buffer, file.originalname, file.mimetype);
+  uploadFile(userId: string, routePointId: string, file: { buffer: Buffer; originalname: string; mimetype: string; size: number }, rights?: MediaRights) {
+    return this.persist(userId, routePointId, file.buffer, file.originalname, file.mimetype, rights);
   }
 
-  private async persist(userId: string, routePointId: string, buffer: Buffer, originalName: string, mimeType: string) {
+  private async persist(userId: string, routePointId: string, buffer: Buffer, originalName: string, mimeType: string, rightsInput?: MediaRights) {
+    const rights = checkedMediaRights(rightsInput);
+    if (typeof originalName !== "string" || !originalName || originalName.length > 180 || /[\r\n\0]/.test(originalName)) throw new BadRequestException("Invalid media filename");
     const point = await this.prisma.routePoint.findUnique({ where: { id: routePointId }, select: { id: true } });
     if (!point) throw new NotFoundException("Route point not found");
     const extension = MIME_EXTENSIONS[mimeType];
@@ -52,9 +55,9 @@ export class MediaService {
     const provider = databaseStorage ? "database" : cloudinaryRequested ? "cloudinary" : "local";
     await this.prisma.$transaction(async tx => {
       await tx.mediaAsset.create({ data: { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, ...(databaseStorage ? { dataBytes: buffer } : {}) } });
-      await tx.auditLog.create({ data: { userId, action: "MEDIA_UPLOADED", entity: "RoutePoint", entityId: routePointId, metadata: { mimeType, byteSize: buffer.length, provider } } });
+      await tx.auditLog.create({ data: { userId, action: "MEDIA_UPLOADED", entity: "MediaAsset", entityId: id, metadata: { routePointId, mimeType, byteSize: buffer.length, provider, rights } } });
     });
-    return { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, provider };
+    return { id, routePointId, storageKey, publicUrl, originalName, mimeType, byteSize: buffer.length, provider, rights };
   }
 
   private async uploadToCloudinary(buffer: Buffer, originalName: string, mimeType: string) {
@@ -71,7 +74,7 @@ export class MediaService {
     return { publicId: payload.public_id, publicUrl: payload.secure_url };
   }
 
-  async file(userId: string, id: string) {
+  private async authorize(userId: string, id: string) {
     const [asset, user] = await Promise.all([
       this.prisma.mediaAsset.findUnique({ where: { id }, select: { routePoint: { select: { routeId: true } } } }),
       this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
@@ -84,6 +87,27 @@ export class MediaService {
       const access = await this.routeAccess.requireAccess(userId, asset.routePoint.routeId);
       if (!access.premium) throw new ForbiddenException("Paid route access required for media");
     }
+  }
+
+  async description(userId: string, id: string) {
+    await this.authorize(userId, id);
+    const record = await this.prisma.auditLog.findFirst({ where: { action: "MEDIA_UPLOADED", entity: "MediaAsset", entityId: id }, orderBy: { createdAt: "desc" }, select: { metadata: true } });
+    return { id, rights: (record?.metadata as any)?.rights ?? null, qualification: "Rights are declared by the uploader, not independently certified. Route-linked media does not certify current road conditions." };
+  }
+
+  async learningFile(userId: string, routeId: string, id: string, kind: string) {
+    if (!["observation", "junctions", "roundabouts", "lane-planning"].includes(id) || !["poster", "video", "captions-en", "captions-nl"].includes(kind)) throw new NotFoundException("Learning media not found");
+    if (!routeId || routeId.length > 100) throw new BadRequestException("A route reference is required");
+    const access = await this.routeAccess.requireAccess(userId, routeId);
+    if (!access.premium) throw new ForbiddenException("Paid access to this route is required for visual preparation media");
+    const extension = kind === "poster" ? ".png" : kind === "video" ? ".mp4" : `.${kind.slice(9)}.vtt`;
+    const buffer = await readFile(join(__dirname, "../../../content/learning-media", id + extension)).catch(() => null);
+    if (!buffer) throw new NotFoundException("Learning media file unavailable");
+    return { buffer, mimeType: kind === "poster" ? "image/png" : kind === "video" ? "video/mp4" : "text/vtt; charset=utf-8" };
+  }
+
+  async file(userId: string, id: string) {
+    await this.authorize(userId, id);
     const rows = await this.prisma.$queryRawUnsafe<Array<{ storageKey: string; publicUrl: string; mimeType: string; originalName: string }>>('SELECT "storageKey", "publicUrl", "mimeType", "originalName" FROM "MediaAsset" WHERE "id" = $1', id);
     if (!rows[0]) throw new NotFoundException("Media asset not found");
     if (rows[0].storageKey.startsWith("database:")) {

@@ -14,6 +14,10 @@ export class LearningController {
   @Post("me/favorites/:routeId") addFavorite(@Req() req: AuthenticatedRequest, @Param("routeId") routeId: string) { return this.learning.addFavorite(req.user.sub, routeId); }
   @Delete("me/favorites/:routeId") removeFavorite(@Req() req: AuthenticatedRequest, @Param("routeId") routeId: string) { return this.learning.removeFavorite(req.user.sub, routeId); }
   @Get("me/practice-sessions") sessions(@Req() req: AuthenticatedRequest) { return this.learning.listSessions(req.user.sub); }
+  @Get("me/practice-status") @Header("Cache-Control", "private, no-store")
+  status(@Req() req: AuthenticatedRequest, @Query("centreSlug") centreSlug?: string, @Query("routeId") routeId?: string) { return this.learning.practiceStatus(req.user.sub, centreSlug, routeId); }
+  @Get("practice-sessions/:id") @Header("Cache-Control", "private, no-store")
+  session(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.learning.sessionState(req.user.sub, id); }
   @Get("practice-sessions/:id/report") @Header("Cache-Control", "private, no-store") report(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.learning.driveReport(req.user.sub, id); }
   @Post("practice-sessions/:id/review") review(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: SaveDriveReviewDto) { return this.learning.saveDriveReview(req.user.sub, id, dto); }
   @Get("me/route-assistant") routeAssistant(@Req() req: AuthenticatedRequest, @Query("routeId") routeId: string) { return this.learning.routeAssistant(req.user.sub, routeId); }

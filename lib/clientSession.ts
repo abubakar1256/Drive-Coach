@@ -16,6 +16,11 @@ function notifyAuthChange() {
   window.dispatchEvent(new Event("routepilot-auth-change"));
 }
 
+function currentOwner() {
+  try { const user = JSON.parse(window.sessionStorage.getItem(userKey) ?? "null"); return typeof user?.id === "string" ? user.id : null; }
+  catch { return null; }
+}
+
 export function clearClientSession() {
   window.sessionStorage.removeItem(accessTokenKey);
   window.sessionStorage.removeItem(refreshTokenKey);
@@ -43,13 +48,17 @@ async function refreshClientSessionInternal() {
       body: JSON.stringify({ refreshToken }),
     });
     const payload = await response.json().catch(() => null);
+    // A late refresh from an old login must not replace or clear a newer login.
+    if (window.sessionStorage.getItem(refreshTokenKey) !== refreshToken) return null;
     if (!response.ok || !payload?.accessToken) {
       clearClientSession();
       return null;
     }
     window.sessionStorage.setItem(accessTokenKey, payload.accessToken as string);
     if (payload.refreshToken) window.sessionStorage.setItem(refreshTokenKey, payload.refreshToken as string);
-    notifyAuthChange();
+    // Rotating credentials for the same account is not an account change: do
+    // not tear down a consented drive or erase an unsaved feedback checklist.
+    window.dispatchEvent(new Event("routepilot-session-refresh"));
     return payload.accessToken as string;
   } catch {
     return null;
@@ -63,13 +72,16 @@ function withBearer(init: RequestInit, token: string): RequestInit {
 }
 
 export async function authFetch(input: RequestInfo | URL, init: RequestInit = {}) {
+  const owner = currentOwner();
   let token = window.sessionStorage.getItem(accessTokenKey);
   if (!token) throw new SessionExpiredError();
   let response = await fetch(input, withBearer(init, token));
+  if (currentOwner() !== owner) throw new SessionExpiredError();
   if (response.status !== 401) return response;
   token = await refreshClientSession();
-  if (!token) throw new SessionExpiredError();
+  if (!token || currentOwner() !== owner) throw new SessionExpiredError();
   response = await fetch(input, withBearer(init, token));
+  if (currentOwner() !== owner) throw new SessionExpiredError();
   if (response.status === 401) {
     clearClientSession();
     throw new SessionExpiredError();

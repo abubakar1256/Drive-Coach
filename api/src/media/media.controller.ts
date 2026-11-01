@@ -1,9 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import type { Response } from "express";
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { AdminGuard } from "../admin/admin.guard";
-import { UploadMediaDto } from "./dto/media.dto";
+import { UploadMediaDto, UploadMediaFileDto } from "./dto/media.dto";
 import { MediaService } from "./media.service";
 
 @Controller()
@@ -19,9 +19,20 @@ export class MediaController {
   @UseGuards(JwtAuthGuard, AdminGuard)
   @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 15 * 1024 * 1024, files: 1 } }))
   @Post("admin/media/upload-file")
-  uploadFile(@Req() request: AuthenticatedRequest, @UploadedFile() file: { buffer: Buffer; originalname: string; mimetype: string; size: number }, @Body("routePointId") routePointId: string) {
-    if (!file || !routePointId) throw new BadRequestException("A file and routePointId are required");
-    return this.mediaService.uploadFile(request.user.sub, routePointId, file);
+  uploadFile(@Req() request: AuthenticatedRequest, @UploadedFile() file: { buffer: Buffer; originalname: string; mimetype: string; size: number }, @Body() dto: UploadMediaFileDto) {
+    if (!file || !dto.routePointId) throw new BadRequestException("A file and routePointId are required");
+    return this.mediaService.uploadFile(request.user.sub, dto.routePointId, file, dto);
+  }
+
+  @Get("media/:id/description") @UseGuards(JwtAuthGuard)
+  async description(@Req() request: AuthenticatedRequest, @Param("id") id: string, @Res() response: Response) {
+    response.setHeader("Cache-Control", "private, no-store"); response.json(await this.mediaService.description(request.user.sub, id));
+  }
+
+  @Get("learning-media/:id/:kind") @UseGuards(JwtAuthGuard)
+  async learningFile(@Req() request: AuthenticatedRequest, @Param("id") id: string, @Param("kind") kind: string, @Query("routeId") routeId: string, @Res() response: Response) {
+    const asset = await this.mediaService.learningFile(request.user.sub, routeId, id, kind);
+    response.setHeader("Cache-Control", "private, no-store"); response.setHeader("X-Content-Type-Options", "nosniff"); response.type(asset.mimeType).send(asset.buffer);
   }
 
   @Get("media/:id") @UseGuards(JwtAuthGuard)
