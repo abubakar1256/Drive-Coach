@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { authFetch } from "../../lib/clientSession";
 import "./route-foundation.css";
+import PassageCoverage from "../centres/PassageCoverage";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "/api/v1";
 type Passage = { id: string; sequence: number; municipality: string; junction: string; latitude: number | null; longitude: number | null; verificationStatus: string; notes: string | null; duplicateOfSequence: number | null; sourceFingerprint: string | null; verifiedBy: string | null; verifiedAt: string | null };
@@ -54,6 +55,7 @@ export default function RouteFoundationPanel({ centres, onCreated }: { centres: 
     {loading && <p role="status">Loading source workspace…</p>}
     {error && <p role="alert" className="admin-inline-error">{error}</p>}{notice && <p role="status" className="admin-notice">{notice}</p>}
     {workspace && <>
+      <PassageCoverage key={`${centreId}:${workspace.readyPointCount}`} centreId={centreId} disabled={busy} onSelect={ids => { setOrder(ids); setShapeText(""); setNotice("Selection loaded. Validate the actual roads and 23–27 minute duration before reviewing/publishing; no routing request was made by selecting it."); }} />
       <ol className="foundation-steps"><li><strong>01 · Operator source</strong><span>{workspace.source ? `${workspace.source.points.length} source entries` : "Source not verified yet"}</span></li><li><strong>02 · Location review</strong><span>{workspace.readyPointCount} reviewed junctions · {departureReady ? "departure reviewed" : "departure pending"}</span></li><li><strong>03 · Route validation</strong><span>Ordered loop · road check · content review</span></li></ol>
       {workspace.source ? <div className="foundation-source"><strong>{workspace.centreName} · Autoveiligheid</strong><p>{workspace.source.address}</p><p>Document revision: {workspace.source.sourceRevision}. Names only: coordinates and legal access need separate review. Repeated source rows are retained but cannot both be selected.</p><div className="point-actions"><a href={workspace.source.sourceUrl} target="_blank" rel="noreferrer">Read passage PDF ↗</a><a href={workspace.source.centreSourceUrl} target="_blank" rel="noreferrer">Verify centre address ↗</a><button className="button button-small" disabled={busy} onClick={() => void action(() => request(`/admin/centres/${centreId}/route-foundation/import`, "POST"), "Current source imported. Existing coordinates preserved; changed source entries require re-review.")}>Import / refresh source</button></div></div> : <p className="foundation-warning">No verified operator passage list is bundled for this centre. Do not invent official points. Existing road-network practice routes remain separate from this workflow.</p>}
       <DepartureReview key={`${centreId}-${workspace.departure?.version ?? 0}`} departure={workspace.departure} suggestedUrl={workspace.source?.centreSourceUrl ?? ""} busy={busy} save={data => action(() => request(`/admin/centres/${centreId}/route-foundation/departure`, "PATCH", data), "Departure review saved. Previous provenance snapshots will need rebuilding if changed.")} />

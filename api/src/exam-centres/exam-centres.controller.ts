@@ -10,6 +10,9 @@ export class ExamCentresController {
   @Get(":slug/route-foundation")
   foundationSummary(@Param("slug") slug: string) { return this.foundation.summary(slug); }
 
+  @Get(":slug/passage-coverage") @Header("Cache-Control", "no-store")
+  passageCoverage(@Param("slug") slug: string) { return this.foundation.coverageForSlug(slug); }
+
   @Get()
   list() {
     return this.examCentresService.list();

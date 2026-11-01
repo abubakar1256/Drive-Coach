@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Header, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthenticatedRequest, JwtAuthGuard } from "../auth/auth.guard";
 import { AdminGuard } from "./admin.guard";
 import { AdminService } from "./admin.service";
@@ -8,7 +8,7 @@ import { UpdateUserRoleDto } from "./dto/admin-user.dto";
 import { ReviewTipDto } from "./dto/admin-drive-coach.dto";
 import { AnnouncementDto } from "../notifications/notification.dto";
 import { GeneratePracticeLoopDto, ImportRoutePointsDto, ImportRoadCatalogRouteDto } from "./dto/admin-route.dto";
-import { ReviewDepartureDto, GeneratePassageRouteDto } from "./dto/admin-route.dto";
+import { ReviewDepartureDto, GeneratePassageRouteDto, GenerateCoverageDraftsDto } from "./dto/admin-route.dto";
 import { OfficialRouteFoundationService } from "../routes/official-route-foundation.service";
 
 @Controller("admin")
@@ -18,6 +18,12 @@ export class AdminController {
 
   @Get("centres/:id/route-foundation")
   foundationWorkspace(@Param("id") id: string) { return this.foundation.workspace(id); }
+
+  @Get("centres/:id/passage-coverage") @Header("Cache-Control", "private, no-store")
+  passageCoverage(@Param("id") id: string) { return this.foundation.coverage(id, true); }
+
+  @Post("centres/:id/passage-coverage/drafts") @Header("Cache-Control", "private, no-store")
+  coverageDrafts(@Req() req: AuthenticatedRequest, @Param("id") id: string, @Body() dto: GenerateCoverageDraftsDto) { return this.foundation.generateCoverageDrafts(req.user.sub, id, dto); }
 
   @Post("centres/:id/route-foundation/import")
   importFoundation(@Req() req: AuthenticatedRequest, @Param("id") id: string) { return this.foundation.importSource(req.user.sub, id); }
