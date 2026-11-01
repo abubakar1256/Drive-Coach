@@ -105,7 +105,9 @@ Existing unfinished full-route turn-by-turn voice changes remain a separate task
 
 ### Local results
 
-- Final API build passed; **333/333 regression tests** passed.
+- Original mixed-workspace API build passed with **333/333 regression tests**.
+  The isolated Phase 2/3 review commit, excluding the separate unfinished
+  navigation changes and their two tests, passed **331/331 tests** and its API build.
 - Final Next.js production build passed, including type checks.
 - Disposable PostgreSQL verification passed actual history queries, account
   isolation, concurrent reservations by different administrators, revoked-role
