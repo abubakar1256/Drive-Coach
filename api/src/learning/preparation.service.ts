@@ -7,6 +7,7 @@ import { PreparationVersionDto, UpdatePreparationDto } from "./dto/preparation.d
 import { preparationFocus, type PreparationLevel } from "./preparation-policy";
 import { Prisma } from "@prisma/client";
 import { reportedObservations, reflectionTrends, type ReportedObservation } from "./reflection-trends";
+import { sessionReviews } from "./session-reviews";
 
 @Injectable()
 export class PreparationService {
@@ -49,8 +50,7 @@ export class PreparationService {
     const observations: ReportedObservation[] = [];
     for (const r of reflections) observations.push(...reportedObservations(`public:${r.sessionId}`, r.session.startedAt, r.updatedAt, r));
     for (const r of checklists) {
-      const review = (r.routeSnapshot as any)?.coachingReview;
-      if (review?.savedAt && Number.isFinite(Date.parse(review.savedAt))) observations.push(...reportedObservations(`public:${r.id}`, r.startedAt, review.savedAt, review, true));
+      for (const review of sessionReviews(r.routeSnapshot)) if (review.savedAt && Number.isFinite(Date.parse(review.savedAt))) observations.push(...reportedObservations(`public:${r.id}`, r.startedAt, review.savedAt, review, true));
     }
     for (const r of hometown) if (r.reflectedAt) observations.push(...reportedObservations(`private:${r.id}`, r.startedAt, r.reflectedAt, r.reflection));
     return reflectionTrends(observations, level, now);

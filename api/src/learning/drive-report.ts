@@ -1,4 +1,5 @@
 import { metres, type PracticeSnapshot } from "./practice-progress";
+import { sessionReviews } from "./session-reviews";
 
 export const reviewItems = ["mirrors", "blind_spots", "signals", "lane_position", "junctions", "roundabouts", "priority", "speed_choice", "following_distance", "vulnerable_users", "parking", "vehicle_control"] as const;
 export type DriveReview = { source: "self" | "instructor_reported"; ratings: Record<string, "good" | "practice" | "not_assessed">; notes: string; savedAt?: string };
@@ -72,7 +73,7 @@ export function buildDriveReport(session: { startedAt: Date | string; completedA
   return { version: 1, ended: Boolean(session.completedAt), startedAt: session.startedAt, completedAt: session.completedAt, durationSec, completionPct: session.completionPct,
     gps: { sampleCount: samples.length, usableSamples, weakSamples, gaps, coveragePct, distanceM: Math.round(distanceM), maxSpeedKph: maxSpeedKph === null ? null : Math.round(maxSpeedKph), confidence: usableSamples >= 10 && coveragePct >= 70 ? "medium" : "low" },
     points: { total: points.length, visited: visitedPoints, unconfirmed: points.length - visitedPoints },
-    events, review: snapshot?.coachingReview ?? null,
+    events, review: snapshot?.coachingReview ?? null, reviews: sessionReviews(snapshot),
     geometry: geometry.filter((_, i) => i % Math.max(1, Math.ceil(geometry.length / 800)) === 0 || i === geometry.length - 1),
     track: trace.filter((p, i) => i % Math.max(1, Math.ceil(trace.length / 800)) === 0 || i === trace.length - 1 || trace[i - 1]?.segment !== p.segment),
     limitations: ["GPS coverage can stop when Google Maps opens, the browser is backgrounded or the screen locks.", "Unconfirmed points are not necessarily missed: GPS gaps or stopping early can explain them.", "Recorded distance is approximate; weak samples, gaps and movement within GPS uncertainty are excluded, so distance may be understated.", "Speed is an estimate, not a verified speed-limit check. Overspeed, braking, acceleration, mirrors, signals and right-of-way are not automatically assessed.", "Instructor-reported feedback is entered by the account holder, not independently authenticated. No official pass/fail score."] };

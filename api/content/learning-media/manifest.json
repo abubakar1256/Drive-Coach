@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "source": "Original Drive Coach project diagrams, generated from geometric drawing code.",
+  "rights": "Original project media; permitted for use and adaptation within Drive Coach. No third-party photos, route recordings or branding.",
+  "locationEvidence": false,
+  "audio": false,
+  "durationSeconds": 8,
+  "lessons": [
+    {
+      "id": "observation",
+      "title": "Observation & anticipation",
+      "transcriptEn": [
+        "Look ahead and notice the setting.",
+        "Discuss mirror and blind-spot checks.",
+        "Choose one observation focus together."
+      ],
+      "transcriptNl": [
+        "Kijk vooruit en bekijk de situatie.",
+        "Bespreek spiegels en dode hoeken.",
+        "Kies samen een aandachtspunt."
+      ],
+      "files": [
+        {
+          "name": "observation.en.vtt",
+          "sha256": "3679f5091eef0612f9c0ad02c4f473575ff26a3f1f3f30ee332d37977e6622bd",
+          "bytes": 194
+        },
+        {
+          "name": "observation.mp4",
+          "sha256": "f8f3a115838790c2102488083fa344a5e9221ad4177dcadf747483922f9a1162",
+          "bytes": 27483
+        },
+        {
+          "name": "observation.nl.vtt",
+          "sha256": "01708e89fd9d13f79b1260b38b955490a3559034a6ff4eb6927ac1e072f94752",
+          "bytes": 182
+        },
+        {
+          "name": "observation.png",
+          "sha256": "9733a109ec085d0fa4754244d9a9bff1b138e90a01d110ddbc642608db25d765",
+          "bytes": 13992
+        }
+      ]
+    },
+    {
+      "id": "junctions",
+      "title": "Preparing for junctions",
+      "transcriptEn": [
+        "Notice the junction layout ahead.",
+        "Review the signs and visibility.",
+        "Discuss a calm approach with your supervisor."
+      ],
+      "transcriptNl": [
+        "Bekijk de indeling van het kruispunt.",
+        "Bespreek borden en zichtbaarheid.",
+        "Bespreek een rustige nadering."
+      ],
+      "files": [
+        {
+          "name": "junctions.en.vtt",
+          "sha256": "3b2fa7d27be3a690b2303bbab6a5394631612a22e34ce375fcad5ea1b796fb15",
+          "bytes": 195
+        },
+        {
+          "name": "junctions.mp4",
+          "sha256": "3dac707951c19b06aeb754bc5b9fdd885a63e352ef115849d8b90f40275df485",
+          "bytes": 27067
+        },
+        {
+          "name": "junctions.nl.vtt",
+          "sha256": "833b4be108851d2ec1806c5fc5fff3c00c92438685da851fa56922a395b2200f",
+          "bytes": 185
+        },
+        {
+          "name": "junctions.png",
+          "sha256": "92067d234e5ad971f609918e48fdb26761d237986f68f12f6f9cbc8313ebc549",
+          "bytes": 13168
+        }
+      ]
+    },
+    {
+      "id": "roundabouts",
+      "title": "Preparing for roundabouts",
+      "transcriptEn": [
+        "Study the approach before your drive.",
+        "Review the actual signs and lane layout.",
+        "Discuss the planned exit with your supervisor."
+      ],
+      "transcriptNl": [
+        "Bestudeer de nadering voor je rit.",
+        "Bekijk actuele borden en rijstroken.",
+        "Bespreek de geplande uitrit."
+      ],
+      "files": [
+        {
+          "name": "roundabouts.en.vtt",
+          "sha256": "0dfefbcc8f9f5913ff47afa6b4e0257afdd86d48c2ad4cb3e3d62637b8d5bc8e",
+          "bytes": 208
+        },
+        {
+          "name": "roundabouts.mp4",
+          "sha256": "061c3959fc292e6dc3cdebd2e400ec58d862b450a44898fdbbc34a40272891a3",
+          "bytes": 29643
+        },
+        {
+          "name": "roundabouts.nl.vtt",
+          "sha256": "d8604fe6f804629fc41ace7c2c3898321e6c6ce516f15126de4003e873fde3f0",
+          "bytes": 183
+        },
+        {
+          "name": "roundabouts.png",
+          "sha256": "5d957616e285d5a3a5cf0eb03d080edb7206b90462ab6dccc9a83c6c0cc411f3",
+          "bytes": 14655
+        }
+      ]
+    },
+    {
+      "id": "lane-planning",
+      "title": "Observation before changing position",
+      "transcriptEn": [
+        "Notice the road layout and other users.",
+        "Discuss mirrors, blind spots and space.",
+        "Review your plan before moving."
+      ],
+      "transcriptNl": [
+        "Bekijk de weg en andere weggebruikers.",
+        "Bespreek spiegels, dode hoeken en ruimte.",
+        "Bespreek je plan voor vertrek."
+      ],
+      "files": [
+        {
+          "name": "lane-planning.en.vtt",
+          "sha256": "ed324e94dc3a254c800477d78364655a0c24b1847e8a3b71a97cf176dc4a1912",
+          "bytes": 194
+        },
+        {
+          "name": "lane-planning.mp4",
+          "sha256": "34ba719c076e161354ac57dd83b61e865d5c04bd01917a24935e36cb424ec448",
+          "bytes": 28150
+        },
+        {
+          "name": "lane-planning.nl.vtt",
+          "sha256": "a1f74d60150b790256092a5356e405288bfd44b177b5dbcaf1230c972a9a0839",
+          "bytes": 194
+        },
+        {
+          "name": "lane-planning.png",
+          "sha256": "1b6d15ef98ea6d9488e8f75800c3931d559dcba2c82f4694a0c8d0d683529b6c",
+          "bytes": 14624
+        }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ const { renderToStaticMarkup } = require('react-dom/server');
 function load(file, mocks = {}) {
   const filename = path.resolve(__dirname, '..', file), result = new Module(filename, module);
   result.paths = module.paths;
-  result.require = id => mocks[id] ?? require(id);
+  result.require = id => id.endsWith(".css") ? {} : mocks[id] ?? require(id);
   result._compile(ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, filename);
   return result.exports;
 }
@@ -75,6 +75,8 @@ test('actual practice handlers retain confirmed next-step after reflection, but 
       const states = []; let cursor = 0;
       const promptComponent = () => null;
       const component = load('app/routes/PracticeControls.tsx', {
+        '../../lib/usePracticeStatus':{usePracticeStatus:()=>({items:[],loading:false,refresh:()=>{}}),notifyPracticeChange:()=>{}},
+        './DriveCoachVoice':{__esModule:true,default:()=>null},
         'react': {...React, useEffect: () => {}, useRef: () => ({current: null}), useState: initial => {
           const i = cursor++;
           if (!(i in states)) states[i] = i === 3 ? 'fixture-session' : initial;

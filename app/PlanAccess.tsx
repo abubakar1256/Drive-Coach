@@ -32,8 +32,9 @@ export function PlanAccessProvider({ children }: { children: React.ReactNode }) 
     const listener = () => { void sync(); };
     const timer = window.setInterval(listener, 60000);
     window.addEventListener("routepilot-auth-change", listener);
+    window.addEventListener("routepilot-session-refresh", listener);
     window.addEventListener("focus", listener);
-    return () => { disposed = true; ++generation; clearInterval(timer); window.removeEventListener("routepilot-auth-change", listener); window.removeEventListener("focus", listener); };
+    return () => { disposed = true; ++generation; clearInterval(timer); window.removeEventListener("routepilot-auth-change", listener); window.removeEventListener("routepilot-session-refresh", listener); window.removeEventListener("focus", listener); };
   }, []);
   useEffect(() => {
     const now = Date.now();

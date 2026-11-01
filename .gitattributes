@@ -1,0 +1,3 @@
+# Keep provenance hashes stable across Windows/Linux checkouts.
+api/content/learning-media/*.vtt text eol=lf
+api/content/learning-media/manifest.json text eol=lf

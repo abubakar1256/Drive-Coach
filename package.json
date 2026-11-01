@@ -17,7 +17,8 @@
     "api:dev": "pnpm --dir api dev",
     "api:build": "pnpm --dir api build",
     "test:drive-feedback": "pnpm --dir api build && node --test api/test/drive-report.test.cjs tests/drive-report.test.cjs tests/practice-gps.test.cjs tests/route-progression.test.cjs",
-    "api:prisma:validate": "pnpm --dir api prisma:validate"
+    "api:prisma:validate": "pnpm --dir api prisma:validate",
+    "test:phase4": "pnpm --dir api build && node --test api/test/phase-four.test.cjs api/test/drive-report.test.cjs tests/drive-report.test.cjs tests/practice-gps.test.cjs tests/route-progression.test.cjs tests/session-continuity.test.cjs"
   },
   "dependencies": {
     "mapbox-gl": "^3.31.0",

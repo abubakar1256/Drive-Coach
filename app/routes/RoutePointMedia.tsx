@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import type { RoutePoint } from "../../lib/data";
 import DrivingIllustration from "./DrivingIllustration";
 import { authFetch } from "../../lib/clientSession";
+import LearningMedia from "./LearningMedia";
+import RouteMediaRights from "./RouteMediaRights";
 
 export function safeMediaUrl(value?: string | null) {
   if (!value) return null;
@@ -30,8 +32,7 @@ function useProtectedMedia(value?: string | null) {
   }, [url, local]);
   return local ? (loaded?.source === url ? loaded.blob : null) : url;
 }
-export default function RoutePointMedia({ point }: { point: RoutePoint }) {
+export default function RoutePointMedia({ point, routeId, paid = false }: { point: RoutePoint; routeId?: string; paid?: boolean }) {
   const image = useProtectedMedia(point.imageUrl), video = useProtectedMedia(point.videoUrl);
-  if (!image && !video) return <DrivingIllustration />;
-  return <section className="route-point-media" aria-label={point.title}>{image && <img src={image} alt={point.title} loading="lazy" style={{ width: "100%", borderRadius: 16 }} />}{video && <video src={video} controls preload="metadata" playsInline style={{ width: "100%", borderRadius: 16 }} />}</section>;
+  return <>{(image || video) && <section className="route-point-media" aria-label={point.title}><span className="small-label">ROUTE-LINKED MEDIA</span>{image && <img src={image} alt={point.title} loading="lazy" style={{ width: "100%", borderRadius: 16 }} />}{video && <video src={video} controls preload="metadata" playsInline style={{ width: "100%", borderRadius: 16 }} />}<RouteMediaRights imageUrl={point.imageUrl} videoUrl={point.videoUrl} /><small>Route-linked content. Road conditions can change; follow current signs and your instructor.</small></section>}{paid && routeId ? <LearningMedia routeId={routeId} category={point.category} /> : !image && !video ? <DrivingIllustration /> : null}</>;
 }
