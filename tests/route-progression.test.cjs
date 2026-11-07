@@ -55,7 +55,7 @@ test('Google parts are labelled as the selected route, not alternative routes', 
   const sections = utils.googleMapsRouteSections(Array.from({length: 25}, (_, i) => ({latitude: 50 + i / 1000, longitude: 5})));
   const html = renderToStaticMarkup(React.createElement(component, {sections, routeLabel: 'Route A'}));
   assert.match(html, /Route A · Section 6\/6/);
-  assert.match(html, /parts of Route A only, not other routes/);
+  assert.match(html, /Google Maps opens the practice route in parts/);
   assert.doesNotMatch(html, /Route B/);
 });
 test('route conversion never combines centre fallback routes or stale geometry', () => {
