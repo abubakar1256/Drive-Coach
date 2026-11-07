@@ -55,23 +55,25 @@ test("Google Maps sections fail closed rather than skip invalid points", () => {
 
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
-function renderGoogleLinks(locale, sections, navigation = false) {
+function renderGoogleLinks(locale, sections) {
   const componentFile = path.resolve(__dirname, "../app/routes/GoogleMapsLinks.tsx");
   const componentModule = new Module(componentFile, module);
   componentModule.paths = module.paths;
   componentModule.require = id => id === "../../lib/useLocale" ? { useCurrentLocale: () => locale } : id === "../../lib/route-utils" ? loaded.exports : require(id);
   componentModule._compile(ts.transpileModule(fs.readFileSync(componentFile, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, componentFile);
-  return renderToStaticMarkup(React.createElement(componentModule.exports.default, { sections, navigation }));
+  return renderToStaticMarkup(React.createElement(componentModule.exports.default, { sections }));
 }
 test("Long route UI exposes every section and the Google Maps action", () => {
   const sections = googleMapsRouteSections(Array.from({ length: 25 }, (_, i) => ({ latitude: 50 + i / 1000, longitude: 5 })));
   const html = renderGoogleLinks("en", sections);
-  assert.match(html, /Open in Google Maps/);
+  const beforePicker = html.split('<details class="google-handoff-details">')[0];
+  assert.match(beforePicker, /Start route in Google Maps · Part 1\/6/);
+  assert.match(beforePicker, /href="https:\/\/www\.google\.com\/maps\/dir\/\?[^"]+dir_action=navigate/);
+  assert.doesNotMatch(beforePicker, /target="_blank"/);
   assert.match(html, /Section 6\/6/);
   assert.match(html, /points 21–25/);
   assert.match(html, /safely parked/);
-  assert.match(html, /full checked route stays on the Mapbox map/);
-  assert.match(html,/ONE CONTINUOUS PRACTICE ROUTE/);
+  assert.match(html, /full practice route on the map below/);
   assert.match(html,/<details class="google-handoff-details">/);
   assert.doesNotMatch(html,/navigation-section-rail|aria-pressed/);
 });
@@ -80,14 +82,12 @@ test('a closed Google hand-off chain finishes at its original start without drop
   const route=[...points,...points.slice(0,-1).reverse(),points[0]];
   const sections=googleMapsRouteSections(route),html=renderGoogleLinks('en',sections);
   assert.equal(new URL(sections[0].url).searchParams.get('origin'),new URL(sections.at(-1).url).searchParams.get('destination'));
-  assert.match(html,/finish at the same starting point/);
-  assert.match(html,/No points are omitted/);
+  assert.match(html,/Full loop/);
   assert.equal(sections.at(-1).lastPoint,route.length);
 });
 test("Dutch and navigation links use localized labels and navigation URLs", () => {
   const sections = googleMapsRouteSections(points);
-  assert.match(renderGoogleLinks("nl", sections), /Openen in Google Maps/);
-  assert.match(renderGoogleLinks("en", sections, true), /dir_action=navigate/);
-  assert.match(renderGoogleLinks("nl", sections, true), /Navigeren met Google Maps/);
+  assert.match(renderGoogleLinks("nl", sections), /Start oefenroute in Google Maps/);
+  assert.match(renderGoogleLinks("en", sections), /dir_action=navigate/);
   assert.equal(renderGoogleLinks("en", []), "");
 });

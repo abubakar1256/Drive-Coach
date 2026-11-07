@@ -82,7 +82,7 @@ export type GoogleMapsSection = {
 export function wazeStartNavigationUrl(point?: RoutePointLike | null): string | null {
   if (!point || !hasCoordinates(point)) return null;
   const params = new URLSearchParams({ ll: `${point.latitude},${point.longitude}`, navigate: "yes", utm_source: "drivecoach" });
-  return `https://waze.com/ul?${params.toString()}`;
+  return `https://www.waze.com/ul?${params.toString()}`;
 }
 
 // Waypoint-leg coverage, not distance travelled or recorded practice completion.

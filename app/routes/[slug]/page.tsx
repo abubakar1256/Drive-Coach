@@ -12,8 +12,7 @@ import LanguageSwitcher from "../../../app/LanguageSwitcher";
 import LocalizedNavLinks from "../../../app/LocalizedNavLinks";
 import SiteFooter from "../../../app/SiteFooter";
 import { getServerLocale } from "../../../lib/serverLocale";
-import { siteCopy } from "../../../lib/siteCopy";
-import { localizeCentre } from "../../../lib/localizeContent";
+import { localizeText } from "../../../lib/localizeContent";
 import MobileMenu from "../../../app/MobileMenu";
 
 function getRouteContext(slug: string) {
@@ -28,9 +27,12 @@ function fallbackRouteName(slug: string) {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const route = await getRouteBySlug(params.slug);
-  const name = route?.name ?? fallbackRouteName(params.slug);
-  const centre = route?.centre.name ?? "your test centre";
-  const description = `Study ${name} around ${centre} with route points, warnings and preparation guidance.`;
+  const locale = getServerLocale();
+  const name = localizeText(route?.name ?? fallbackRouteName(params.slug), locale);
+  const centre = route?.centre.name ?? (locale === "nl" ? "je examencentrum" : "your test centre");
+  const description = locale === "nl"
+    ? `Bekijk ${name} rond ${centre} met routepunten en voorbereidingstips.`
+    : `Study ${name} around ${centre} with route points, warnings and preparation guidance.`;
   return { title: `${name} at ${centre} | Drive Coach`, description, alternates: { canonical: `/routes/${params.slug}` }, openGraph: { title: `${name} at ${centre}`, description, url: `/routes/${params.slug}` } };
 }
 
@@ -38,20 +40,17 @@ export default async function RoutePage({ params }: { params: { slug: string } }
   const fallbackCentre = getRouteContext(params.slug);
   const apiRoute = await getRouteBySlug(params.slug);
   if (!apiRoute) notFound();
-  const locale = getServerLocale();
-  const centre = localizeCentre(apiRoute ? routeToCentre(apiRoute, fallbackCentre) : fallbackCentre, locale);
+  const centre = routeToCentre(apiRoute, fallbackCentre);
   const catalogue = await getCentreBySlug(apiRoute.centre.slug);
   const steps = (catalogue?.routes ?? []).map(route => ({ slug: route.slug, label: route.label ?? route.name, isFree: route.isFree === true }));
   const progression = routeProgression(steps, params.slug);
   const routeName = progression.current?.label ?? apiRoute.name;
 
-
-  const copy = siteCopy[locale].route;
   return (
     <main className="route-page">
       <PageViewTracker eventType="ROUTE_VIEW" centreSlug={centre.slug} routeSlug={params.slug} />
-      <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} /><div className="nav-actions"><LanguageSwitcher /><AccountNavLink /><PlanAccessLink unlock /></div><MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} /></nav>
-      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><div className="route-detail-head"><div><p className="eyebrow"><span className="eyebrow-dot" /> {copy.routeExperience} · {centre.area}</p><h1>{routeName}</h1></div></div>{apiRoute.sourceLabel && <p className="route-list-note">{apiRoute.sourceLabel}</p>}<RouteExperience key={params.slug} centre={centre} routeId={apiRoute.id} initialDriving={apiRoute.driving} routeSlug={params.slug} routeLabel={routeName} nextRoute={progression.next} /></section>
+      <nav className="nav shell inner-nav"><Link className="brand" href="/"><span className="brand-mark"><span /></span><span>Drive <span className="brand-accent">Coach</span></span></Link><LocalizedNavLinks items={[{ href: "/#how-it-works", label: "howItWorks" }, { href: "/centres", label: "testCentres" }, { href: "/#pricing", label: "pricing" }]} /><div className="nav-actions"><LanguageSwitcher refreshOnChange={false} /><AccountNavLink /><PlanAccessLink unlock /></div><MobileMenu links={[{ href: "/#how-it-works", label: "How it works" }, { href: "/centres", label: "Test centres" }, { href: "/#pricing", label: "Pricing" }, { href: "/account", label: "My account" }]} /></nav>
+      <section className="route-detail shell"><Link className="back-link" href={`/centres/${centre.slug}`}>← {centre.name}</Link><RouteExperience key={params.slug} centre={centre} routeId={apiRoute.id} initialDriving={apiRoute.driving} routeSlug={params.slug} routeLabel={routeName} sourceLabel={apiRoute.sourceLabel} nextRoute={progression.next} /></section>
       <SiteFooter />
     </main>
   );

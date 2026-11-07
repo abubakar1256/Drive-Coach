@@ -33,3 +33,6 @@
 .waze-start-navigation { display:grid; gap:9px; padding:12px; border:1px solid #b7e7f0; border-radius:12px; background:#f0fbfd; }
 .google-maps-links .waze-start-button { background:#143e48; color:#fff; }
 .google-maps-links .waze-start-button:hover { background:#0c2d35; }
+.route-navigation { padding: 16px; border: 1px solid #cbded4; border-radius: 16px; background: #f4faf5; }
+.route-navigation-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.route-navigation-actions > a { flex: 1 1 210px; }

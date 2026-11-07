@@ -25,11 +25,11 @@ export default function RouteTrialAccess({ routeId, routeSlug }: { routeId?: str
     finally { setBusy(false); }
   }
   return <section className="route-trial-card" aria-labelledby="route-trial-title">
-    <span className="small-label">Free · 24 hours</span>
+    <span className="small-label">{nl ? "Gratis · 24 uur" : "Free · 24 hours"}</span>
     <h3 id="route-trial-title">{nl ? "Eén route. Jouw eerste oefenrit." : "One route. Your first practice drive."}</h3>
     {state === "signed-out" ? <><p>{nl ? "Log in om één gekozen route 24 uur te proberen." : "Sign in to try one chosen route for 24 hours."}</p><Link className="button button-full" href={`/auth/login?next=${encodeURIComponent(`/routes/${routeSlug}`)}`}>{nl ? "Inloggen" : "Sign in"} ↗</Link></> : state !== "ready" ? <p role="status">{nl ? "Je proefperiode controleren…" : "Checking your trial access…"}</p> : trial?.available ? <>
       <p>{nl ? "Na bevestiging start je eenmalige proefperiode van 24 uur voor deze route. Je kunt niet van route wisselen of een nieuwe proefperiode bij een ander centrum starten." : "Confirm to start your single 24-hour trial for this route. You cannot switch routes or start another trial at another centre."}</p>
-      <button className="button button-full" disabled={busy || !routeId} onClick={() => void start()}>{busy ? "Starting…" : (nl ? "Start mijn proefperiode van 24 uur" : "Start my 24-hour route trial")}</button>
+      <button className="button button-full" disabled={busy || !routeId} onClick={() => void start()}>{busy ? (nl ? "Bezig met starten…" : "Starting…") : (nl ? "Start mijn proefperiode van 24 uur" : "Start my 24-hour route trial")}</button>
     </> : <>
       <p>{trial?.active ? (trial.routeId === routeId ? (nl ? "Je proefperiode voor deze route is actief." : "Your trial for this route is active.") : (nl ? "Je proefperiode geldt alleen voor je eerder gekozen route." : "Your trial applies only to your previously selected route.")) : (nl ? "Je eenmalige proefperiode is afgelopen. Kies Basic of Premium voor verdere routetoegang." : "Your one-time trial has ended. Choose Basic or Premium for further route access.")}</p>
       {trial?.expiresAt && <p className="trial-expiry">{nl ? "Eindtijd" : "Trial ends"}: <time dateTime={trial.expiresAt}>{new Date(trial.expiresAt).toLocaleString(nl ? "nl-BE" : "en-GB")}</time></p>}

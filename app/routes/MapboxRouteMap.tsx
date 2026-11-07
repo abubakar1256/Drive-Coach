@@ -65,7 +65,8 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
       markerElement.type = "button";
       const endpoint = index === 0 || finish;
       markerElement.className = `mapbox-point-marker ${endpoint ? "mapbox-endpoint-marker" : ""} ${index === selectedIndex ? "is-active" : ""}`;
-      const label = index === 0 ? (closed ? "START / FINISH" : "START") : finish ? "FINISH" : String(index + 1);
+      const finishLabel = nl ? "EINDE" : "FINISH";
+      const label = index === 0 ? (closed ? `START / ${finishLabel}` : "START") : finish ? finishLabel : String(index + 1);
       const number = document.createElement("span"); number.textContent = label; markerElement.appendChild(number);
       markerElement.hidden = !endpoint && index !== selectedIndex;
       markerElement.setAttribute("aria-label", endpoint ? label : nl ? `Selecteer vormpunt ${index + 1}` : `Select shaping point ${index + 1}`);
@@ -117,5 +118,6 @@ export default function MapboxRouteMap({ centre, selectedIndex, onSelect, livePo
     if (tracking) map.easeTo({ center: livePosition, duration: 650, essential: true });
   }, [livePosition, tracking, nl, mapReady]);
 
-  return <div className="mapbox-shell"><div ref={containerRef} className="mapbox-container" /><div className="mapbox-loop-key"><strong>{loop.closed ? (nl ? "Eén ronde · start = einde" : "One loop · start = finish") : (nl ? "Geen gesloten ronde bevestigd" : "Closed loop not confirmed")}</strong><small>{loop.direction ? `${nl ? "Vertrek richting" : "Initial direction"}: ${loop.direction} · ` : ""}{nl ? "Volg de pijlen; niet stoppen bij elk punt." : "Follow the arrows; points are not stops."}</small><button type="button" aria-pressed={showPoints} onClick={() => setShowPoints(v => !v)}>{showPoints ? (nl ? "Vormpunten verbergen" : "Hide shaping points") : (nl ? "Vormpunten tonen" : "Show shaping points")}</button></div><div className="mapbox-helper"><span><i className={tracking ? "is-live" : ""} /> {tracking ? (nl ? "Live oefen-GPS" : "Live practice GPS") : (nl ? "Volledige route" : "Full route")}</span><small>{tracking ? (nl ? "Je positie en spoor verschijnen hier" : "Your position and track appear here") : (nl ? "Eén doorlopende oefenrit" : "One continuous practice drive")}</small></div></div>;
+  const direction = nl ? loop.direction?.replace("E", "O") : loop.direction;
+  return <div className="mapbox-shell"><div ref={containerRef} className="mapbox-container" /><div className="mapbox-loop-key"><strong>{loop.closed ? (nl ? "Eén ronde · start = einde" : "One loop · start = finish") : (nl ? "Geen gesloten ronde bevestigd" : "Closed loop not confirmed")}</strong><small>{direction ? `${nl ? "Vertrek richting" : "Initial direction"}: ${direction} · ` : ""}{nl ? "Volg de pijlen; niet stoppen bij elk punt." : "Follow the arrows; points are not stops."}</small><button type="button" aria-pressed={showPoints} onClick={() => setShowPoints(v => !v)}>{showPoints ? (nl ? "Vormpunten verbergen" : "Hide shaping points") : (nl ? "Vormpunten tonen" : "Show shaping points")}</button></div><div className="mapbox-helper"><span><i className={tracking ? "is-live" : ""} /> {tracking ? (nl ? "Live oefen-GPS" : "Live practice GPS") : (nl ? "Volledige route" : "Full route")}</span><small>{tracking ? (nl ? "Je positie en spoor verschijnen hier" : "Your position and track appear here") : (nl ? "Eén doorlopende oefenrit" : "One continuous practice drive")}</small></div></div>;
 }
