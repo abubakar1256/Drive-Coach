@@ -49,13 +49,13 @@ test('eligible next route opens only its own slug; completion is not claimed bef
   assert.match(prompt(true, true, null), /last published route/);
   assert.doesNotMatch(prompt(true, true, null), /href="\/routes/);
 });
-test('Google parts are labelled as the selected route, not alternative routes', () => {
+test('the Google directions action belongs to the selected route', () => {
   const utils = load('lib/route-utils.ts');
-  const component = load('app/routes/GoogleMapsLinks.tsx', {'../../lib/useLocale': {useCurrentLocale: () => 'en'}, '../../lib/route-utils':utils}).default;
-  const sections = utils.googleMapsRouteSections(Array.from({length: 25}, (_, i) => ({latitude: 50 + i / 1000, longitude: 5})));
-  const html = renderToStaticMarkup(React.createElement(component, {sections, routeLabel: 'Route A'}));
-  assert.match(html, /Route A · Section 6\/6/);
-  assert.match(html, /Google Maps opens the practice route in parts/);
+  const component = load('app/routes/GoogleMapsLinks.tsx', {'../../lib/useLocale': {useCurrentLocale: () => 'en'}}).default;
+  const links = utils.routeNavigationLinks([{latitude: 50, longitude: 5}, {latitude: 50.05, longitude: 5.01}]);
+  const html = renderToStaticMarkup(React.createElement(component, {links, routeLabel: 'Route A'}));
+  assert.match(html, /<strong>Route A<\/strong>/);
+  assert.match(html, /destination=50.05%2C5.01/);
   assert.doesNotMatch(html, /Route B/);
 });
 test('route conversion never combines centre fallback routes or stale geometry', () => {
