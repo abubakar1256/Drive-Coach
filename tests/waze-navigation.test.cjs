@@ -4,7 +4,12 @@ const React=require('react'),{renderToStaticMarkup}=require('react-dom/server');
 function load(file,mocks={}){const filename=path.resolve(__dirname,'..',file),m=new Module(filename,module);m.paths=module.paths;m.require=id=>id in mocks?mocks[id]:require(id);m._compile(ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX}}).outputText,filename);return m.exports;}
 const utils=load('lib/route-utils.ts');
 const points=Array.from({length:25},(_,i)=>({latitude:50+i/1000,longitude:5}));
-function render(sections,locale='en',selected=0){const component=load('app/routes/GoogleMapsLinks.tsx',{'../../lib/route-utils':utils,'../../lib/useLocale':{useCurrentLocale:()=>locale},react:{...React,useState:()=>[selected,()=>{}]}}).default;return renderToStaticMarkup(React.createElement(component,{sections,routeLabel:'Route A'}));}
+function render(links, locale = 'en') {
+  const component = load('app/routes/GoogleMapsLinks.tsx', {
+    '../../lib/useLocale': {useCurrentLocale: () => locale},
+  }).default;
+  return renderToStaticMarkup(React.createElement(component, {links, routeLabel: 'Route A'}));
+}
 test('Waze start link uses a fixed HTTPS destination with correct coordinate order and no credentials',()=>{
   const u=new URL(utils.wazeStartNavigationUrl({latitude:50.123,longitude:5.456}));
   assert.equal(u.origin,'https://www.waze.com');assert.equal(u.pathname,'/ul');
@@ -16,20 +21,14 @@ test('Waze refuses missing or invalid coordinates, including non-numeric strings
   for(const p of [null,undefined,{}, {latitude:NaN,longitude:5},{latitude:91,longitude:5},{latitude:50,longitude:181},{latitude:'50',longitude:5},{latitude:50,longitude:Infinity}])assert.equal(utils.wazeStartNavigationUrl(p),null);
   assert.ok(utils.wazeStartNavigationUrl({latitude:0,longitude:0}));
 });
-test('Waze always points to the entire selected route start, independent of Google section selection',()=>{
-  const sections=utils.googleMapsRouteSections(points),first=render(sections),last=render(sections,'en',5);
-  const href=h=>h.match(/href="(https:\/\/www\.waze\.com[^\"]+)"/)[1];
-  assert.equal(href(first),href(last));assert.match(first,/Navigate to start in Waze/);
-  assert.match(first,/Waze loads that start point as its destination/);assert.match(first,/referrerPolicy="no-referrer"/i);
-  assert.doesNotMatch(first,/target="_blank"/);
-  assert.doesNotMatch(first,/waze:\/\//);
-});
-test('no Waze link is rendered for locked/empty sections or legacy sections without an authorized start',()=>{
-  assert.equal(render([]),'');
-  const sections=utils.googleMapsRouteSections(points).map(({startPoint,...s})=>s);
-  assert.doesNotMatch(render(sections),/waze\.com/);
-  assert.doesNotMatch(render(utils.googleMapsRouteSections(points).slice(1)),/waze\.com/);
-});
-test('Dutch Waze copy clearly limits navigation to the start point',()=>{
-  const html=render(utils.googleMapsRouteSections(points),'nl');assert.match(html,/Naar startpunt met Waze/);assert.match(html,/automatisch als bestemming/);
+test('the Waze button receives the selected route start and no private location', () => {
+  const links = utils.routeNavigationLinks(points);
+  const html = render(links);
+  assert.equal(new URL(links.wazeUrl).searchParams.get('ll'), '50,5');
+  assert.match(html, /href="https:\/\/www\.waze\.com\/ul\?ll=50%2C5/);
+  assert.match(html, /Navigate to start in Waze/);
+  assert.match(html, /referrerPolicy="no-referrer"/i);
+  assert.doesNotMatch(html, /target="_blank"|waze:\/\//);
+  assert.equal(render(null), '');
+  assert.match(render(links, 'nl'), /Naar startpunt met Waze/);
 });

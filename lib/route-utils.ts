@@ -26,7 +26,11 @@ export function routeSequence(points: RoutePointLike[]): string {
 export function routeDistanceKm(points: RoutePointLike[]): number | null {
   const coordinates = points.filter(hasCoordinates);
   if (coordinates.length < 2) return null;
+  return Number(routeDistances(coordinates).at(-1)!.toFixed(1));
+}
 
+function routeDistances(coordinates: { latitude: number; longitude: number }[]) {
+  const distances = [0];
   let distance = 0;
   const earthRadiusKm = 6371;
   for (let index = 1; index < coordinates.length; index += 1) {
@@ -38,46 +42,48 @@ export function routeDistanceKm(points: RoutePointLike[]): number | null {
     const latitudeB = current.latitude * Math.PI / 180;
     const haversine = Math.sin(latitudeDelta / 2) ** 2
       + Math.cos(latitudeA) * Math.cos(latitudeB) * Math.sin(longitudeDelta / 2) ** 2;
-    distance += earthRadiusKm * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+    distance += earthRadiusKm * 2 * Math.asin(Math.sqrt(Math.min(1, haversine)));
+    distances.push(distance);
   }
 
-  return Number(distance.toFixed(1));
-}
-
-export function googleMapsRouteUrl(points: RoutePointLike[]): string | null {
-  const coordinates = points.filter(hasCoordinates).map((point) => `${point.latitude},${point.longitude}`);
-  // Mobile browsers support only three intermediate waypoints. Never silently
-  // drop points from a longer instructor route.
-  if (coordinates.length < 2 || coordinates.length > 5 || coordinates.length !== points.length) return null;
-
-  const origin = coordinates[0];
-  const destination = coordinates[coordinates.length - 1] ?? origin;
-  const waypoints = coordinates.slice(1, -1).join("|");
-  const params = new URLSearchParams({ api: "1", origin, destination, travelmode: "driving" });
-  if (waypoints) params.set("waypoints", waypoints);
-  return `https://www.google.com/maps/dir/?${params.toString()}`;
+  return distances;
 }
 
 export function googleMapsNavigationUrl(points: RoutePointLike[]): string | null {
-  const coordinates = points.filter(hasCoordinates).map((point) => `${point.latitude},${point.longitude}`);
-  if (coordinates.length < 2 || coordinates.length > 5 || coordinates.length !== points.length) return null;
+  if (points.length < 2 || !points.every(hasCoordinates)) return null;
+  const route = points.filter((point, index) => {
+    const previous = points[index - 1];
+    return !previous || point.latitude !== previous.latitude || point.longitude !== previous.longitude;
+  });
+  if (route.length < 2) return null;
 
-  const destination = coordinates[coordinates.length - 1];
-  const waypoints = coordinates.slice(1, -1).join("|");
-  const params = new URLSearchParams({ api: "1", origin: coordinates[0], destination, travelmode: "driving", dir_action: "navigate" });
-  if (waypoints) params.set("waypoints", waypoints);
+  const coordinates = route.map(({ latitude, longitude }) => `${latitude},${longitude}`);
+  const last = coordinates.length - 1;
+  const distances = routeDistances(route);
+  const totalKm = distances[last];
+  // Mobile browser directions links support three intermediate waypoints.
+  // Spread them across the drive and preserve the actual start and finish.
+  const waypointCount = Math.min(3, last - 1);
+  const waypoints: string[] = [];
+  let previousIndex = 0;
+  for (let slot = 1; slot <= waypointCount; slot++) {
+    const targetKm = totalKm * slot / (waypointCount + 1);
+    const lastCandidate = last - 1 - (waypointCount - slot);
+    let closest = previousIndex + 1;
+    for (let candidate = closest + 1; candidate <= lastCandidate; candidate++) {
+      if (Math.abs(distances[candidate] - targetKm) < Math.abs(distances[closest] - targetKm)) closest = candidate;
+    }
+    waypoints.push(coordinates[closest]);
+    previousIndex = closest;
+  }
+  const params = new URLSearchParams({
+    api: "1", origin: coordinates[0], destination: coordinates[last], travelmode: "driving", dir_action: "navigate",
+  });
+  if (waypoints.length) params.set("waypoints", waypoints.join("|"));
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
-export type GoogleMapsSection = {
-  firstPoint: number;
-  lastPoint: number;
-  url: string;
-  navigationUrl: string;
-  startPoint: { latitude: number; longitude: number };
-};
-
-// Waze deep links take one destination, not the full ordered practice loop.
+// Waze deep links take one destination.
 // No live location, account data or API key is included in this outbound URL.
 export function wazeStartNavigationUrl(point?: RoutePointLike | null): string | null {
   if (!point || !hasCoordinates(point)) return null;
@@ -85,24 +91,7 @@ export function wazeStartNavigationUrl(point?: RoutePointLike | null): string | 
   return `https://www.waze.com/ul?${params.toString()}`;
 }
 
-// Waypoint-leg coverage, not distance travelled or recorded practice completion.
-export function googleMapsSectionRange(section: GoogleMapsSection, sections: GoogleMapsSection[]) {
-  const legs = Math.max(1, (sections.at(-1)?.lastPoint ?? 1) - 1);
-  return { start: Math.round((section.firstPoint - 1) / legs * 100), end: Math.round((section.lastPoint - 1) / legs * 100) };
-}
-
-// Each section fits mobile's three intermediate waypoints. Consecutive
-// sections share their boundary point, preserving every ordered route leg.
-export function googleMapsRouteSections(points: RoutePointLike[]): GoogleMapsSection[] {
-  if (points.length < 2 || !points.every(hasCoordinates)) return [];
-  const sections: GoogleMapsSection[] = [];
-  for (let start = 0; start < points.length - 1; start += 4) {
-    const end = Math.min(start + 4, points.length - 1);
-    const section = points.slice(start, end + 1);
-    const url = googleMapsRouteUrl(section);
-    const navigationUrl = googleMapsNavigationUrl(section);
-    if (!url || !navigationUrl) return [];
-    sections.push({ firstPoint: start + 1, lastPoint: end + 1, url, navigationUrl, startPoint: { latitude: section[0].latitude!, longitude: section[0].longitude! } });
-  }
-  return sections;
+export function routeNavigationLinks(points: RoutePointLike[]) {
+  const googleUrl = googleMapsNavigationUrl(points);
+  return googleUrl ? { googleUrl, wazeUrl: wazeStartNavigationUrl(points[0]) } : null;
 }

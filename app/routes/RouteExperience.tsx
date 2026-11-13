@@ -11,7 +11,7 @@ import RoutePointMedia from "./RoutePointMedia";
 import RouteTrialAccess from "./RouteTrialAccess";
 
 import { useSiteCopy, useCurrentLocale } from "../../lib/useLocale";
-import { googleMapsRouteSections, routeSequence, routeLoopSummary } from "../../lib/route-utils";
+import { routeNavigationLinks, routeSequence } from "../../lib/route-utils";
 import GoogleMapsLinks from "./GoogleMapsLinks";
 import type { RouteStep } from "../../lib/route-progression";
 import { localizeCentre, localizeText } from "../../lib/localizeContent";
@@ -67,12 +67,11 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
   }, [centre, routeSlug, initialDriving]);
 
   const displayCentre = useMemo(() => localizeCentre(activeCentre, locale), [activeCentre, locale]);
-  const googleMapsSections = useMemo(() => accessMode === "full" && driving?.valid
-    ? googleMapsRouteSections(activeCentre.routeCoordinates.map(([longitude, latitude]) => ({ longitude, latitude })))
-    : [], [accessMode, driving?.valid, activeCentre.routeCoordinates]);
+  const navigationLinks = useMemo(() => accessMode === "full" && driving?.valid
+    ? routeNavigationLinks(activeCentre.routeCoordinates.map(([longitude, latitude]) => ({ longitude, latitude })))
+    : null, [accessMode, driving?.valid, activeCentre.routeCoordinates]);
   const selectedPoint = displayCentre.routePoints[selectedIndex] ?? displayCentre.routePoints[0];
   const hasMapboxToken = Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN);
-  const closedLoop = routeLoopSummary(activeCentre.routePoints).closed;
   function handlePositionUpdate(position: GeolocationPosition) {
     const coordinate: [number, number] = [position.coords.longitude, position.coords.latitude];
     setLivePosition(coordinate);
@@ -96,12 +95,12 @@ export default function RouteExperience({ centre, routeId, routeSlug, initialDri
     <div className="route-overview-metrics">
       <div><span>{nl ? "GESCHATTE RIJTIJD" : "ESTIMATED DRIVE"}</span><strong>{driving?.valid ? Math.ceil(driving.durationSec! / 60) : "—"}<small> min</small></strong></div>
       <div><span>{nl ? "AFSTAND OVER DE WEG" : "ROAD DISTANCE"}</span><strong>{driving?.valid ? (driving.distanceM! / 1000).toFixed(1) : "—"}<small> km</small></strong></div>
-      <div><span>{nl ? "OEFENROUTE" : "PRACTICE ROUTE"}</span><strong className="route-mode-text">{accessMode === "full" && driving?.valid && closedLoop ? (nl ? "1 volledige ronde" : "1 complete loop") : (nl ? "Routeoverzicht" : "Route preview")}</strong><small>{accessMode === "full" ? `${activeCentre.routePoints.length} ${nl ? "vormpunten · geen aparte routes" : "shaping points · not separate routes"}` : (nl ? "Toegang vereist" : "Route access required")}</small></div>
+      <div><span>{nl ? "OEFENROUTE" : "PRACTICE ROUTE"}</span><strong className="route-mode-text">{accessMode === "full" && driving?.valid ? (nl ? "1 oefenroute" : "1 practice route") : (nl ? "Routeoverzicht" : "Route preview")}</strong><small>{accessMode === "full" ? `${activeCentre.routePoints.length} ${nl ? "routepunten" : "route points"}` : (nl ? "Toegang vereist" : "Route access required")}</small></div>
       <div><span>{nl ? "PRAKTIJKMODUS" : "PRACTICE MODE"}</span><strong className="route-mode-text">{tracking ? "Live GPS" : (nl ? "Voorbereiden" : "Preparation")}</strong><small>{nl ? "Veilig geparkeerd instellen" : "Set up while safely parked"}</small></div>
     </div>
     <div id="google-maps">
-      <GoogleMapsLinks key={routeSlug} routeLabel={routeLabel} sections={googleMapsSections} />
-      {accessMode === "full" && googleMapsSections.length === 0 && <p role="status">{nl
+      <GoogleMapsLinks key={routeSlug} routeLabel={routeLabel} links={navigationLinks} />
+      {accessMode === "full" && !navigationLinks && <p role="status">{nl
         ? "Navigatie is beschikbaar na een geslaagde routecontrole met volledige coördinaten."
         : "Navigation is available after the route passes its check with complete coordinates."}</p>}
     </div>
